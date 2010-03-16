@@ -1,0 +1,24 @@
+<!-- ${zul.fileName}.java
+
+	Purpose:for testing ${zul.fileName} .
+
+	Description:
+
+	History:
+		${CreateTime}
+
+Copyright (C) ${Year} Potix Corporation. All Rights Reserved.
+
+This program is distributed under Apache License Version 2.0 in the hope that
+it will be useful, but WITHOUT ANY WARRANTY.
+-->
+<test tags="${zul.tags}">
+	<case id="${zul.case}">
+		<server><!--
+			${zul.content}
+		--></server>
+		<client><![CDATA[
+
+		]]></client>
+	</case>
+</test>

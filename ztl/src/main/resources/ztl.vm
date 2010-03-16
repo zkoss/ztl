@@ -1,0 +1,100 @@
+/* ${ztl.fileName}.java
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		${CreateTime}
+
+Copyright (C) ${Year} Potix Corporation. All Rights Reserved.
+
+This program is distributed under Apache License Version 2.0 in the hope that
+it will be useful, but WITHOUT ANY WARRANTY.
+*/
+#if ($ztl.package != "")
+package ${ztl.package};
+#end
+import org.junit.Test;
+import org.zkoss.ztl.Element;
+import org.zkoss.ztl.JQuery;
+import org.zkoss.ztl.Tags;
+import org.zkoss.ztl.Widget;
+import org.zkoss.ztl.ZK;
+import org.zkoss.ztl.ZKClientTestCase;
+import org.zkoss.ztl.util.ColorVerifingHelper;
+
+import com.thoughtworks.selenium.Selenium;
+#foreach($item in $ztl.import)
+import $item;
+#end
+
+@Tags(tags = "${ztl.tags}")
+public class ${ztl.fileName} extends ZKClientTestCase {
+	
+	public ${ztl.fileName}() {
+		target = "$ztl.server$ztl.contextPath/$ztl.action";
+		browsers = getBrowsers("$ztl.browser");
+		_timeout = ${ztl.timeout};
+		caseID = getClass().getSimpleName();
+	}
+	
+#foreach($case in $ztl.children)
+	@Test(expected = AssertionError.class)
+	public void test${case.id}() {
+		for (Selenium browser : browsers) {
+			try {
+				start(browser);
+				windowFocus();
+				windowMaximize();
+				String zscript = "";
+				Widget engine = new Widget(new StringBuffer("zk.Desktop._dt"));
+				
+				// remove all of unnecessary children
+				if (target.endsWith("/service.zul"))
+					removeChildren(engine.firstChild());
+					
+				/** start **/
+#foreach ($source in $case.children)
+	#if ( $source.getType() == "Server")
+			/** server code **/
+				zscript = ""
+		#foreach($cnt in $source.contentArray)
+			+ $cnt
+		#end
+			;
+				runZscript(zscript);
+		#set( $esc = '$' )
+		#foreach($ids in $source.idArray)
+		Widget $ids = engine.${esc}f("$ids");
+		#end
+		waitResponse();
+	#else
+	#set($wait = $source.wait)
+		/** client code **/
+		#if($wait != "")
+		/** set speed depended on test case setting */
+				setSpeed("$wait");
+		#end
+		
+		#foreach($cnt in $source.contentArray)
+		$cnt
+		#end
+		
+		#if($wait != "")
+		/** reset */
+				setSpeed("${ztl.delay}");
+		#end
+	#end	
+#end	
+	/** end **/
+			} finally {
+				stop();	
+			}
+		}
+	}
+#end
+}
+
+
+

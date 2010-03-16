@@ -1,0 +1,20 @@
+#!/bin/bash
+# build
+#
+#	Purpose:
+#		
+#	Description:
+#		
+#	History:
+#		Tue Jul 26 14:29:51 TST 2011, Created by jumperchen
+#
+#Copyright (C) 2011 Potix Corporation. All Rights Reserved.
+#
+
+maindir="$(pwd)"
+chmod -R 755 $maindir
+cd $maindir/ztl
+echo "Working directory $maindir"
+mvn clean javadoc:jar package -Dmaven.test.skip=true
+cd ..
+cp ztl/target/ztl-2.0.0-javadoc.jar ztl/target/ztl-2.0.0-bundle.jar ztl/target/ztl-2.0.0.zip $maindir/dist/
