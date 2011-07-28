@@ -20,6 +20,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.zkoss.ztl.util.Scripts;
 
 /**
  * A class to fix OperaDirver issue
@@ -39,7 +40,7 @@ public class ZKGetText extends SeleneseCommand<String> {
 
 	protected String handleSeleneseCommand(WebDriver driver, String locator,
 			String ignored) {
-		if (ZKElementFinder.isZKElement(locator)) {
+		if (Scripts.isZKScript(locator)) {
 			WebElement element = finder.findElement(driver, locator);
 			return element.getText();
 		}

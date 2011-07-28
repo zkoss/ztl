@@ -21,17 +21,28 @@ import java.io.File;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.HasInputDevices;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keyboard;
+import org.openqa.selenium.Mouse;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.android.AndroidDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
+import org.openqa.selenium.iphone.IPhoneDriver;
 import org.zkoss.ztl.util.ConfigHelper;
+import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
 import org.zkoss.ztl.util.image.DefaultComparator;
@@ -40,7 +51,6 @@ import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import com.opera.core.systems.OperaDriver;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import com.thoughtworks.selenium.Selenium;
-import com.thoughtworks.selenium.SeleniumException;
 /**
  * A skeleton of ZK Selenium test, which implements all of the methods of {@link Selenium}
  * interface.
@@ -189,21 +199,13 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	 * Launches the browser with a new Selenium session
 	 */
 	protected void start(Selenium selenium) {
+		_selenium.set(selenium);
 		System.out.println("testing:"+((ZKSelenium)selenium).getBrowserName());
 		selenium.open(target);
-/**		selenium.start();
-		try{
-			selenium.setTimeout("5000");
-			selenium.open(target);
-		}catch(SeleniumException e){
-			//Sometime it will get timeout , try one more time.
-			selenium.open(target);   
+		
+		if (ConfigHelper.getInstance().isDebuggable()) {
+			((JavascriptExecutor) getWebDriver()).executeScript(Scripts.ZTL_DEBUGGER_SCRIPTS);
 		}
-		selenium.setTimeout("30000");
-		if (selenium == null)
-		    Thread.dumpStack();
-	*/	
-		_selenium.set(selenium);
 		this.selenium = selenium;
 		recordCount = 0; // reset
 	}
@@ -219,9 +221,120 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	    return selenium;
 	}
 
+	/**
+	 * Returns the web driver.
+	 * @since 2.0.0
+	 */
 	public WebDriver getWebDriver() {
 		return ((ZKSelenium) getCurrent()).getWrappedDriver();
 	}
+
+	/**
+	 * Returns the browser mouse for Selenium 2.x
+	 * @since 2.0.0
+	 */
+	public Mouse getMouse() {
+		return ((HasInputDevices) getWebDriver()).getMouse(); 	
+	}
+	
+
+	/**
+	 * Returns the browser keyboard for Selenium 2.x
+	 * @since 2.0.0
+	 */
+    public Keyboard getKeyboard() {
+		return ((HasInputDevices) getWebDriver()).getKeyboard(); 	
+    }
+    
+	/**
+	 * Returns the browser actions for Selenium 2.x
+	 * @since 2.0.0
+	 */
+	public Actions getActions() {
+		return new Actions(getWebDriver());
+	}
+
+	/**
+	 * Returns whether is InternatExplorer Driver
+	 * @since 2.0.0
+	 */
+	public boolean isIE() {
+		WebDriver driver = getWebDriver();
+		return (driver instanceof InternetExplorerDriver || 
+				(driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+						.getCapabilities().getBrowserName().contains("internet")));
+	}
+
+	/**
+	 * Returns whether is Firefox Driver
+	 * @since 2.0.0
+	 */
+	public boolean isFirefox() {
+		WebDriver driver = getWebDriver();
+		return (driver instanceof FirefoxDriver
+				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+						.getCapabilities().getBrowserName().contains("firefox")));
+	}
+
+	/**
+	 * Returns whether is Chrome Driver
+	 * @since 2.0.0
+	 */
+	public boolean isChrome() {
+		WebDriver driver = getWebDriver();
+		return (driver instanceof ChromeDriver
+				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+						.getCapabilities().getBrowserName().contains("chrome")));
+	}
+
+	/**
+	 * Returns whether is Opera Driver
+	 * @since 2.0.0
+	 */
+	public boolean isOpera() {
+		WebDriver driver = getWebDriver();
+		return (driver instanceof OperaDriver
+				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+						.getCapabilities().getBrowserName().contains("opera")));
+	}
+
+
+	/**
+	 * Returns whether is IPhone Driver
+	 * @since 2.0.0
+	 */
+	public boolean isIPhone() {
+		WebDriver driver = getWebDriver();
+		return (driver instanceof IPhoneDriver
+				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+						.getCapabilities().getBrowserName().contains("iphone")));
+	}
+
+
+	/**
+	 * Returns whether is Android Driver
+	 * @since 2.0.0
+	 */
+	public boolean isAndroid() {
+		WebDriver driver = getWebDriver();
+		return (driver instanceof AndroidDriver
+				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+						.getCapabilities().getBrowserName().contains("android")));
+	}
+	
+	/**
+	 * Find the first {@link WebElement} using the given method.
+	 * 
+	 * @param by
+	 *            The locating mechanism
+	 * @return The first matching element on the current page
+	 * @throws NoSuchElementException
+	 *             If no matching elements are found
+	 */
+	public WebElement findElement(By by) {
+		return getWebDriver().findElement(by);
+	}
+	
 	@Override
 	public void setUp() {
 		if (target == null)
@@ -332,14 +445,10 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void click(String locator) {
-		ZKSelenium selenium = (ZKSelenium) getCurrent();
-
 		// fixed for firefox web driver B30-1455584.ztl
-		WebDriver driver = selenium.getWrappedDriver();
-		if (driver instanceof FirefoxDriver
-				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
-						.getCapabilities().getBrowserName().contains("firefox")))
-			getCurrent().clickAt(locator, "1,1");
+		WebDriver driver = getWebDriver();
+		if (isFirefox() || isIE())
+			getCurrent().clickAt(locator, "2,2");
 		else getCurrent().click(locator);
 	}
 

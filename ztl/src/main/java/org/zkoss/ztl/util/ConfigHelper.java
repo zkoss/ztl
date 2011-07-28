@@ -19,7 +19,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.util.AbstractSequentialList;
 import java.util.ArrayList;
@@ -214,14 +213,10 @@ public class ConfigHelper {
 		if (_driverSetting.get(key) == null)
 			throw new NullPointerException("Null Browser Type String");
 
-		Selenium browser = _browserHolder.get(key);
-		if (browser == null) {
-			WebDriver driver = getWebDriver( _driverSetting.get(key), _browserRemote.get(key));
-			browser = new ZKSelenium(new ZKWebDriverCommandProcessor("http://10.1.3.63:8081/zktest/ztl.zul", driver), key,_openonce);
-			System.out.println("connecting "+key);
-			browser.setSpeed(getDelay());
-			_browserHolder.put(key, browser);
-		}
+		System.out.println("connecting "+key);
+		WebDriver driver = getWebDriver( _driverSetting.get(key), _browserRemote.get(key));
+		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor("http://10.1.3.63:8081/zktest/ztl.zul", driver), key,_openonce);
+		browser.setSpeed(getDelay());
 		return browser;
 	}
 	public List<Selenium> getBrowsersForLazy(String keys) {
@@ -231,6 +226,7 @@ public class ConfigHelper {
 			browser.addAll(_allBrowsers);
 		}
 		List<Selenium> list = new AbstractSequentialList<Selenium>() {
+			@Override
 			public ListIterator<Selenium> listIterator(int index) {
 				return new ItemIter(index, browser);
 			}
@@ -306,6 +302,7 @@ public class ConfigHelper {
 	 * @deprecated as of release ZTL 2.0.0 version
 	 * @see #getBrowsersForLazy
 	 */
+	@Deprecated
 	public List<Selenium> getBrowsers(String keys) {
 		return getBrowsersForLazy(keys);
 	}
@@ -358,7 +355,7 @@ public class ConfigHelper {
 				_prop = new Properties();
 				_prop.load(in);
 //				_openonce = Boolean.parseBoolean(_prop.getProperty("openonce","false"));
-				System.out.println("openonce="+_openonce);
+//				System.out.println("openonce="+_openonce);
 				_lastModified = f.lastModified();
 //				_client = _prop.getProperty("client");
 				_debuggable = Boolean.parseBoolean(_prop.getProperty("debuggable"));

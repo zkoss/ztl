@@ -20,6 +20,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
@@ -229,18 +230,24 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	/**
-	 * @browsers ie6,ie7,ie8,chrome7,firefox363,safari402
 	 * @param locator
 	 */
 	public void focus(ClientWidget locator) {
-		super.focus(locator.toLocator());
+		// fixed for IE9 on Webdriver
+		if (isIE())
+			click(locator);
+		else
+			super.focus(locator.toLocator());
 	}
 	/**
-	 * @browsers ie6,ie7,ie8,chrome7,firefox363,safari402
 	 * @param locator
 	 */
 	public void blur(ClientWidget locator) {
-		super.fireEvent(locator.toLocator(), "blur");
+		// fixed for IE9 on Webdriver
+		if (isIE())
+			findElement(locator).sendKeys(Keys.TAB);
+		else
+			super.fireEvent(locator.toLocator(), "blur");
 	}
 
 	public String getAttribute(ClientWidget attributeLocator) {
@@ -431,10 +438,11 @@ public class ZKClientTestCase extends ZKTestCase {
 		super.mouseOut(locator.toLocator());
 	}
 
-	public void mouseOver(ClientWidget locator) {
-		super.mouseOver(locator.toLocator());
+	public void mouseOver(By locator) {
+		// fix for IE9 issue, don't use super.mouseOver();
+		getActions().moveToElement(findElement(locator)).perform();
 	}
-
+	
 	public void mouseUp(ClientWidget locator) {
 		super.mouseUp(locator.toLocator());
 	}
