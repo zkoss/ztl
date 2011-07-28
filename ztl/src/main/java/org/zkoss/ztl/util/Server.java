@@ -117,7 +117,7 @@ public class Server implements Source {
 						String s = str.trim();
 						if (s.indexOf('<') < 0)
 							str = " " + str;
-						if (str.indexOf("//") < 0 || str.indexOf("://") < 0)
+						if (str.indexOf("//") < 0 || str.contains("://"))
 							ary.add('"' + str + '"');
 						else
 							ary.add('"' + str + "\\\\n\"");
