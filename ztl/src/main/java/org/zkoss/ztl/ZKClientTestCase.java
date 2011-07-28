@@ -16,6 +16,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -365,14 +366,14 @@ public class ZKClientTestCase extends ZKTestCase {
 		super.keyPress(locator.toLocator(), keySequence);
 	}
 
-	
 	/**
-	 * 2010/10/29 TonyQ:note: when typing number in chrome , it failed 
-	 * @param locator
-	 * @param keySequence
+	 * Use this method to simulate typing into an element, which may set its value.
+	 * @param by The locating mechanism to use
+	 * @param keysToSend
+	 * @since 2.0.0
 	 */
-	public void keyPress(ClientWidget locator, Keys keys) {
-		super.keyPress(locator.toLocator(), keys.toString());
+	public void sendKeys(By by, CharSequence... keysToSend) {
+		getWebDriver().findElement(by).sendKeys(keysToSend);
 	}
 	/**
 	 * <pre>

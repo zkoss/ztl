@@ -24,6 +24,7 @@ import org.zkoss.ztl.ZK;
 import org.zkoss.ztl.ZKClientTestCase;
 import org.zkoss.ztl.util.ColorVerifingHelper;
 
+import org.openqa.selenium.*;
 import com.thoughtworks.selenium.Selenium;
 #foreach($item in $ztl.import)
 import $item;

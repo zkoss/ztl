@@ -389,6 +389,16 @@ public class ConfigHelper {
 						_allBrowsers.add(browserKey);
 					}
 				}
+				
+				// System Properties
+				String sysprop = _prop.getProperty("systemproperties");
+				if (sysprop != null) {
+					String[] keys = sysprop.split(";");
+					for (String key : keys) {
+						String[] values = key.split(":");
+						System.setProperty(values[0], values[1]);
+					}
+				}
 			} finally {
 				if (in != null) {
 					in.close();
