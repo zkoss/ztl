@@ -126,6 +126,7 @@ import org.openqa.selenium.internal.seleniumemulation.WindowMaximize;
 import org.openqa.selenium.internal.seleniumemulation.Windows;
 import org.openqa.selenium.internal.seleniumemulation.ZKElementFinder;
 import org.openqa.selenium.internal.seleniumemulation.ZKGetText;
+import org.zkoss.ztl.util.Scripts;
 
 import java.util.Map;
 
@@ -274,7 +275,7 @@ public class ZKWebDriverCommandProcessor implements CommandProcessor, WrapsDrive
   }
 
   private void setUpMethodMap() {
-    JavascriptLibrary javascriptLibrary = new JavascriptLibrary();
+    JavascriptLibrary javascriptLibrary = Scripts.JS;
     ZKElementFinder elementFinder = new ZKElementFinder(javascriptLibrary);
     KeyState keyState = new KeyState();
 

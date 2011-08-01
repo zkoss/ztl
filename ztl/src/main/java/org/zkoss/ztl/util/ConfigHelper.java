@@ -392,8 +392,12 @@ public class ConfigHelper {
 				if (sysprop != null) {
 					String[] keys = sysprop.split(";");
 					for (String key : keys) {
-						String[] values = key.split(":");
-						System.setProperty(values[0], values[1]);
+						int start = key.indexOf(":");
+						if (start < 0) {
+							System.err.println("The syntax of the system property is wrong! [" + key + "]");
+							continue;
+						}	
+						System.setProperty(key.substring(0, start), key.substring(start+1));
 					}
 				}
 			} finally {

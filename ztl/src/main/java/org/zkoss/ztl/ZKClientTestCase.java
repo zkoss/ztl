@@ -20,11 +20,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.zkoss.ztl.util.ConfigHelper;
+import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
-import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 
 /**
  * A skeleton of ZK client widget.
@@ -46,6 +44,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	/**
 	 * Verifies the image before response has done. 
 	 */
+	@Override
 	public void verifyImage(Comparator comparator) {
 		waitResponse();
 		super.verifyImage(comparator);
@@ -179,6 +178,31 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public void click(ClientWidget locator) {
 		super.click(locator.toLocator());
+	}
+	
+	/**
+	 * Close the errorbox for webdriver
+	 * @since 2.0.0
+	 */
+	public void closeErrorBox() {
+		// fixed bug for B50-2916148.ztl
+		JQuery jq = jq(".z-errbox-close");
+		int x = jq.width() - 3;
+		if (!isFirefox())
+			x += parseInt(jq.css("padding-right"));
+
+		if (isOpera())
+			Scripts.callEmbeddedSelenium(getWebDriver(), "triggerMouseEventAt", jq, "click", x + ",3");
+		else
+			getActions().moveToElement(findElement(jq), x, 3).click().perform();
+		
+		// double check again (clicking without padding-right)
+		// sometimes on 64bit os will close again for IE.
+		if (jq.exists()) {
+			x -= parseInt(jq.css("padding-right"));
+			getActions().moveToElement(findElement(jq), x, 3).click().perform();
+		}
+			
 	}
 
 	public void clickAt(ClientWidget locator, String coordString) {

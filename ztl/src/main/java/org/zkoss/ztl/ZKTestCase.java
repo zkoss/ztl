@@ -1173,6 +1173,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		getCurrent().selectPopUp(arg0);
 	}
 
+	@Override
 	public void verifyEquals(Object obj1, Object obj2){
 		if(obj1 == obj2)return;
 		
