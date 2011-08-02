@@ -242,7 +242,18 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void dragdropTo(ClientWidget locatorOfObjectToBeDragged, String from, String to) {
-		super.dragdropTo(locatorOfObjectToBeDragged.toLocator(), from, to);
+		if (ZK.is("ie9")) {
+			String[] froms = from.split(",");
+			String[] tos = to.split(",");
+			int x0 = Integer.parseInt(froms[0]);
+			int y0 = Integer.parseInt(froms[1]);
+			int x1 = Integer.parseInt(tos[0]);
+			int y1 = Integer.parseInt(tos[1]);
+			WebElement element = findElement(new JQuery(locatorOfObjectToBeDragged));
+			getActions().moveToElement(element, x0, y0).clickAndHold(element)
+				.moveByOffset(x1-x0, y1-y0).release(element).perform();
+		} else
+			super.dragdropTo(locatorOfObjectToBeDragged.toLocator(), from, to);
 	}
 
 	public void dragdropToObject(ClientWidget locatorOfObjectToBeDragged,

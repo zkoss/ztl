@@ -26,6 +26,9 @@ import org.openqa.selenium.internal.seleniumemulation.JavascriptLibrary;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
+import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
+
+import com.opera.core.systems.OperaDriver;
 
 /**
  * An element finder for ZK's client widget.
@@ -42,9 +45,14 @@ public class ZKElementFinder extends ElementFinder {
 	
 	public static WebElement findElementX(WebDriver driver, String locator) {
 		try {
+		// fixed B30-1615919.ztl for OperaDriver
+		String replaced = (driver instanceof OperaDriver
+				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+						.getCapabilities().getBrowserName().contains("opera"))) ?
+								"\\\\\\\\\"" : "\\\\\""; 
 		Object result = ((JavascriptExecutor) driver).executeScript(
 				"return (" + js + ")(arguments[0]);",
-				locator.replaceAll("\"", "\\\\\"").replaceAll("'", "\"")); // fixed for Operadriver
+				locator.replaceAll("\"", replaced).replaceAll("'", "\"")); // fixed for Operadriver
 		if (result instanceof WebElement)
 			return (WebElement) result;
 		} catch (WebDriverException e) {
