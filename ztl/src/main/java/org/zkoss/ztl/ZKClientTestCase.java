@@ -23,6 +23,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
@@ -249,7 +250,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			int y0 = Integer.parseInt(froms[1]);
 			int x1 = Integer.parseInt(tos[0]);
 			int y1 = Integer.parseInt(tos[1]);
-			WebElement element = findElement(new JQuery(locatorOfObjectToBeDragged));
+			WebElement element = findElement(locatorOfObjectToBeDragged);
 			getActions().moveToElement(element, x0, y0).clickAndHold(element)
 				.moveByOffset(x1-x0, y1-y0).release(element).perform();
 		} else
@@ -290,8 +291,10 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public void blur(ClientWidget locator) {
 		// fixed for IE9 on Webdriver
-		if (isIE())
-			findElement(locator).sendKeys(Keys.TAB);
+		// very tricky way to fire the blur event. In this case we cannot send Keys.Tab,
+		// because it may affect the scrollbar to move.
+		if (ZK.is("ie9"))
+			clickAt(locator, "-20,-20");
 		else
 			super.fireEvent(locator.toLocator(), "blur");
 	}
@@ -461,7 +464,14 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseDownAt(ClientWidget locator, String coordString) {
-		super.mouseDownAt(locator.toLocator(), coordString);
+		if (ZK.is("ie9")) {
+			String[] froms = coordString.split(",");
+			int x0 = Integer.parseInt(froms[0]);
+			int y0 = Integer.parseInt(froms[1]);
+			WebElement element = findElement(locator);
+			getActions().moveToElement(element, x0, y0).clickAndHold(element).perform();
+		} else
+			super.mouseDownAt(locator.toLocator(), coordString);
 	}
 
 	public void mouseDownRight(ClientWidget locator) {
@@ -477,7 +487,14 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseMoveAt(ClientWidget locator, String coordString) {
-		super.mouseMoveAt(locator.toLocator(), coordString);
+		if (ZK.is("ie9")) {
+			String[] froms = coordString.split(",");
+			int x0 = Integer.parseInt(froms[0]);
+			int y0 = Integer.parseInt(froms[1]);
+			WebElement element = findElement(locator);
+			getActions().moveToElement(element, x0, y0).perform();
+		} else
+			super.mouseMoveAt(locator.toLocator(), coordString);
 	}
 
 	public void mouseOut(ClientWidget locator) {
@@ -494,7 +511,14 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseUpAt(ClientWidget locator, String coordString) {
-		super.mouseUpAt(locator.toLocator(), coordString);
+		if (ZK.is("ie9")) {
+			String[] froms = coordString.split(",");
+			int x0 = Integer.parseInt(froms[0]);
+			int y0 = Integer.parseInt(froms[1]);
+			WebElement element = findElement(locator);
+			getActions().moveToElement(element, x0, y0).release(element).perform();
+		} else
+			super.mouseUpAt(locator.toLocator(), coordString);
 	}
 
 	public void mouseUpRight(ClientWidget locator) {
@@ -518,11 +542,19 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void select(ClientWidget selectLocator, String optionLocator) {
-		super.select(selectLocator.toLocator(), optionLocator);
+		new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
+		
+		// force to fire onChange event for IE
+		if (ZK.is("ie"))
+			blur(selectLocator);
+			
 	}
 
 	public void selectFrame(ClientWidget locator) {
-		super.selectFrame(locator.toLocator());
+		if (locator instanceof Widget)
+			getWebDriver().switchTo().frame(((Widget)locator).uuid());
+		else
+			getWebDriver().switchTo().frame(findElement(locator));
 	}
 
 	public void setContext(ClientWidget context) {

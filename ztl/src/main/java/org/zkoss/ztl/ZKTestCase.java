@@ -448,11 +448,11 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void click(String locator) {
-// fixed for firefox web driver B30-1455584.ztl (seems to be fixed in Selenium 2.2)
-//		if (isFirefox())
-//			getCurrent().clickAt(locator, "2,2");
-//		else
-		getCurrent().click(locator);
+		// bug B30-1813055.ztl for listitem
+		if (isChrome())
+			getCurrent().clickAt(locator, "2,2");
+		else
+			getCurrent().click(locator);
 	}
 
 	@Override
