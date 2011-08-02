@@ -1,0 +1,6 @@
+	--------
+ZTL 2.0.0
+* Features
+
+* Bugs
+  ZTL-5: IE9webdriver doesn't work with dragdropTo() method
