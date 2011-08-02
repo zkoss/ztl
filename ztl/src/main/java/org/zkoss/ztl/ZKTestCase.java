@@ -448,11 +448,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void click(String locator) {
-		// bug B30-1813055.ztl for listitem
-		if (isChrome())
-			getCurrent().clickAt(locator, "2,2");
-		else
-			getCurrent().click(locator);
+		getCurrent().click(locator);
 	}
 
 	@Override

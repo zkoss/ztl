@@ -181,6 +181,15 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void click(ClientWidget locator) {
+		if (!isOpera()) {
+			WebElement element = findElement(locator);
+
+			// bug B30-1813055.ztl and B30-1769047.ztl for listitem
+			if ("tr".equals(element.getTagName())) {
+				getActions().moveToElement(element, 2,2).click().perform();
+				return;
+			}
+		}
 		super.click(locator.toLocator());
 	}
 	
