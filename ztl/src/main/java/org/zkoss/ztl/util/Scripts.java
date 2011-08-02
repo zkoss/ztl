@@ -34,45 +34,66 @@ import com.google.common.io.Resources;
 
 /**
  * A util class to collect the source of Javascript for Selenium 2.
+ * 
  * @author jumperchen
  * @since 2.0.0
  */
 public class Scripts {
-	public static final String ZTL_DEBUGGER_SCRIPTS = "(function(){var log=function(evt){if(evt.target.id!='zk_log'&&zk.Widget.$(evt.target).widgetName!='page'){var md=evt.mouseData(),kd=evt.keyData(),log='';if(kd.shiftKey)log+='shiftKey,';if(kd.altKey)log+='altKey,';if(kd.ctrlKey)log+'ctrlKey,';if(md.pageX!=undefined)log+='x='+md.pageX+',';if(md.pageY!=undefined)log+='y='+md.pageY+',';if(log)zk.log(evt.type,evt.target,log);elsezk.log(evt.type,evt.target);}};jq(document).keydown(log).keyup(log).keypress(log).bind('zcontextmenu',log).bind('zmousedown',log).bind('zmouseup',log).bind('zmousemove',log).mouseover(log).mouseout(log).click(log).bind('zdblclick',log);})();";
+	public static final String ZTL_DEBUGGER_SCRIPTS = "(function(){var log=function(evt){var w=zk.Widget.$(evt.target);if(evt.target.id!='zk_log'&&(!w||w.widgetName!='page')){var md=evt.mouseData(),kd=evt.keyData(),log='';if(kd.shiftKey){log+='shiftKey,';}if(kd.altKey){log+='altKey,';}if(kd.ctrlKey){log+'ctrlKey,';}if(md.pageX!=undefined){log+='x='+md.pageX+',';}if(md.pageY!=undefined){log+='y='+md.pageY+',';}if(log){zk.log(evt.type,evt.target,log);}else{zk.log(evt.type,evt.target);}}};jq(document).keydown(log).keyup(log).keypress(log).bind('zcontextmenu',log).bind('zmousedown',log).bind('zmouseup',log).bind('zmousemove',log).mouseover(log).mouseout(log).click(log).bind('zdblclick',log);})();";
+
 	public static final String FIND_ELEMENT_SCRIPTS = "function(e){e=jq.evalJSON(e);if(e){if(e.length)return e[0];else if(e.$n)return e.$n();return(e);}}";
+
 	public static final String DEBUGGER_FIND_ELEMENT_SCRIPTS = "function(e){e=jq.evalJSON(e);if(e){if(e.length){zk.log(\"jq\",jq.nodeName(e[0]),e[0],e[0].id);return e[0];}else if(e.$n){zk.log(\"zk widget\",e.widgetName,e.$n().id);return e.$n();}return(e);}}";
+
 	public static final JavascriptLibrary JS = new JavascriptLibrary();
-	
-	private static final String injectableSelenium = getRawScript(JS.getSeleniumScript("injectableSelenium.js"));
-	
+
+	private static final String SELENIUM_PREFIX = "/" + JavascriptLibrary.class.getPackage()
+    .getName().replace(".", "/") + "/";
+	private static final String PREFIX = "/" + Scripts.class.getPackage()
+    .getName().replace(".", "/") + "/";
+	private static final String injectableSelenium = readScript(SELENIUM_PREFIX + "injectableSelenium.js");
+
+	public static final String ZK_FIXED_SCRIPTS = readScript(PREFIX + "zkfixed.js");;
+
 	/**
 	 * Returns whether the locator can be recognized via ZK engine.
 	 */
 	public static boolean isZKScript(String locator) {
-		return (locator.indexOf("zk.") == 0 || locator.indexOf("zk(") == 0
-				|| locator.indexOf("jq") == 0);
+		return (locator.indexOf("zk.") == 0 || locator.indexOf("zk(") == 0 || locator
+				.indexOf("jq") == 0);
 	}
-	
+
 	/**
 	 * Calls the embeddedSelenium function.
-	 * <p>This is an enhancement for {@link JavascriptLibrary#callEmbeddedSelenium(WebDriver, String, WebElement, Object...)}
+	 * <p>
+	 * This is an enhancement for
+	 * {@link JavascriptLibrary#callEmbeddedSelenium(WebDriver, String, WebElement, Object...)}
 	 */
-	public static Object callEmbeddedSelenium(WebDriver driver, String functionName, By by,
-			Object... values) {
+	public static Object callEmbeddedSelenium(WebDriver driver,
+			String functionName, By by, Object... values) {
 		StringBuilder builder = new StringBuilder(injectableSelenium);
-	    builder.append("return browserbot.").append(functionName).append(".apply(browserbot, arguments);");
+		builder.append("return browserbot.").append(functionName)
+				.append(".apply(browserbot, arguments);");
 
-	    List<Object> args = new ArrayList<Object>();
-	    args.add(driver.findElement(by));
-	    args.addAll(Arrays.asList(values));
+		List<Object> args = new ArrayList<Object>();
+		args.add(driver.findElement(by));
+		args.addAll(Arrays.asList(values));
 
-	   return ((JavascriptExecutor) driver).executeScript(builder.toString(), args.toArray());
+		return ((JavascriptExecutor) driver).executeScript(builder.toString(),
+				args.toArray());
 	}
 	
-	private static String getRawScript(String script) {
-		if (script.startsWith("function() { return (") && script.endsWith(").apply(null, arguments);}")) {
-			return script.substring(21, script.length() - 26);
+	private static String readScript(String script) {
+		URL url = Scripts.class.getResource(script);
+
+		if (url == null) {
+			throw new RuntimeException("Cannot locate " + script);
 		}
-		return script;
+
+		try {
+			return Resources.toString(url, Charsets.UTF_8);
+		} catch (IOException e) {
+			throw Throwables.propagate(e);
+		}
 	}
 }

@@ -203,6 +203,9 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		System.out.println("testing:"+((ZKSelenium)selenium).getBrowserName());
 		selenium.open(target);
 		
+		// fixed ZK timing issue for ZTL
+		((JavascriptExecutor) getWebDriver()).executeScript(Scripts.ZK_FIXED_SCRIPTS);
+		
 		if (ConfigHelper.getInstance().isDebuggable()) {
 			((JavascriptExecutor) getWebDriver()).executeScript(Scripts.ZTL_DEBUGGER_SCRIPTS);
 		}
@@ -445,11 +448,11 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void click(String locator) {
-		// fixed for firefox web driver B30-1455584.ztl
-		WebDriver driver = getWebDriver();
-		if (isFirefox() || isIE())
-			getCurrent().clickAt(locator, "2,2");
-		else getCurrent().click(locator);
+// fixed for firefox web driver B30-1455584.ztl (seems to be fixed in Selenium 2.2)
+//		if (isFirefox())
+//			getCurrent().clickAt(locator, "2,2");
+//		else
+		getCurrent().click(locator);
 	}
 
 	@Override
