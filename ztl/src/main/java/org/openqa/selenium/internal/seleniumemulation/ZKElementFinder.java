@@ -19,9 +19,11 @@ package org.openqa.selenium.internal.seleniumemulation;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.seleniumemulation.ElementFinder;
 import org.openqa.selenium.internal.seleniumemulation.JavascriptLibrary;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
 
@@ -39,13 +41,15 @@ public class ZKElementFinder extends ElementFinder {
 	}
 	
 	public static WebElement findElementX(WebDriver driver, String locator) {
+		try {
 		Object result = ((JavascriptExecutor) driver).executeScript(
 				"return (" + js + ")(arguments[0]);",
 				locator.replaceAll("\"", "\\\\\"").replaceAll("'", "\"")); // fixed for Operadriver
 		if (result instanceof WebElement)
 			return (WebElement) result;
-		else
-			throw new NoSuchElementException("Element not found: [" + locator + "]");
+		} catch (WebDriverException e) {
+		}
+		throw new NoSuchElementException("Element not found: [" + locator + "], Driver: [" + ((RemoteWebDriver)driver).getCapabilities() + "]");
 	}
 	
 	public WebElement findElement(WebDriver driver, String locator) {

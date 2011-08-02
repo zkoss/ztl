@@ -39,7 +39,7 @@ import com.google.common.io.Resources;
  * @since 2.0.0
  */
 public class Scripts {
-	public static final String ZTL_DEBUGGER_SCRIPTS = "(function(){var log=function(evt){var w=zk.Widget.$(evt.target);if(evt.target.id!='zk_log'&&(!w||w.widgetName!='page')){var md=evt.mouseData(),kd=evt.keyData(),log='';if(kd.shiftKey){log+='shiftKey,';}if(kd.altKey){log+='altKey,';}if(kd.ctrlKey){log+'ctrlKey,';}if(md.pageX!=undefined){log+='x='+md.pageX+',';}if(md.pageY!=undefined){log+='y='+md.pageY+',';}if(log){zk.log(evt.type,evt.target,log);}else{zk.log(evt.type,evt.target);}}};jq(document).keydown(log).keyup(log).keypress(log).bind('zcontextmenu',log).bind('zmousedown',log).bind('zmouseup',log).bind('zmousemove',log).mouseover(log).mouseout(log).click(log).bind('zdblclick',log);})();";
+	public static final String ZTL_DEBUGGER_SCRIPTS = "(function(){var log=function(evt){var w=zk.Widget.$(evt.target);if(evt.target.id!='zk_log'&&w&&w.widgetName!='page'){var md=evt.mouseData(),kd=evt.keyData(),log='';if(kd.shiftKey){log+='shiftKey,';}if(kd.altKey){log+='altKey,';}if(kd.ctrlKey){log+'ctrlKey,';}if(md.pageX!=undefined){log+='x='+md.pageX+',';}if(md.pageY!=undefined){log+='y='+md.pageY+',';}if(log){zk.log(evt.type,evt.target,log);}else{zk.log(evt.type,evt.target);}}};jq(document).keydown(log).keyup(log).keypress(log).bind('zcontextmenu',log).bind('zmousedown',log).bind('zmouseup',log).bind('zmousemove',log).mouseover(log).mouseout(log).click(log).bind('zdblclick',log);})();";
 
 	public static final String FIND_ELEMENT_SCRIPTS = "function(e){e=jq.evalJSON(e);if(e){if(e.length)return e[0];else if(e.$n)return e.$n();return(e);}}";
 

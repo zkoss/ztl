@@ -218,7 +218,10 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void contextMenu(ClientWidget locator) {
-		super.contextMenu(locator.toLocator());
+		if (ZK.is("ie9")) {
+			sendKeys(locator, Keys.SHIFT, Keys.F10);
+		} else
+			Scripts.callEmbeddedSelenium(getWebDriver(), "triggerMouseEventAt", locator, "contextmenu", "5,5");
 	}
 
 	public void contextMenuAt(ClientWidget locator, String coordString) {
