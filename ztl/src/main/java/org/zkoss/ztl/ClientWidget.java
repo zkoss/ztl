@@ -25,6 +25,7 @@ import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.seleniumemulation.ZKElementFinder;
+import org.openqa.selenium.remote.RemoteWebElement;
 
 
 /**
@@ -92,7 +93,12 @@ public abstract class ClientWidget extends By {
 	@Override
 	public List<WebElement> findElements(SearchContext context) {
 		List<WebElement> list = new ArrayList<WebElement>();
-		list.add(ZKElementFinder.findElementX((WebDriver) context, toLocator()));
+		if (context instanceof WebDriver)
+			list.add(ZKElementFinder.findElementX((WebDriver) context, toLocator()));
+		else {
+			RemoteWebElement element = (RemoteWebElement) context;
+			list.add(ZKElementFinder.findChildElementX(element.getWrappedDriver(), element.getAttribute("id"), toLocator()));
+		}
 		return list;
 	}
 }

@@ -37,10 +37,28 @@ import com.opera.core.systems.OperaDriver;
  * @author jumperchen
  */
 public class ZKElementFinder extends ElementFinder {
-	private static String js = ConfigHelper.getInstance().isDebuggable() ? 
+	private static String _finderJS = ConfigHelper.getInstance().isDebuggable() ? 
 			Scripts.DEBUGGER_FIND_ELEMENT_SCRIPTS : Scripts.FIND_ELEMENT_SCRIPTS;
+	private static String _childFinderJS = ConfigHelper.getInstance().isDebuggable() ? 
+			Scripts.DEBUGGER_FIND_CHILD_ELEMENT_SCRIPTS : Scripts.FIND_CHILD_ELEMENT_SCRIPTS;
 	public ZKElementFinder(JavascriptLibrary javascriptLibrary) {
 		super(javascriptLibrary);
+	}
+	
+	public static WebElement findChildElementX(WebDriver driver, String id, String locator) {
+		try {
+			String replaced = (driver instanceof OperaDriver
+					|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+							.getCapabilities().getBrowserName().contains("opera"))) ?
+									"\\\\\\\\\"" : "\\\\\""; 
+			Object result = ((JavascriptExecutor) driver).executeScript(
+					"return (" + _childFinderJS + ")(arguments[0],arguments[1]);",
+					id,	locator.replaceAll("\"", replaced).replaceAll("'", "\"")); // fixed for Operadriver
+			if (result instanceof WebElement)
+				return (WebElement) result;
+			} catch (WebDriverException e) {
+			}
+			throw new NoSuchElementException("Element not found: [" + locator + "] from [#"+id+"], Driver: [" + ((RemoteWebDriver)driver).getCapabilities() + "]");
 	}
 	
 	public static WebElement findElementX(WebDriver driver, String locator) {
@@ -51,7 +69,7 @@ public class ZKElementFinder extends ElementFinder {
 						.getCapabilities().getBrowserName().contains("opera"))) ?
 								"\\\\\\\\\"" : "\\\\\""; 
 		Object result = ((JavascriptExecutor) driver).executeScript(
-				"return (" + js + ")(arguments[0]);",
+				"return (" + _finderJS + ")(arguments[0]);",
 				locator.replaceAll("\"", replaced).replaceAll("'", "\"")); // fixed for Operadriver
 		if (result instanceof WebElement)
 			return (WebElement) result;

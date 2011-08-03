@@ -45,6 +45,9 @@ public class Scripts {
 
 	public static final String DEBUGGER_FIND_ELEMENT_SCRIPTS = "function(e){e=jq.evalJSON(e);if(e){if(e.length){zk.log(\"jq\",jq.nodeName(e[0]),e[0],e[0].id);return e[0];}else if(e.$n){zk.log(\"zk widget\",e.widgetName,e.$n().id);return e.$n();}return(e);}}";
 
+	public static final String FIND_CHILD_ELEMENT_SCRIPTS = "function(id,e){e=jq.evalJSON(e);if(e){if(e.length){if(!id){return e[0];}return e.filter(function(){return $(this).parents(\"#\"+id).length>0;})[0];}else if(e.$n){return e.$n();}return(e);}}";
+	
+	public static final String DEBUGGER_FIND_CHILD_ELEMENT_SCRIPTS = "function(id,e){e=jq.evalJSON(e);if(e){if(e.length){if(!id){zk.log(\"jq\",jq.nodeName(e[0]),e[0],e[0].id);return e[0];}e=e.filter(function(){return $(this).parents(\"#\"+id).length>0;});zk.log(\"jq-child\",jq.nodeName(e[0]),e[0],e[0].id);return e[0];}else if(e.$n){zk.log(\"zk widget\",e.widgetName,e.$n().id);return e.$n();}return(e);}}";
 	public static final JavascriptLibrary JS = new JavascriptLibrary();
 
 	private static final String SELENIUM_PREFIX = "/" + JavascriptLibrary.class.getPackage()
