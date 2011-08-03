@@ -498,8 +498,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void doubleClick(String locator) {
-		// don't use doubleClick(), because it fails in IE
-		getCurrent().doubleClickAt(locator, "0,0");
+		getCurrent().doubleClick(locator);
 	}
 
 	@Override

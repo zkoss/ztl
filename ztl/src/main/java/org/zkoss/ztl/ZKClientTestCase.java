@@ -21,9 +21,6 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.interactions.Action;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.Select;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
@@ -240,11 +237,13 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public void doubleClick(ClientWidget locator) {
 		// don't use doubleClick(), because it fails in IE
-		super.doubleClickAt(locator.toLocator(), "0,0");
+		doubleClickAt(locator, "1,1");
 	}
 
 	public void doubleClickAt(ClientWidget locator, String coordString) {
-		super.doubleClickAt(locator.toLocator(), coordString);
+		// fixed for webdriver
+		//super.doubleClickAt(locator.toLocator(), coordString);
+		Scripts.callEmbeddedSelenium(getWebDriver(), "triggerMouseEventAt", locator, "dblclick", coordString);
 	}
 
 	public void dragAndDrop(ClientWidget locator, String movementsString) {
@@ -551,12 +550,19 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void select(ClientWidget selectLocator, String optionLocator) {
-		new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
+		// fixed Opera to fire unnecessary onchange event.
+		if (isOpera())
+			click(selectLocator);
+		// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
+		// of selenium 2.2+ to fix the following API.
+		// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
+		findElement(jq(selectLocator).find("option:contains(\""+ optionLocator + "\")")).click();
 		
 		// force to fire onChange event for IE
-		if (ZK.is("ie"))
+		if (isIE())
 			blur(selectLocator);
-			
+		else if (isOpera()) // close the dropdown list and fire onchange
+			sendKeys(selectLocator, Keys.ENTER);
 	}
 
 	public void selectFrame(ClientWidget locator) {
