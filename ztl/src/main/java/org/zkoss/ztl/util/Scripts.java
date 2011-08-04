@@ -86,6 +86,13 @@ public class Scripts {
 				args.toArray());
 	}
 	
+	/**
+	 * Calls the embeddedSelenium triggerMouseEventAt() function
+	 */
+	public static void triggerMouseEventAt(WebDriver driver, By by, String eventName, String coordString) {
+		Scripts.callEmbeddedSelenium(driver, "triggerMouseEventAt", by, eventName, coordString);
+	}
+	
 	private static String readScript(String script) {
 		URL url = Scripts.class.getResource(script);
 

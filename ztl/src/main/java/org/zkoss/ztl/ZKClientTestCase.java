@@ -205,7 +205,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			x += parseInt(jq.css("padding-right"));
 		
 		if (isOpera())
-			Scripts.callEmbeddedSelenium(getWebDriver(), "triggerMouseEventAt", jq, "click", x + ",3");
+			Scripts.triggerMouseEventAt(getWebDriver(), jq, "click", x + ",3");
 		else {
 			WebElement element = findElement(jq);
 			getActions().moveToElement(element, x, 3).click().perform();
@@ -231,7 +231,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (ZK.is("ie9")) {
 			sendKeys(locator, Keys.SHIFT, Keys.F10);
 		} else
-			Scripts.callEmbeddedSelenium(getWebDriver(), "triggerMouseEventAt", locator, "contextmenu", "5,5");
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "contextmenu", "5,5");
 	}
 
 	public void contextMenuAt(ClientWidget locator, String coordString) {
@@ -246,7 +246,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	public void doubleClickAt(ClientWidget locator, String coordString) {
 		// fixed for webdriver
 		//super.doubleClickAt(locator.toLocator(), coordString);
-		Scripts.callEmbeddedSelenium(getWebDriver(), "triggerMouseEventAt", locator, "dblclick", coordString);
+		Scripts.triggerMouseEventAt(getWebDriver(), locator, "dblclick", coordString);
 	}
 
 	public void dragAndDrop(ClientWidget locator, String movementsString) {
@@ -520,7 +520,10 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public void mouseOver(By locator) {
 		// fix for IE9 issue, don't use super.mouseOver();
-		getActions().moveToElement(findElement(locator)).perform();
+		if (ZK.is("ie9"))
+			getActions().moveToElement(findElement(locator)).perform();
+		else
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
 	}
 	
 	public void mouseUp(ClientWidget locator) {
