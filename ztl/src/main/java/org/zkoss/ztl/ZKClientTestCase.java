@@ -183,6 +183,9 @@ public class ZKClientTestCase extends ZKTestCase {
 
 			// bug B30-1813055.ztl and B30-1769047.ztl for listitem
 			if ("tr".equals(element.getTagName())) {
+				// force to show up
+				if (isIE())
+					locator.toElement().eval("scrollIntoView(true)");
 				getActions().moveToElement(element, 2,2).click().perform();
 				return;
 			}
@@ -437,6 +440,12 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @since 2.0.0
 	 */
 	public void sendKeys(By by, CharSequence... keysToSend) {
+		// fixed firefox Keys.ENTER is 14, not 13
+		if (isFirefox()) {
+			for (int i = 0; i < keysToSend.length; i++)
+				if (keysToSend[i] == Keys.ENTER)
+					keysToSend[i] = Keys.RETURN;
+		}
 		getWebDriver().findElement(by).sendKeys(keysToSend);
 	}
 	/**

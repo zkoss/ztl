@@ -354,6 +354,10 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 		return new Element(_out.toString()+"[" + index + "]");
 	}
 	
+	public Element toElement() {
+		return get(0);
+	}
+	
 	/**
 	 * proxy for jQuery eq method
 	 * @param index

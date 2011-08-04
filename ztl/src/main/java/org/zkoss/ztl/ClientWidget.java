@@ -89,6 +89,11 @@ public abstract class ClientWidget extends By {
 		return _out.toString();
 	}
 	
+	/**
+	 * Returns the element from this client widget.
+	 * @since 2.0.0
+	 */
+	abstract public Element toElement();
 	
 	@Override
 	public List<WebElement> findElements(SearchContext context) {

@@ -88,4 +88,7 @@ public class ZK extends ClientWidget {
 	public static boolean is(String name) {
 		return Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!zk." + name));
 	}
+	public Element toElement() {
+		return jq().toElement();
+	}
 }

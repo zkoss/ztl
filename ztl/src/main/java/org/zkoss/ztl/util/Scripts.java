@@ -56,7 +56,7 @@ public class Scripts {
     .getName().replace(".", "/") + "/";
 	private static final String injectableSelenium = readScript(SELENIUM_PREFIX + "injectableSelenium.js");
 
-	public static final String ZK_FIXED_SCRIPTS = readScript(PREFIX + "zkfixed.js");;
+	public static final String ZK_FIXED_SCRIPTS = readScript("/zkfixed.js");;
 
 	/**
 	 * Returns whether the locator can be recognized via ZK engine.

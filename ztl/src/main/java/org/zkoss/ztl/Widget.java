@@ -185,6 +185,9 @@ public class Widget extends ClientWidget {
 		return new Element(_out + ".$n('"+ subname +"')");
 	}
 	
+	public Element toElement() {
+		return $n();
+	}
 	/**
 	 * Detaches the widget
 	 */

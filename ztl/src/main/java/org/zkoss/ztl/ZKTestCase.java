@@ -522,8 +522,12 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	 */
 	public void dragdropTo(String locatorOfObjectToBeDragged, String from, String to) {
 		ZKSelenium browser = (ZKSelenium) getCurrent();
-		browser.mouseDownAt(locatorOfObjectToBeDragged, from);
 		browser.mouseMoveAt(locatorOfObjectToBeDragged, from);
+		browser.mouseDownAt(locatorOfObjectToBeDragged, from);
+
+		// wait mouse to move (B30-1822564.ztl)
+		if (isChrome())
+			sleep(Integer.parseInt(ConfigHelper.getInstance().getDelay()));
 		browser.mouseMoveAt(locatorOfObjectToBeDragged, to);
 		browser.mouseUpAt(locatorOfObjectToBeDragged, to);
 	}

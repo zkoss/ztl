@@ -97,4 +97,7 @@ public class Element extends ClientWidget {
 	public boolean exists() {
 		return Boolean.valueOf(ZKTestCase.getCurrent().getEval(_out.toString() + " != null"));
 	}
+	public Element toElement() {
+		return this;
+	}
 }
