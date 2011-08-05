@@ -16,9 +16,15 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.ztl.util;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -230,7 +236,42 @@ public class ZtlGenerator {
 			StringBuffer testcases= new StringBuffer();
 			boolean init = false ;
 			int count = 0;
+			DataInputStream in = null;
+			Map<String,String> ignoreMap = new HashMap<String,String>();
+			try {
+				String executionPath = System.getProperty("user.dir");
+				File ignore = new File(executionPath + File.separator
+						+ "ztl.ignore");
+				FileInputStream fstream = new FileInputStream(ignore);
+				in = new DataInputStream(fstream);
+				BufferedReader br = new BufferedReader(
+						new InputStreamReader(in));
+				String strLine;
+				while ((strLine = br.readLine()) != null) {
+					strLine = strLine.trim();
+//					System.err.println("ignore= " + strLine);
+					ignoreMap.put(strLine, strLine);
+				}
+			} catch (Exception e) {
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		
 			for (File f : getFiles(dir, new ArrayList<File>(30), ".ztl")){
+				
+				// ignore test case
+				if (ignoreMap.containsKey(f.getName())) {
+					System.out.println("ignore: " + f.getName());
+					continue;
+				}
+				
 				Test test = t.load(f, dir.getPath());
 				
 				boolean included = true;
