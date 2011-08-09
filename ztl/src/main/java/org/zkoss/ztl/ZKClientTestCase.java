@@ -221,17 +221,15 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public void clickAt(ClientWidget locator, String coordString) {
 		// Opera seems not to support clickAt()
-		if (isOpera())
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
-		else 
+//  fixed for B30-1903399.ztl, won't trigger onFloatup		
+//		if (isOpera()) {
+//			Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
+//		} else 
 			super.clickAt(locator.toLocator(), coordString);
 	}
 
 	public void contextMenu(ClientWidget locator) {
-		if (ZK.is("ie9")) {
-			sendKeys(locator, Keys.SHIFT, Keys.F10);
-		} else
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "contextmenu", "5,5");
+		Scripts.triggerMouseEventAt(getWebDriver(), locator, "contextmenu", "5,5");
 	}
 
 	public void contextMenuAt(ClientWidget locator, String coordString) {
@@ -305,7 +303,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		// very tricky way to fire the blur event. In this case we cannot send Keys.Tab,
 		// because it may affect the scrollbar to move.
 		if (ZK.is("ie9"))
-			clickAt(locator, "-2,-2");
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "blur", "2,2");
 		else
 			super.fireEvent(locator.toLocator(), "blur");
 	}

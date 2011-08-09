@@ -54,8 +54,12 @@ public class Scripts {
     .getName().replace(".", "/") + "/";
 	private static final String PREFIX = "/" + Scripts.class.getPackage()
     .getName().replace(".", "/") + "/";
-	private static final String injectableSelenium = readScript(SELENIUM_PREFIX + "injectableSelenium.js");
-
+	
+	// Fixed IE9 issue and use our own hack, the bug is related to 
+	// http://code.google.com/p/selenium/issues/detail?id=2218
+	//private static final String injectableSelenium = readScript(SELENIUM_PREFIX + "injectableSelenium.js");
+	private static final String injectableSelenium = readScript("/injectableSelenium.js");
+	
 	public static final String ZK_FIXED_SCRIPTS = readScript("/zkfixed.js");;
 
 	/**
