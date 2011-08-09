@@ -36,12 +36,23 @@ public class ZKClientTestCase extends ZKTestCase {
 	protected int _timeout;
 
 	/**
-	 * Waits for Ajax response.
+	 * Waits for Ajax response. (excluding animation check)
 	 * <p>By default the timeout time is specified in config.properties
 	 * @see #waitResponse(int)
 	 */
 	protected void waitResponse() {
 		waitResponse(_timeout);
+	}
+
+	/**
+	 * Waits for Ajax response.
+	 * <p>By default the timeout time is specified in config.properties
+	 * @param includingAnimation if true, it will include animation check.
+	 * @see #waitResponse(int, boolean)
+	 * @since 2.0.0
+	 */
+	protected void waitResponse(boolean includingAnimation) {
+		waitResponse(_timeout, includingAnimation);
 	}
 	
 	/**
@@ -55,17 +66,22 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	/**
 	 * Waits for Ajax response according to the timeout attribute.
-	 * @param timeout the time. (millisecond).
+	 * @param timeout
+	 * @param includingAnimation if true, it will include animation check.
+	 * @since 2.0.0
+	 * 
 	 */
-	protected void waitResponse(int timeout) {
+	protected void waitResponse(int timeout, boolean includingAnimation) {
 		long s = System.currentTimeMillis();
 		int i = 0;
 		int ms = Integer.parseInt(getSpeed());
 		if (isIE())
 			ms /= 2;
 		
+		String scripts = includingAnimation ? "!!zAu.processing() || !!jq.timers.length"
+								: "!!zAu.processing()";
 		while (i < 2) { // make sure the command is triggered.
-			while(Boolean.valueOf(this.getEval("!!zAu.processing() || !!jq.timers.length"))) {
+			while(Boolean.valueOf(this.getEval(scripts))) {
 				if (System.currentTimeMillis() - s > timeout) {
 					assertTrue("Test case timeout!", false);
 					break;
@@ -76,6 +92,14 @@ public class ZKClientTestCase extends ZKTestCase {
 			i++;
 			sleep(ms);
 		}
+	}
+	/**
+	 * Waits for Ajax response according to the timeout attribute.(excluding animation check)
+	 * @param timeout the time. (millisecond).
+	 * @see #waitResponse(int, boolean)
+	 */
+	protected void waitResponse(int timeout) {
+		waitResponse(timeout, false);
 	}
 
 	/**
@@ -530,15 +554,11 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseOut(ClientWidget locator) {
-		super.mouseOut(locator.toLocator());
+		Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseout", "2,2");
 	}
 
 	public void mouseOver(By locator) {
-		// fix for IE9 issue, don't use super.mouseOver();
-		if (ZK.is("ie9"))
-			getActions().moveToElement(findElement(locator)).perform();
-		else
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
+		Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
 	}
 	
 	public void mouseUp(ClientWidget locator) {
