@@ -257,10 +257,10 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (ZK.is("ie9")) {
 			String[] froms = from.split(",");
 			String[] tos = to.split(",");
-			int x0 = Integer.parseInt(froms[0]);
-			int y0 = Integer.parseInt(froms[1]);
-			int x1 = Integer.parseInt(tos[0]);
-			int y1 = Integer.parseInt(tos[1]);
+			int x0 = (int) Double.parseDouble(froms[0]);
+			int y0 = (int) Double.parseDouble(froms[1]);
+			int x1 = (int) Double.parseDouble(tos[0]);
+			int y1 = (int) Double.parseDouble(tos[1]);
 			WebElement element = findElement(locatorOfObjectToBeDragged);
 			getActions().moveToElement(element, x0, y0).clickAndHold(element)
 				.moveByOffset(x1-x0, y1-y0).release(element).perform();
@@ -305,7 +305,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		// very tricky way to fire the blur event. In this case we cannot send Keys.Tab,
 		// because it may affect the scrollbar to move.
 		if (ZK.is("ie9"))
-			clickAt(locator, "-20,-20");
+			clickAt(locator, "-2,-2");
 		else
 			super.fireEvent(locator.toLocator(), "blur");
 	}

@@ -338,6 +338,14 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		return getWebDriver().findElement(by);
 	}
 	
+	/**
+	 * Executes the javascript by the current web driver.
+	 * @since 2.0.0
+	 */
+	public Object executeScript(String s, Object... args) {
+		return ((JavascriptExecutor) getWebDriver()).executeScript(s, args);
+	}
+	
 	@Override
 	public void setUp() {
 		if (target == null)

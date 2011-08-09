@@ -249,6 +249,8 @@ public class ZtlGenerator {
 				String strLine;
 				while ((strLine = br.readLine()) != null) {
 					strLine = strLine.trim();
+					if (strLine.isEmpty() || strLine.startsWith("#"))
+						continue;
 //					System.err.println("ignore= " + strLine);
 					ignoreMap.put(strLine, strLine);
 				}
