@@ -58,19 +58,21 @@ public class ZKClientTestCase extends ZKTestCase {
 	protected void waitResponse(int timeout) {
 		long s = System.currentTimeMillis();
 		int i = 0;
-		ZKSelenium selenium = (ZKSelenium)getCurrent();
-		WebDriver driver = selenium.getWrappedDriver();
-		boolean isDelayed = !(driver instanceof InternetExplorerDriver);
+		int ms = Integer.parseInt(getSpeed());
+		if (isIE())
+			ms /= 2;
+		
 		while (i < 2) { // make sure the command is triggered.
-			if (isDelayed)
-				sleep(Integer.parseInt(getSpeed()));
 			while(Boolean.valueOf(this.getEval("!!zAu.processing()"))) {
 				if (System.currentTimeMillis() - s > timeout) {
 					assertTrue("Test case timeout!", false);
 					break;
 				}
+				i = 0;//reset
+				sleep(ms);
 			}
 			i++;
+			sleep(ms);
 		}
 	}
 
