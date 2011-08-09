@@ -25,6 +25,8 @@ import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
 
+import com.thoughtworks.selenium.SeleniumException;
+
 /**
  * A skeleton of ZK client widget.
  * @author jumperchen
@@ -63,7 +65,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			ms /= 2;
 		
 		while (i < 2) { // make sure the command is triggered.
-			while(Boolean.valueOf(this.getEval("!!zAu.processing()"))) {
+			while(Boolean.valueOf(this.getEval("!!zAu.processing() || !!jq.timers.length"))) {
 				if (System.currentTimeMillis() - s > timeout) {
 					assertTrue("Test case timeout!", false);
 					break;
@@ -222,12 +224,19 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void clickAt(ClientWidget locator, String coordString) {
-		// Opera seems not to support clickAt()
-//  fixed for B30-1903399.ztl, won't trigger onFloatup		
-//		if (isOpera()) {
-//			Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
-//		} else 
+		try {
 			super.clickAt(locator.toLocator(), coordString);
+		} catch (SeleniumException e) {
+			// Opera seems not to support clickAt()
+			// Fixed for B30-2562880.ztl
+			if (isOpera()) {
+				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
+				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
+				Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
+			}
+			else
+				throw e;
+		}
 	}
 
 	public void contextMenu(ClientWidget locator) {
