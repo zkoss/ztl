@@ -206,19 +206,19 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void click(ClientWidget locator) {
-		if (!isOpera()) {
-			WebElement element = findElement(locator);
-
-			// bug B30-1813055.ztl and B30-1769047.ztl for listitem
-			if ("tr".equals(element.getTagName())) {
-				// force to show up
-				if (isIE())
-					locator.toElement().eval("scrollIntoView(true)");
-				getActions().moveToElement(element, 2,2).click().perform();
-				return;
+		if (isOpera() || !"tr".equalsIgnoreCase(locator.toElement().get("tagName")))
+			super.click(locator.toLocator());
+		else {			
+			// bug B30-1575048.ztl and B30-1813055.ztl
+			// fixed Selenium 2.3 on Firefox driver issue
+			if (isFirefox()) {
+				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
+				Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", "2,2");
+			} else {
+				// bug B30-1575048.ztl, B30-1813055.ztl and B30-1769047.ztl for listitem
+				getActions().moveToElement(findElement(locator), 2,2).click().perform();
 			}
 		}
-		super.click(locator.toLocator());
 	}
 	
 	/**

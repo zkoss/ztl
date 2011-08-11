@@ -92,6 +92,13 @@ public class Element extends ClientWidget {
 		return new Element(_out + ".firstChild");
 	}
 	/**
+	 * Returns the nextSibling of the element.
+	 * @since 2.0.0
+	 */
+	public Element nextSibling() {
+		return new Element(_out + ".nextSibling");
+	}
+	/**
 	 * Returns whether the element exists or not.
 	 */
 	public boolean exists() {
