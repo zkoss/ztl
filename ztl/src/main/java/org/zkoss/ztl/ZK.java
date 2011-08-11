@@ -86,7 +86,7 @@ public class ZK extends ClientWidget {
 	 * The invoking JavaScript code will be "zk.ie", and return the boolean value. 
 	 */
 	public static boolean is(String name) {
-		return Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!zk." + name));
+		return Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!(zk." + name + ")"));
 	}
 	public Element toElement() {
 		return jq().toElement();

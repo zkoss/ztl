@@ -229,8 +229,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		// fixed bug for B50-2916148.ztl
 		JQuery jq = jq(".z-errbox-close");
 		int x = jq.width() - 3;
-		if (!isFirefox())
-			x += parseInt(jq.css("padding-right"));
+		x += parseInt(jq.css("padding-right"));
 		
 		if (isOpera())
 			Scripts.triggerMouseEventAt(getWebDriver(), jq, "click", x + ",3");
@@ -251,15 +250,15 @@ public class ZKClientTestCase extends ZKTestCase {
 		try {
 			super.clickAt(locator.toLocator(), coordString);
 		} catch (SeleniumException e) {
-			// Opera seems not to support clickAt()
-			// Fixed for B30-2562880.ztl
-			if (isOpera()) {
+			// Opera seems not to support clickAt() fixed for B30-2562880.ztl
+			// Firefox3 for B30-1903399.ztl
+			try {
 				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
 				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
 				Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
-			}
-			else
+			} catch (SeleniumException ee){
 				throw e;
+			}
 		}
 	}
 
