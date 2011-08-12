@@ -520,7 +520,13 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public void mouseDownAt(ClientWidget locator, String coordString) {
 		if (ZK.is("ie9")) {
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
+			//bug for Form.ztl 
+			//Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
+			String[] froms = coordString.split(",");
+			int x0 = Integer.parseInt(froms[0]);
+			int y0 = Integer.parseInt(froms[1]);
+			WebElement element = findElement(locator);
+			getActions().moveToElement(element, x0, y0).clickAndHold(element).perform();
 		} else
 			super.mouseDownAt(locator.toLocator(), coordString);
 	}
