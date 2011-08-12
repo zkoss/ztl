@@ -14,11 +14,14 @@ it will be useful, but WITHOUT ANY WARRANTY.
  */
 package org.zkoss.ztl.util;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.AbstractSequentialList;
 import java.util.ArrayList;
@@ -98,6 +101,8 @@ public class ConfigHelper {
 
 	private HashMap<String, String> _browserRemote;
 	
+	private HashMap<String, List<String>> _ignoreMap;
+	
 	private volatile boolean _inited;
 
 	/**
@@ -156,6 +161,23 @@ public class ConfigHelper {
 
 	public long lastModified() {
 		return _lastModified;
+	}
+	
+	public boolean isAllIgnoreCase(String fileName) {
+		List<String> ignoreList = _ignoreMap.get(ALL_BROWSERS);
+		if (ignoreList == null)
+			return false;
+		return ignoreList.contains(fileName);
+	}
+	public boolean isIgnoreCase(String key, String fileName) {
+		if (isAllIgnoreCase(fileName))
+			return true;
+		
+		List<String> ignoreList = _ignoreMap.get(key);
+		if (ignoreList != null) {
+			return ignoreList.contains(fileName);
+		}
+		return false;
 	}
 	
 	private WebDriver getWebDriver(String key, String remotePath) {
@@ -219,11 +241,15 @@ public class ConfigHelper {
 		browser.setSpeed(getDelay());
 		return browser;
 	}
-	public List<Selenium> getBrowsersForLazy(String keys) {
+	public List<Selenium> getBrowsersForLazy(String keys, String caseName) {
 		final List<String> browser = new ArrayList<String>(Arrays.asList(keys.split(",")));
 		if (browser.contains(ALL_BROWSERS)) {
 			browser.remove(ALL_BROWSERS);
 			browser.addAll(_allBrowsers);
+		}
+		for (Iterator<String> it = browser.iterator(); it.hasNext();) {
+			if (isIgnoreCase(it.next(), caseName))
+				it.remove();
 		}
 		List<Selenium> list = new AbstractSequentialList<Selenium>() {
 			@Override
@@ -241,7 +267,6 @@ public class ConfigHelper {
 	}
 	private class ItemIter implements ListIterator<Selenium> {
 		private int _j;
-		private boolean _bNxt;
 		private List<String> _browser;
 
 		private ItemIter(int index, List<String> browser) {
@@ -304,7 +329,7 @@ public class ConfigHelper {
 	 */
 	@Deprecated
 	public List<Selenium> getBrowsers(String keys) {
-		return getBrowsersForLazy(keys);
+		return getBrowsersForLazy(keys, null);
 	}
 
 	private void init() throws IOException, Exception {
@@ -314,10 +339,66 @@ public class ConfigHelper {
 		if (_browserRemote == null) {
 			_browserRemote = new HashMap<String, String>();
 		}
-
+		if (_ignoreMap == null) {
+			_ignoreMap = new HashMap<String, List<String>>();
+		}
 		initProperty();
+		initIgnoreList();
 	}
 
+	private void initIgnoreList() {
+		DataInputStream in = null;
+		try {
+			String executionPath = System.getProperty("user.dir");
+			File ignore = new File(executionPath + File.separator
+					+ "ztl.ignore");
+			FileInputStream fstream = new FileInputStream(ignore);
+			in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(
+					new InputStreamReader(in));
+			String strLine;
+			
+			String key = null;
+			List<String> list = new ArrayList<String>();
+			while ((strLine = br.readLine()) != null) {
+				strLine = strLine.trim();
+				if (strLine.isEmpty() || strLine.startsWith("#"))
+					continue;
+				
+				int keyIndex = strLine.indexOf("={");
+				if (keyIndex > -1) {
+					if (key != null) {
+						throw new IllegalArgumentException("The file format is wrong! No end '}' was found! ["+ key+"]");
+					}
+					key = strLine.substring(0, keyIndex);
+					continue;
+				}
+				
+				if (strLine.startsWith("}")) {
+					if (key == null) {
+						throw new IllegalArgumentException("The file format is wrong! No key was found!");
+					}
+					_ignoreMap.put(key, list);
+					list = new ArrayList<String>();
+					key = null;
+					continue;
+				} else {
+					//System.err.println("ignore: " + key +"=" + strLine);
+					list.add(strLine);
+				}
+			}
+		} catch (Exception e) {
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	private void addBrowserNameSetting(String browserName, String browserPath) {
 		browserName = browserName.toLowerCase();
 		String setting = browserPath;

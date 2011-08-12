@@ -367,9 +367,14 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	}
 	
 	protected List<Selenium> getBrowsers(String browsers) {
-		return ConfigHelper.getInstance().getBrowsersForLazy(browsers);
+		return ConfigHelper.getInstance().getBrowsersForLazy(browsers, 
+				getTestCaseName());
 	}
 	
+	private String getTestCaseName() {
+		String name = getClass().getSimpleName().replaceAll("_", "-");
+		return name.substring(0, name.length() - 4) + ".ztl";
+	}
 	/**
 	 * Resizes the current window to the size(width and height).
 	 */

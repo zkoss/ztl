@@ -236,40 +236,11 @@ public class ZtlGenerator {
 			StringBuffer testcases= new StringBuffer();
 			boolean init = false ;
 			int count = 0;
-			DataInputStream in = null;
-			Map<String,String> ignoreMap = new HashMap<String,String>();
-			try {
-				String executionPath = System.getProperty("user.dir");
-				File ignore = new File(executionPath + File.separator
-						+ "ztl.ignore");
-				FileInputStream fstream = new FileInputStream(ignore);
-				in = new DataInputStream(fstream);
-				BufferedReader br = new BufferedReader(
-						new InputStreamReader(in));
-				String strLine;
-				while ((strLine = br.readLine()) != null) {
-					strLine = strLine.trim();
-					if (strLine.isEmpty() || strLine.startsWith("#"))
-						continue;
-//					System.err.println("ignore= " + strLine);
-					ignoreMap.put(strLine, strLine);
-				}
-			} catch (Exception e) {
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
 		
 			for (File f : getFiles(dir, new ArrayList<File>(30), ".ztl")){
 				
 				// ignore test case
-				if (ignoreMap.containsKey(f.getName())) {
+				if (ConfigHelper.getInstance().isAllIgnoreCase(f.getName())) {
 					System.out.println("ignore: " + f.getName());
 					continue;
 				}
