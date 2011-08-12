@@ -37,6 +37,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.android.AndroidDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
@@ -257,6 +258,15 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		return new Actions(getWebDriver());
 	}
 
+	/**
+	 * Returns whether is HTML Unit Driver
+	 * @since 2.0.0
+	 */
+	public boolean isHtmlUnit() {
+		WebDriver driver = getWebDriver();
+		return (driver instanceof HtmlUnitDriver);
+	}
+	
 	/**
 	 * Returns whether is InternatExplorer Driver
 	 * @since 2.0.0
@@ -1244,8 +1254,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
                 resultDir.mkdir();
             }
 
-            String title = this.getEval("document.title");
-            byte[] imgByteArr = Base64.decode(((TakesScreenshot)((ZKSelenium)getCurrent()).getWrappedDriver()).getScreenshotAs(OutputType.BASE64));
+            byte[] imgByteArr = ((TakesScreenshot)((ZKSelenium)getCurrent()).getWrappedDriver()).getScreenshotAs(OutputType.BYTES);
             BufferedImage testBuffImg = ImageIO.read(new ByteArrayInputStream(imgByteArr));
             
             final String postfix = "_" + recordCount++ + ".png";

@@ -117,6 +117,15 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	/**
+	 * Verify image after waitResponse(). (including animation time)
+	 * @since 2.0.0
+	 */
+	public void verifyImage() {
+		waitResponse(true);
+		super.verifyImage();
+	}
+	
+	/**
 	 * Returns the Widget object of the UUID.
 	 * @param number the number of the widget ID.
 	 * @see #uuid(int)
@@ -247,6 +256,10 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void clickAt(ClientWidget locator, String coordString) {
+		if (isHtmlUnit()) {
+			super.click(locator.toLocator());
+			return;
+		}
 		try {
 			super.clickAt(locator.toLocator(), coordString);
 		} catch (SeleniumException e) {
