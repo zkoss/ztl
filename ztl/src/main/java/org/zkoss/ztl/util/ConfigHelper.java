@@ -173,9 +173,17 @@ public class ConfigHelper {
 		if (isAllIgnoreCase(fileName))
 			return true;
 		
-		List<String> ignoreList = _ignoreMap.get(key);
-		if (ignoreList != null) {
-			return ignoreList.contains(fileName);
+		for (Map.Entry<String, List<String>> me : _ignoreMap.entrySet()) {
+			String key2 = me.getKey();
+			if (key.matches("^" + key2 + "$")) {
+				List<String> ignoreList = me.getValue();
+				if (ignoreList != null) {
+					if (ignoreList.contains(fileName)) {
+						System.out.println("runtime-ignore: " + key + "=" + key2);
+						return true;
+					}
+				}
+			}
 		}
 		return false;
 	}
@@ -360,9 +368,21 @@ public class ConfigHelper {
 			
 			String key = null;
 			List<String> list = new ArrayList<String>();
+			boolean commented = false;
 			while ((strLine = br.readLine()) != null) {
 				strLine = strLine.trim();
-				if (strLine.isEmpty() || strLine.startsWith("#"))
+				if (commented) {
+					if (strLine.startsWith("*/")) {
+						commented = false;
+						continue;
+					}
+					continue;
+				}
+				if (strLine.startsWith("/*")) {
+					commented = true;
+					continue;
+				}
+				if (strLine.isEmpty() || strLine.startsWith("#") || strLine.startsWith("//"))
 					continue;
 				
 				int keyIndex = strLine.indexOf("={");
@@ -378,7 +398,15 @@ public class ConfigHelper {
 					if (key == null) {
 						throw new IllegalArgumentException("The file format is wrong! No key was found!");
 					}
-					_ignoreMap.put(key, list);
+					String[] keys = key.split(",");
+					for (String k: keys) {
+						k = k.replaceAll("\\*", ".*");
+						//System.err.println("put: " + k +"=" + list);
+						if (_ignoreMap.containsKey(k)) {
+							_ignoreMap.get(k).addAll(list);
+						} else
+							_ignoreMap.put(k, list);
+					}
 					list = new ArrayList<String>();
 					key = null;
 					continue;
