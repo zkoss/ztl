@@ -489,8 +489,10 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (isFirefox()) {
 			// fixed B30-1943783.ztl
 			if (keysToSend.length == 1 && keysToSend[0] == Keys.ENTER) {
-				Scripts.callEmbeddedSelenium(getWebDriver(), "triggerKeyEvent", by, "keydown", 13);
-				Scripts.callEmbeddedSelenium(getWebDriver(), "triggerKeyEvent", by, "keyup", 13);
+				try {
+					Scripts.callEmbeddedSelenium(getWebDriver(), "triggerKeyEvent", by, "keydown", 13);
+					Scripts.callEmbeddedSelenium(getWebDriver(), "triggerKeyEvent", by, "keyup", 13);
+				} catch (SeleniumException e) {}
 				return;
 			}
 			for (int i = 0; i < keysToSend.length; i++)
