@@ -316,7 +316,7 @@ public class ZtlGenerator {
 						}
 					}
 					if (!foundAll)
-						log("Not found the case [" + tag + "]");
+						log("Not found the case [" + tags + "]");
 				} else {
 					boolean foundAll = false;
 					for (File f : files) {
