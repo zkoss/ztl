@@ -244,8 +244,11 @@ public class ConfigHelper {
 			throw new NullPointerException("Null Browser Type String");
 
 		System.out.println("connecting "+key);
-		WebDriver driver = getWebDriver( _driverSetting.get(key), _browserRemote.get(key));
-		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor("http://10.1.3.63:8081/zktest/ztl.zul", driver), key,_openonce);
+		// TODO : SB : Make this code runnable
+		// TODO : SB : fix method getWebDriver()
+		WebDriver driver = new FirefoxDriver();//getWebDriver( _driverSetting.get(key), _browserRemote.get(key));
+		// TODO : SB : Replace URL with one from configuration
+		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor("http://localhost:8080/ZKTreeSort/index.zul", driver), key,_openonce);
 		browser.setSpeed(getDelay());
 		return browser;
 	}
