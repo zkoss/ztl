@@ -6,17 +6,21 @@
 	<version>2.0.0-SNAPSHOT</version>
 	<name>ZUL Testing Language</name>
 	<description>ZTL is an automatic testing tool for recording and testing
-		ZK applications</description>
+		ZK applications
+	</description>
+	<properties>
+		<selenium.version>2.5.0</selenium.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
-			<version>2.3.1</version>
+			<version>${selenium.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-htmlunit-driver</artifactId>
-			<version>2.3.1</version>
+			<version>${selenium.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
