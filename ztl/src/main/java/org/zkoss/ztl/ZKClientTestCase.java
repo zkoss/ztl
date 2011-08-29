@@ -323,8 +323,14 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public void dragdropToObject(ClientWidget locatorOfObjectToBeDragged,
 			ClientWidget locatorOfDragDestinationObject, String from, String to) {
-		super.dragdropToObject(locatorOfObjectToBeDragged.toLocator(),
-				locatorOfDragDestinationObject.toLocator(), from, to);
+			
+		// fixed for Selenium 2.5.0
+		//super.dragdropToObject(locatorOfObjectToBeDragged.toLocator(),
+		//	locatorOfDragDestinationObject.toLocator(), from, to);
+		mouseMoveAt(locatorOfObjectToBeDragged, from);
+		mouseDownAt(locatorOfObjectToBeDragged, from);
+		mouseMoveAt(locatorOfDragDestinationObject, to);
+		mouseUpAt(locatorOfDragDestinationObject, to);
 	}
 
 	public void dragAndDropToObject(ClientWidget locatorOfObjectToBeDragged,
