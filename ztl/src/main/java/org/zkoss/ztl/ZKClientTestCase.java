@@ -550,8 +550,11 @@ public class ZKClientTestCase extends ZKTestCase {
 			int y0 = Integer.parseInt(froms[1]);
 			WebElement element = findElement(locator);
 			getActions().moveToElement(element, x0, y0).clickAndHold(element).perform();
-		} else
-			super.mouseDownAt(locator.toLocator(), coordString);
+		} else {
+			// fixed for Selenium 2.5.0
+			// super.mouseDownAt(locator.toLocator(), coordString);
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
+		}
 	}
 
 	public void mouseDownRight(ClientWidget locator) {
@@ -573,8 +576,11 @@ public class ZKClientTestCase extends ZKTestCase {
 			int y0 = Integer.parseInt(froms[1]);
 			WebElement element = findElement(locator);
 			getActions().moveToElement(element, x0, y0).perform();
-		} else
-			super.mouseMoveAt(locator.toLocator(), coordString);
+		} else {
+			// fixed for Selenium 2.5.0
+			// super.mouseMoveAt(locator.toLocator(), coordString);
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousemove", coordString);
+		}
 	}
 
 	public void mouseOut(ClientWidget locator) {
@@ -593,10 +599,8 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseUpAt(ClientWidget locator, String coordString) {
-		if (ZK.is("ie9")) {
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
-		} else
-			super.mouseUpAt(locator.toLocator(), coordString);
+		// fixed for Selenium 2.5.0
+		Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
 	}
 
 	public void mouseUpRight(ClientWidget locator) {
