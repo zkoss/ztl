@@ -21,6 +21,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
@@ -309,8 +310,15 @@ public class ZKClientTestCase extends ZKTestCase {
 			WebElement element = findElement(locatorOfObjectToBeDragged);
 			getActions().moveToElement(element, x0, y0).clickAndHold(element)
 				.moveByOffset(x1-x0, y1-y0).release(element).perform();
-		} else
-			super.dragdropTo(locatorOfObjectToBeDragged.toLocator(), from, to);
+		} else {
+			// fixed for Selenium 2.5.0 issue
+			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
+			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousedown", from);
+			if (isChrome())
+				sleep(Integer.parseInt(ConfigHelper.getInstance().getDelay()));
+			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
+			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mouseup", to);
+		}
 	}
 
 	public void dragdropToObject(ClientWidget locatorOfObjectToBeDragged,
