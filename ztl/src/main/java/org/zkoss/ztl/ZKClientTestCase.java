@@ -21,6 +21,7 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
@@ -309,14 +310,27 @@ public class ZKClientTestCase extends ZKTestCase {
 			WebElement element = findElement(locatorOfObjectToBeDragged);
 			getActions().moveToElement(element, x0, y0).clickAndHold(element)
 				.moveByOffset(x1-x0, y1-y0).release(element).perform();
-		} else
-			super.dragdropTo(locatorOfObjectToBeDragged.toLocator(), from, to);
+		} else {
+			// fixed for Selenium 2.5.0 issue
+			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
+			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousedown", from);
+			if (isChrome())
+				sleep(Integer.parseInt(ConfigHelper.getInstance().getDelay()));
+			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
+			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mouseup", to);
+		}
 	}
 
 	public void dragdropToObject(ClientWidget locatorOfObjectToBeDragged,
 			ClientWidget locatorOfDragDestinationObject, String from, String to) {
-		super.dragdropToObject(locatorOfObjectToBeDragged.toLocator(),
-				locatorOfDragDestinationObject.toLocator(), from, to);
+			
+		// fixed for Selenium 2.5.0
+		//super.dragdropToObject(locatorOfObjectToBeDragged.toLocator(),
+		//	locatorOfDragDestinationObject.toLocator(), from, to);
+		mouseMoveAt(locatorOfObjectToBeDragged, from);
+		mouseDownAt(locatorOfObjectToBeDragged, from);
+		mouseMoveAt(locatorOfDragDestinationObject, to);
+		mouseUpAt(locatorOfDragDestinationObject, to);
 	}
 
 	public void dragAndDropToObject(ClientWidget locatorOfObjectToBeDragged,
@@ -542,8 +556,11 @@ public class ZKClientTestCase extends ZKTestCase {
 			int y0 = Integer.parseInt(froms[1]);
 			WebElement element = findElement(locator);
 			getActions().moveToElement(element, x0, y0).clickAndHold(element).perform();
-		} else
-			super.mouseDownAt(locator.toLocator(), coordString);
+		} else {
+			// fixed for Selenium 2.5.0
+			// super.mouseDownAt(locator.toLocator(), coordString);
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
+		}
 	}
 
 	public void mouseDownRight(ClientWidget locator) {
@@ -565,8 +582,11 @@ public class ZKClientTestCase extends ZKTestCase {
 			int y0 = Integer.parseInt(froms[1]);
 			WebElement element = findElement(locator);
 			getActions().moveToElement(element, x0, y0).perform();
-		} else
-			super.mouseMoveAt(locator.toLocator(), coordString);
+		} else {
+			// fixed for Selenium 2.5.0
+			// super.mouseMoveAt(locator.toLocator(), coordString);
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousemove", coordString);
+		}
 	}
 
 	public void mouseOut(ClientWidget locator) {
@@ -585,10 +605,8 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseUpAt(ClientWidget locator, String coordString) {
-		if (ZK.is("ie9")) {
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
-		} else
-			super.mouseUpAt(locator.toLocator(), coordString);
+		// fixed for Selenium 2.5.0
+		Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
 	}
 
 	public void mouseUpRight(ClientWidget locator) {

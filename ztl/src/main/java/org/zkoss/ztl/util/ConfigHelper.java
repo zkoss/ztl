@@ -453,17 +453,16 @@ public class ConfigHelper {
 		InputStream in = null;
 		if (_prop == null) {
 			try {
-				in = ClassLoader.getSystemResourceAsStream("config.properties");
-				File f = null;
-				if (in == null) {
-					String executionPath = System.getProperty("user.dir");
-					f = new File(executionPath + File.separator + "config.properties");
-					if (!f.isFile()) {
+				String executionPath = System.getProperty("user.dir");
+				File f = new File(executionPath + File.separator + "config.properties");
+				if (!f.isFile()) {
+					in = ClassLoader.getSystemResourceAsStream("config.properties");
+					if (in == null)
 						throw new FileNotFoundException(f.toString());
-					}
-					in = new FileInputStream(f);
-				} else
 					f = new File(ClassLoader.getSystemResource("config.properties").getFile());
+				} else
+					in = new FileInputStream(f);
+					
 				_prop = new Properties();
 				_prop.load(in);
 //				_openonce = Boolean.parseBoolean(_prop.getProperty("openonce","false"));
