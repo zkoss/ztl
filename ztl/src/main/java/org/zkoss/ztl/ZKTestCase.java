@@ -268,7 +268,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	}
 	
 	/**
-	 * Returns whether is InternatExplorer Driver
+	 * Returns whether is InternetExplorer Driver
 	 * @since 2.0.0
 	 */
 	public boolean isIE() {

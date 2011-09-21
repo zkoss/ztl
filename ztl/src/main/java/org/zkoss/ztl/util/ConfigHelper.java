@@ -240,20 +240,18 @@ public class ConfigHelper {
 	 */
 	private Selenium getBrowserFromHolder(String key) {
 		key = key.toLowerCase();
+		System.out.println("connecting "+key);
 		if (_driverSetting.get(key) == null)
 			throw new NullPointerException("Null Browser Type String");
 
-		System.out.println("connecting "+key);
-		// TODO : SB : Make this code runnable
-		// TODO : SB : fix method getWebDriver()
-		WebDriver driver = new FirefoxDriver();//getWebDriver( _driverSetting.get(key), _browserRemote.get(key));
+		WebDriver driver = getWebDriver( _driverSetting.get(key), _browserRemote.get(key));
 		// TODO : SB : Replace URL with one from configuration
-		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor("http://localhost:8080/ZKTreeSort/index.zul", driver), key,_openonce);
+		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor(_contextPath, driver), key,_openonce);
 		browser.setSpeed(getDelay());
 		return browser;
 	}
 	public List<Selenium> getBrowsersForLazy(String keys, String caseName) {
-		final List<String> browser = new ArrayList<String>(Arrays.asList(keys.split(",")));
+		final List<String> browser = new ArrayList<String>(Arrays.asList(keys.split(","))); //$NON-NLS-1$
 		if (browser.contains(ALL_BROWSERS)) {
 			browser.remove(ALL_BROWSERS);
 			browser.addAll(_allBrowsers);
