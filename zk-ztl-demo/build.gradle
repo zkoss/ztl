@@ -6,15 +6,15 @@ apply plugin: 'eclipse'
 
 repositories {
 	//mavenRepo urls:'http://localhost:9080/nexus/content/groups/public'	
-	mavenCentral()
+	//mavenCentral()
 }
 
 dependencies {
 	compile (	
-		'com.opera:operadriver:0.7.3',
-		'org.seleniumhq.selenium:selenium-java:2.7.0',
-		'junit:junit:4.9',
-		//fileTree(dir: 'libs', include: '*.jar')
+		//'com.opera:operadriver:0.7.3',
+		//'org.seleniumhq.selenium:selenium-java:2.7.0',
+		//'junit:junit:4.9',
+		fileTree(dir: 'libs', include: '*.jar')
 	)
 }
 

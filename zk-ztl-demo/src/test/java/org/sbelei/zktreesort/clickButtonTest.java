@@ -25,7 +25,7 @@ public class clickButtonTest extends ZKClientTestCase {
 
 	public clickButtonTest() {
 		target = "http://localhost:8080/ZKTreeSort/index.zul";
-		browsers = getBrowsers("all");
+		browsers = getBrowsers("iexplore");
 		_timeout = 60000;
 		caseID = getClass().getSimpleName();
 	}
@@ -38,9 +38,8 @@ public class clickButtonTest extends ZKClientTestCase {
 				windowFocus();
 				windowMaximize();
 				Widget sampleTree = widget(jq("sampleTree"));
-				click(jq("$colName div.z-treecol-cnt"));
 			} finally {
-				stop();
+				//stop();
 			}
 		}
 	}
