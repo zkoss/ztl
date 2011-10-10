@@ -46,6 +46,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.opera.core.systems.OperaDriver;
 import com.thoughtworks.selenium.Selenium;
 
