@@ -335,6 +335,24 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	public int scrollTop(int value){
 		return ZKClientTestCase.parseInt(ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollTop(\""+value+"\")"));
 	}
+
+	/**
+	 * getter for scrollLeft
+	 * if multiple result , will receive first value.
+	 * @return
+	 */
+	public int scrollLeft(){
+		return ZKClientTestCase.parseInt(ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollLeft()"));
+	}
+	
+	/**
+	 * setter for scrollLeft 
+	 * @param value
+	 * @return
+	 */
+	public int scrollLeft(int value){
+		return ZKClientTestCase.parseInt(ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollLeft(\""+value+"\")"));
+	}
 	
 	/**
 	 * Note:This not a jQuery base method.
@@ -343,6 +361,15 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 */
 	public int scrollHeight(){
 		return ZKClientTestCase.parseInt(get(0).get("scrollHeight"));
+	}
+	
+	/**
+	 * Note:This not a jQuery base method.
+	 * just a short cut ,in javascript's world equals get(0).scrollWidth
+	 * @return
+	 */
+	public int scrollWidth(){
+		return ZKClientTestCase.parseInt(get(0).get("scrollWidth"));
 	}
 	
 	/**
