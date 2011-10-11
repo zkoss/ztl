@@ -1,0 +1,54 @@
+sourceCompability = 1.5;
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+
+repositories {
+	//mavenRepo urls:'http://localhost:9080/nexus/content/groups/public'	
+	//mavenCentral()
+}
+
+dependencies {
+	compile (	
+		//'com.opera:operadriver:0.7.3',
+		//'org.seleniumhq.selenium:selenium-java:2.7.0',
+		//'junit:junit:4.9',
+		fileTree(dir: 'libs', include: '*.jar')
+	)
+}
+
+
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'resources'
+        }
+    }
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+        resources {
+            srcDir 'test-resources'
+        }
+    }
+}
+
+
+eclipse {
+    //default settings for dependencies sources/javadoc download:
+    downloadSources = true
+    downloadJavadoc =  true
+}
+
+test.enabled=true
+
+task copyToLib(type: Copy) {
+    into "libs"
+    from configurations.default
+}

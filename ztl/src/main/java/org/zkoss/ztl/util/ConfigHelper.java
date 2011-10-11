@@ -46,6 +46,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.opera.core.systems.OperaDriver;
 import com.thoughtworks.selenium.Selenium;
 
@@ -240,17 +241,18 @@ public class ConfigHelper {
 	 */
 	private Selenium getBrowserFromHolder(String key) {
 		key = key.toLowerCase();
+		System.out.println("connecting "+key);
 		if (_driverSetting.get(key) == null)
 			throw new NullPointerException("Null Browser Type String");
 
-		System.out.println("connecting "+key);
 		WebDriver driver = getWebDriver( _driverSetting.get(key), _browserRemote.get(key));
-		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor("http://10.1.3.63:8081/zktest/ztl.zul", driver), key,_openonce);
+		// TODO : SB : Replace URL with one from configuration
+		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor(_contextPath, driver), key,_openonce);
 		browser.setSpeed(getDelay());
 		return browser;
 	}
 	public List<Selenium> getBrowsersForLazy(String keys, String caseName) {
-		final List<String> browser = new ArrayList<String>(Arrays.asList(keys.split(",")));
+		final List<String> browser = new ArrayList<String>(Arrays.asList(keys.split(","))); //$NON-NLS-1$
 		if (browser.contains(ALL_BROWSERS)) {
 			browser.remove(ALL_BROWSERS);
 			browser.addAll(_allBrowsers);
