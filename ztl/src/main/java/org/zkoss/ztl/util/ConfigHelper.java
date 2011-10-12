@@ -245,7 +245,7 @@ public class ConfigHelper {
 
 		System.out.println("connecting "+key);
 		WebDriver driver = getWebDriver( _driverSetting.get(key), _browserRemote.get(key));
-		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor("http://10.1.3.63:8081/zktest/ztl.zul", driver), key,_openonce);
+		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor(getServer() + getContextPath() + "/" + getAction(), driver), key,_openonce);
 		browser.setSpeed(getDelay());
 		return browser;
 	}
