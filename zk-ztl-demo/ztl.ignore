@@ -1,0 +1,41 @@
+###
+# The ignore key should match in config.properties
+# For example, (without '#')
+# key={
+# caseName1
+# caseName2
+# caseName3
+# }
+# 
+# Or for multi-keys
+#
+# key1,key2,key3={
+# caseName1
+# caseName2
+# caseName3
+# }
+#
+# Or use * to ignore all matched keys
+# key*={
+# caseName1
+# caseName2
+# caseName3
+# }
+###
+all={
+}
+### ignore all firefox
+firefox*={
+}
+opera={
+}
+ie9={
+}
+ie8={
+}
+ie7={
+}
+ie6={
+}
+chrome={
+}
