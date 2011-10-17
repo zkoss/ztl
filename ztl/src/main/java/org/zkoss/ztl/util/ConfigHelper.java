@@ -46,7 +46,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.opera.core.systems.OperaDriver;
 import com.thoughtworks.selenium.Selenium;
 
@@ -246,8 +245,7 @@ public class ConfigHelper {
 			throw new NullPointerException("Null Browser Type String");
 
 		WebDriver driver = getWebDriver( _driverSetting.get(key), _browserRemote.get(key));
-		// TODO : SB : Replace URL with one from configuration
-		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor(_contextPath, driver), key,_openonce);
+		Selenium browser = new ZKSelenium(new ZKWebDriverCommandProcessor(getServer() + getContextPath() + "/" + getAction(), driver), key,_openonce);
 		browser.setSpeed(getDelay());
 		return browser;
 	}

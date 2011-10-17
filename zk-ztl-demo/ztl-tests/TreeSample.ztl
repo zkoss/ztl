@@ -1,4 +1,4 @@
-<test tags="TreeSample.zul,Tree">
+<test tags="tree">
 	<case id="Hflex">
 		<server><!--
 <zk>
