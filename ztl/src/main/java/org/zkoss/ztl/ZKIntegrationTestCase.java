@@ -19,8 +19,8 @@ import org.zkoss.ztl.util.ui.Tree;
  *
  */
 public class ZKIntegrationTestCase extends ZKClientTestCase {
-	private int clickTimeOut=100;
-	private int waitTimeout=3;
+	private int clickTimeOut;
+	private int waitTimeout;
 	private String screenShotsDir;
 	
 	
@@ -128,6 +128,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 //				System.out.println(_timeout);
 //				setTimeout(String.valueOf(_timeout));
 				setClickTimeOut(Integer.parseInt(testProp.getProperty("click-time-out","1000")));
+				setWaitTimeout(Integer.parseInt(testProp.getProperty("wait-time-out","3")));
 				browsers = getBrowsers(testProp.getProperty("browsers",ConfigHelper.getInstance().getBrowser()));
 				target  = testProp.getProperty("target","");
 				screenShotsDir = testProp.getProperty("screenshots-dir","screenshots");
@@ -166,7 +167,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	 */
 	public void clickAndWait(ClientWidget locator){
 		click(locator);
-		waitNSeconds(2);
+		waitNSeconds(waitTimeout);
 		waitResponse(clickTimeOut, true);
 	}
 
@@ -177,7 +178,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	 */
 	public void doubleClickAndWait(ClientWidget locator){
 		doubleClick(locator);
-		waitNSeconds(2);
+		waitNSeconds(waitTimeout);
 		waitResponse(clickTimeOut, true);
 	}
 	
@@ -188,7 +189,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	 */
 	public void contextMenuAndWait(ClientWidget locator){
 		contextMenu(locator);
-		waitNSeconds(2);
+		waitNSeconds(waitTimeout);
 		waitResponse(clickTimeOut, true);
 	}
 	
