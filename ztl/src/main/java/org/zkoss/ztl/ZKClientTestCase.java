@@ -351,6 +351,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public void focus(ClientWidget locator) {
 		// fixed for IE9 on Webdriver
+		//TODO : Click scrolls page !!!
 		if (isIE())
 			click(locator);
 		else

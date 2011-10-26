@@ -9,7 +9,7 @@
 		ZK applications
 	</description>
 	<properties>
-		<selenium.version>2.7.0</selenium.version>
+		<selenium.version>2.9.0</selenium.version>
 	</properties>
 	<dependencies>
 		<dependency>
