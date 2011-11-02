@@ -451,8 +451,14 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	@Override
 	public void captureScreenshot(String filename) {
 		try {
-			if (isIE()) {
-				File screenshot = ((InternetExplorerDriver) getWebDriver()).getScreenshotAs(OutputType.FILE);
+			//TODO SB : Need to be refactored 
+			if (isIE() || isChrome()) {
+				File screenshot;
+				if (isChrome()) {
+					screenshot = ((ChromeDriver) getWebDriver()).getScreenshotAs(OutputType.FILE);
+				} else {
+					screenshot = ((InternetExplorerDriver) getWebDriver()).getScreenshotAs(OutputType.FILE);
+				}
             	File dest = new File(filename);
             	if (dest.exists()) {
             		dest.delete();

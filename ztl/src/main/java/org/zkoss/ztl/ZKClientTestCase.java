@@ -18,12 +18,9 @@ package org.zkoss.ztl;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
-import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
 
 import com.thoughtworks.selenium.SeleniumException;
