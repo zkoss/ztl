@@ -59,7 +59,7 @@ public class Widget extends ClientWidget {
 	 * @param value true or false.
 	 */
 	public void set(String name, boolean value) {
-		ZKTestCase.getCurrent().getEval(_out.toString() + toUpperCase(".set", name) + "(" + value + ")");
+		ZKTestCase.getCurrent().getEval("!!" + _out.toString() + toUpperCase(".set", name) + "(" + value + ")");
 	}
 	/**
 	 * Sets the number value to the evaluated name.
@@ -69,7 +69,7 @@ public class Widget extends ClientWidget {
 	 * @param value any number.
 	 */
 	public void set(String name, int value) {
-		ZKTestCase.getCurrent().getEval(_out.toString() + toUpperCase(".set", name) + "(" + value + ")");
+		ZKTestCase.getCurrent().getEval("!!" +_out.toString() + toUpperCase(".set", name) + "(" + value + ")");
 	}
 	/**
 	 * Sets the string value to the evaluated name.
@@ -78,7 +78,7 @@ public class Widget extends ClientWidget {
 	 * @param name any allowed property of the widget.
 	 */
 	public void set(String name, String value) {
-		ZKTestCase.getCurrent().getEval(_out.toString() + toUpperCase(".set", name) + "('" + value + "')");
+		ZKTestCase.getCurrent().getEval("!!" +_out.toString() + toUpperCase(".set", name) + "('" + value + "')");
 	}
 
 	/**
