@@ -31,19 +31,30 @@ WrapsDriver {
 	private String _browsername;
 	private String _speed = "200";
 	
-	private boolean _openonce = false;
+	private boolean _openonce;
 	private int _cyclecount = 0;
+	private int _maxsize = 5;
 
 	public ZKSelenium(CommandProcessor processor) {
 		super(processor);
 	}
-	public ZKSelenium(CommandProcessor processor,boolean openonce) {
+	public ZKSelenium(CommandProcessor processor,String openonce) {
 		super(processor);
-		this._openonce=openonce;
+		this._openonce= openonce != null;
+		if (_openonce) {
+			try {
+				_maxsize= Integer.parseInt(openonce);
+			} catch (Exception e) {}
+		}
 	}
-	public ZKSelenium(CommandProcessor processor, String browsername, boolean openonce) {
+	public ZKSelenium(CommandProcessor processor, String browsername, String openonce) {
 		super(processor);
-		this._openonce=openonce;
+		this._openonce= openonce != null;
+		if (_openonce) {
+			try {
+				_maxsize= Integer.parseInt(openonce);
+			} catch (Exception e) {}
+		}
 		_browsername = browsername;
 	}
 	
@@ -70,7 +81,7 @@ WrapsDriver {
 	}
 	@Override
 	public void close() {
-		if(!_openonce || _cyclecount % 20 == 0){
+		if(!_openonce || _cyclecount % _maxsize == 0){
 			if (_openonce)
 				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().close();
@@ -82,7 +93,7 @@ WrapsDriver {
 	}
 	@Override
 	public void stop() {
-		if(!_openonce  || _cyclecount % 20 == 0){
+		if(!_openonce  || _cyclecount % _maxsize == 0){
 			if (_openonce)
 				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().quit();
