@@ -62,15 +62,29 @@ WrapsDriver {
 		}
 	}
 	@Override
+	public void open(String url) {
+		if(_openonce)
+			_cyclecount++;
+		
+		super.open(url);
+	}
+	@Override
 	public void close() {
 		if(!_openonce || _cyclecount % 20 == 0){
+			if (_openonce)
+				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().close();
 			isBrowserOpened = false;
 		}
 	}
+	public void shutdown() {
+		getWrappedDriver().quit();
+	}
 	@Override
 	public void stop() {
 		if(!_openonce  || _cyclecount % 20 == 0){
+			if (_openonce)
+				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().quit();
 			isBrowserOpened = false;
 		}
