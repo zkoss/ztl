@@ -40,19 +40,23 @@ WrapsDriver {
 	}
 	public ZKSelenium(CommandProcessor processor,String openonce) {
 		super(processor);
-		this._openonce= openonce != null;
+		this._openonce= ConfigHelper.isValidOpenOnce(openonce);
 		if (_openonce) {
 			try {
 				_maxsize= Integer.parseInt(openonce);
+				if (_maxsize < 0)
+					_maxsize = Integer.MAX_VALUE;
 			} catch (Exception e) {}
 		}
 	}
 	public ZKSelenium(CommandProcessor processor, String browsername, String openonce) {
 		super(processor);
-		this._openonce= openonce != null;
+		this._openonce= ConfigHelper.isValidOpenOnce(openonce);;
 		if (_openonce) {
 			try {
 				_maxsize= Integer.parseInt(openonce);
+				if (_maxsize < 0)
+					_maxsize = Integer.MAX_VALUE;
 			} catch (Exception e) {}
 		}
 		_browsername = browsername;

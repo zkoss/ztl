@@ -242,14 +242,27 @@ public class ConfigHelper {
 	}
 
 	/**package*/ void clearCache(ZKSelenium browser) {
-		if (_openonce != null) {
+		if (isValidOpenOnce(_openonce)) {
 			final String driverName = _driverSetting.get(browser.getBrowserName());
 			_cacheMap.remove(driverName);
 			System.out.println("Reopen Browser: " + browser.getBrowserName());
 		}
 	}
+
+	/**package*/ static boolean isValidOpenOnce(String openonce) {
+		return openonce != null && ("true".equalsIgnoreCase(openonce) || isNumber(openonce));
+	}
+
+	private static boolean isNumber(String number) {
+		try {
+			Integer.parseInt(number);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
+	}
 	public void shutdown() {
-		if (_openonce != null) {
+		if (isValidOpenOnce(_openonce)) {
 			for (ZKSelenium browser :_cacheMap.values())
 				browser.shutdown();
 			_cacheMap.clear();
@@ -266,7 +279,7 @@ public class ConfigHelper {
 			throw new NullPointerException("Null Browser Type String");
 
 		System.out.println("connecting " + key);
-		if (_openonce != null) {
+		if (isValidOpenOnce(_openonce)) {
 			final String driverName = _driverSetting.get(key);
 			ZKSelenium browser = _cacheMap.get(driverName);
 			if (browser == null) {
@@ -515,7 +528,7 @@ public class ConfigHelper {
 				_prop = new Properties();
 				_prop.load(in);
 				_openonce = _prop.getProperty("openonce");
-				if (_openonce != null) {
+				if (isValidOpenOnce(_openonce)) {
 					_cacheMap = new HashMap<String, ZKSelenium>(15);
 					System.out.println("openonce="+_openonce);
 				}
