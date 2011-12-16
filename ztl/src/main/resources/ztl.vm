@@ -26,6 +26,7 @@ import org.zkoss.ztl.util.*;
 
 import org.openqa.selenium.*;
 import com.thoughtworks.selenium.Selenium;
+import com.thoughtworks.selenium.SeleniumException;
 #foreach($item in $ztl.import)
 import $item;
 #end
@@ -89,6 +90,11 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 	#end	
 #end	
 	/** end **/
+			} catch (SeleniumException e) {
+				ZKSelenium zbrowser = ((ZKSelenium) browser);
+				ConfigHelper.getInstance().clearCache(zbrowser);
+				zbrowser.shutdown();
+				throw e;
 			} finally {
 				stop();	
 			}

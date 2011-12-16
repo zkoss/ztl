@@ -241,7 +241,7 @@ public class ConfigHelper {
 				+ "]");
 	}
 
-	/**package*/ void clearCache(ZKSelenium browser) {
+	public void clearCache(ZKSelenium browser) {
 		if (isValidOpenOnce(_openonce)) {
 			final String driverName = _driverSetting.get(browser.getBrowserName());
 			_cacheMap.remove(driverName);
