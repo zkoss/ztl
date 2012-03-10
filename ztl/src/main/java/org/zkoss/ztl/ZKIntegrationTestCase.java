@@ -3,6 +3,7 @@ package org.zkoss.ztl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import org.openqa.selenium.By;
@@ -10,6 +11,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.ui.Tree;
+
+import com.thoughtworks.selenium.Selenium;
 
 /**
  * Extend this class for integration testing. For component testing please use
@@ -23,7 +26,25 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	private int waitTimeout;
 	private String screenShotsDir;
 	
+	public void setTarget(String tgt){
+		target = tgt;
+	}
 	
+	public List<Selenium> makeListOfBrowsers(String browsers) {
+		return super.getBrowsers(browsers);
+	}
+	
+	public void setBrowsers(List<Selenium> brwsrs){
+		browsers = brwsrs;
+	}
+	
+	public List<Selenium> getBrowsers(){
+		return browsers;
+	}
+	
+	public void start(Selenium selenium) {
+		super.start(selenium);
+	}
 	/**
 	 * This class used for element location with timeout.
 	 * It's throws exception if element found.
@@ -304,5 +325,13 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 		for (i = 0; i < number; i++){ 
 			wait1second(); 
 		} 
+	}
+
+	public ClientWidget getJq(String string) {
+		return jq(string);
+	}
+
+	public void _setTimeout(int i) {
+		_timeout = i;
 	} 
 }

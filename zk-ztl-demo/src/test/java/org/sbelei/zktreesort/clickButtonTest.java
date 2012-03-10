@@ -14,32 +14,48 @@ it will be useful, but WITHOUT ANY WARRANTY.
  */
 package org.sbelei.zktreesort;
 
+import junit.framework.TestCase;
+
 import org.junit.Test;
-import org.zkoss.ztl.Tags;
-import org.zkoss.ztl.Widget;
-import org.zkoss.ztl.ZKClientTestCase;
+import org.zkoss.ztl.ZKIntegrationTestCase;
+import org.zkoss.ztl.util.ui.Button;
+
 import com.thoughtworks.selenium.Selenium;
 
-@Tags(tags = "label")
-public class clickButtonTest extends ZKClientTestCase {
+public class clickButtonTest extends TestCase {
+	private ZKIntegrationTestCase zk;
 
 	public clickButtonTest() {
-		target = "http://localhost:8080/ZKTreeSort/index.zul";
-		browsers = getBrowsers("iexplore");
-		_timeout = 60000;
-		caseID = getClass().getSimpleName();
+		zk = new ZKIntegrationTestCase();
+		zk.setTarget("http://localhost:8080/ZK-demo");
+		zk.setBrowsers(zk.makeListOfBrowsers("iexplore"));
+		zk._setTimeout(100);
+		zk.setClickTimeOut(60000);
 	}
 
-	@Test(expected = AssertionError.class)
+	public void setUp(){
+		zk.setUp();
+	}
+	
+	public void tearDown(){
+		try {
+			zk.tearDown();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void testUntitled() {
-		for (Selenium selenium : browsers) {
+		for (Selenium selenium : zk.getBrowsers()) {
 			try {
-				start(selenium);
-				windowFocus();
-				windowMaximize();
-				Widget sampleTree = widget(jq("sampleTree"));
+				zk.start(selenium);
+				zk.windowFocus();
+				zk.windowMaximize();
+				zk.clickAndWait(Button.byLabel("click"));
+				zk.assertElementPresent(zk.getJq("@label[value=\"hello\"]"));
 			} finally {
-				//stop();
+				zk.stop();
 			}
 		}
 	}

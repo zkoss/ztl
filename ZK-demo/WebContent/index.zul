@@ -1,0 +1,7 @@
+<?page title="Auto Generated index.zul"?>
+<window id="mainWindow" title="Hello World!!" border="normal" width="200px" apply="org.sbelei.zkdemo.MainWindowViewCtrl">
+<vbox align="center" width="200px">
+<label id="msgLabel" value="XXX"/>
+<button id="actButton" label="click" />
+</vbox>
+</window>

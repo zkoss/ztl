@@ -1,0 +1,12 @@
+<html xmlns:c="http://www.concordion.org/2007/concordion">
+<head>
+	<link href="../concordion.css" rel="stylesheet" type="text/css" />
+</head>
+<ul>
+<li>. Open bpowser<span c:execute="openBrowser()"></span></li>
+<li>. Click on button "<span c:set="#btnCaption">click</span>"<span c:execute="checkClick(#btnCaption)"></span></li>
+<li>. Then I will see label <span c:assertTrue="verifyIfLabelIs(#TEXT)">hello</span></li>
+<li>. Close browser<span c:execute="closeBrowser()"></span></li>
+</ul>
+	
+</html>
