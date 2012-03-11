@@ -1,10 +1,8 @@
-import org.concordion.integration.junit4.ConcordionRunner;
-import org.junit.runner.RunWith;
+import org.concordion.integration.junit3.ConcordionTestCase;
 import org.zkoss.ztl.ZKIntegrationTestCase;
 import org.zkoss.ztl.util.ui.Button;
 
-@RunWith(ConcordionRunner.class)
-public class SpecTest {
+public class SpecTest extends ConcordionTestCase{
 	private ZKIntegrationTestCase zk;
 
 	public SpecTest() {
