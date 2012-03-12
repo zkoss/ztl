@@ -26,22 +26,47 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	private int waitTimeout;
 	private String screenShotsDir;
 	
+	/**
+	 * Set target URL
+	 * @param tgt
+	 */
 	public void setTarget(String tgt){
 		target = tgt;
 	}
 	
+	/**
+	 * Create list of selenium brousers by string:
+	 * iexplore - Internet Explorer
+	 * opera - Opera
+	 * firefox - Mozilla Firefox
+	 * chrome - Google Chrome
+	 * @param browsers
+	 * @return
+	 */
 	public List<Selenium> makeListOfBrowsers(String browsers) {
 		return super.getBrowsers(browsers);
 	}
 	
+	/**
+	 * Sets the list of Selenium browsers to test.
+	 * You may generate this list by {@linkplain ZKIntegrationTestCase#makeListOfBrowsers(String)}}
+	 * @param brwsrs
+	 */
 	public void setBrowsers(List<Selenium> brwsrs){
 		browsers = brwsrs;
 	}
 	
+	/**
+	 * Get list of Selenium browsers to test.
+	 * @return
+	 */
 	public List<Selenium> getBrowsers(){
 		return browsers;
 	}
 	
+	/**
+	 * Start test with selected browser
+	 */
 	public void start(Selenium selenium) {
 		super.start(selenium);
 	}
@@ -74,6 +99,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	 * 
 	 * @author sbelei
 	 */
+	@SuppressWarnings("rawtypes")
 	private class ErrorIfElementNotFound implements ExpectedCondition {
 		 
 		By findCondition;
@@ -221,6 +247,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	 * @param timeout
 	 * @author sbelei
 	 */
+	@SuppressWarnings("unchecked")
 	private void assertElementAbsent(ClientWidget locator, int timeOut) {
 		try {
 			WebDriverWait wait = new WebDriverWait(getWebDriver(), timeOut);
@@ -248,6 +275,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	 * @param timeout
 	 * @author sbelei
 	 */
+	@SuppressWarnings("unchecked")
 	private void assertElementPresent(ClientWidget locator, int timeOut) {
 		try {
 			WebDriverWait wait = new WebDriverWait(getWebDriver(), timeOut);
@@ -327,11 +355,20 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 		} 
 	}
 
+	/**
+	 * Getter for <code>jq</code>  object in ZTL test case
+	 * @param string
+	 * @return
+	 */
 	public ClientWidget getJq(String string) {
 		return jq(string);
 	}
 
-	public void _setTimeout(int i) {
-		_timeout = i;
+	/**
+	 * Sets <code>_timeout</code> variable for ZTL tests
+	 * @param timeout in miliseconds
+	 */
+	public void _setTimeout(int timeout) {
+		_timeout = timeout;
 	} 
 }
