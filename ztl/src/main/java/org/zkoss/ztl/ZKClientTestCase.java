@@ -241,7 +241,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		int x = jq.width() - 3;
 		x += parseInt(jq.css("padding-right"));
 		
-		if (isOpera())
+		if (isOpera() || ZK.is("ff > 10"))
 			Scripts.triggerMouseEventAt(getWebDriver(), jq, "click", x + ",3");
 		else {
 			WebElement element = findElement(jq);
