@@ -363,7 +363,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		// fixed for IE9 on Webdriver
 		// very tricky way to fire the blur event. In this case we cannot send Keys.Tab,
 		// because it may affect the scrollbar to move.
-		if (ZK.is("ie9"))
+		if (ZK.is("ie"))
 			Scripts.triggerMouseEventAt(getWebDriver(), locator, "blur", "2,2");
 		else
 			super.fireEvent(locator.toLocator(), "blur");
@@ -598,7 +598,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 	
 	public void mouseUp(ClientWidget locator) {
-		if (ZK.is("ie9"))
+		if (ZK.is("ie"))
 			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", "1,1");
 		else
 			super.mouseUp(locator.toLocator());
