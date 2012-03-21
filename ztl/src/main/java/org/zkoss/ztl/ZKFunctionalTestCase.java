@@ -364,7 +364,7 @@ public class ZKFunctionalTestCase extends ZKClientTestCase {
 	 * @return
 	 */
 	public JQuery jq(String string) {
-		return jq(string);
+		return super.jq(string);
 	}
 
 	/**
