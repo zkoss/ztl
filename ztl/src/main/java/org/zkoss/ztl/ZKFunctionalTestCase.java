@@ -21,7 +21,7 @@ import com.thoughtworks.selenium.Selenium;
  * @author sbelei
  *
  */
-public class ZKIntegrationTestCase extends ZKClientTestCase {
+public class ZKFunctionalTestCase extends ZKClientTestCase {
 	private int clickTimeOut;
 	private int waitTimeout;
 	private String screenShotsDir;
@@ -49,7 +49,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	
 	/**
 	 * Sets the list of Selenium browsers to test.
-	 * You may generate this list by {@linkplain ZKIntegrationTestCase#makeListOfBrowsers(String)}}
+	 * You may generate this list by {@linkplain ZKFunctionalTestCase#makeListOfBrowsers(String)}}
 	 * @param brwsrs
 	 */
 	public void setBrowsers(List<Selenium> brwsrs){
@@ -172,8 +172,6 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 				Properties testProp = new Properties();
 				testProp.load(testIn);
 				_timeout = Integer.parseInt(testProp.getProperty("timeout","100"));
-//				System.out.println(_timeout);
-//				setTimeout(String.valueOf(_timeout));
 				setClickTimeOut(Integer.parseInt(testProp.getProperty("click-time-out","1000")));
 				setWaitTimeout(Integer.parseInt(testProp.getProperty("wait-time-out","3")));
 				browsers = getBrowsers(testProp.getProperty("browsers",ConfigHelper.getInstance().getBrowser()));
@@ -301,6 +299,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	 * Checks if error box absent.
 	 * If error box present raises AssertionException
 	 * @author sbelei
+	 * @deprecated
 	 */
 	public void assertErrorBoxAbsent() {
 		assertElementAbsent(errorBox(), waitTimeout);
@@ -345,12 +344,16 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 		} 
 	} 
 
-	private void waitNSeconds(int number) 
+	/**
+	 * Make pause for n seconds
+	 * @param n number of seconds to wait
+	 */
+	public void waitNSeconds(int n) 
 	// pre: number >= 0
 	// post: pause for number seconds
 	{
 		int i;
-		for (i = 0; i < number; i++){ 
+		for (i = 0; i < n; i++){ 
 			wait1second(); 
 		} 
 	}
@@ -360,7 +363,7 @@ public class ZKIntegrationTestCase extends ZKClientTestCase {
 	 * @param string
 	 * @return
 	 */
-	public ClientWidget getJq(String string) {
+	public JQuery jq(String string) {
 		return jq(string);
 	}
 

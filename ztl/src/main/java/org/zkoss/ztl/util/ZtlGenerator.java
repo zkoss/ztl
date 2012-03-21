@@ -353,6 +353,8 @@ public class ZtlGenerator {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				ConfigHelper.getInstance().shutdown();				
 			}
 		}
 
