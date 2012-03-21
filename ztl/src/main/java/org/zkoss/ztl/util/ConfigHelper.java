@@ -275,6 +275,7 @@ public class ConfigHelper {
 	 */
 	private Selenium getBrowserFromHolder(String key) {
 		key = key.toLowerCase();
+		System.out.println("connecting "+key);
 		if (_driverSetting.get(key) == null)
 			throw new NullPointerException("Null Browser Type String");
 

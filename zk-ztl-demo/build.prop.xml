@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<property name="test.src" value="ztl-test/" />
+	<property name="target.dir" value="ztl-target/" />
+	<property name="lib.dir" value="libs/" />
+	<property name="test.dir" value="${target.dir}/classes" />
+	<property name="report.dir" value="ztl-report/" />
+	<property name="codegen.dir" value="ztl-codegen/" />
+	<property name="dist.dir" value="${target.dir}/dist" />
+	<property name="jar.name" value="ztl.jar" />
+	<property name="javadoc.dir" value="ztl-javadoc/" />
+	<property name="project.title" value="Zul Testing Language" />
+</project>

@@ -268,7 +268,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	}
 	
 	/**
-	 * Returns whether is InternatExplorer Driver
+	 * Returns whether is InternetExplorer Driver
 	 * @since 2.0.0
 	 */
 	public boolean isIE() {
@@ -444,14 +444,47 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		return getCurrent().captureEntirePageScreenshotToString(kwargs);
 	}
 
+	/**
+	 * Coustomized to work with IExplore WebDirver.
+	 * @author sergiy.beley@gmail.com
+	 */
 	@Override
 	public void captureScreenshot(String filename) {
-		getCurrent().captureScreenshot(filename);
+		try {
+			//TODO SB : Need to be refactored 
+			if (isIE() || isChrome()) {
+				File screenshot;
+				if (isChrome()) {
+					screenshot = ((ChromeDriver) getWebDriver()).getScreenshotAs(OutputType.FILE);
+				} else {
+					screenshot = ((InternetExplorerDriver) getWebDriver()).getScreenshotAs(OutputType.FILE);
+				}
+            	File dest = new File(filename);
+            	if (dest.exists()) {
+            		dest.delete();
+            	}
+            	screenshot.renameTo(dest);
+        	} else {
+        		getCurrent().captureScreenshot(filename);
+        	}
+            System.err.println("Saved screenshot " + filename);
+        } catch (Exception e) {
+            System.err.println("Couldn't save screenshot " + filename + ": " + e.getMessage());
+            e.printStackTrace();
+        }
 	}
 
+	/**
+	 * Coustomized to work with IExplore WebDirver.
+	 * @author sergiy.beley@gmail.com
+	 */	
 	@Override
 	public String captureScreenshotToString() {
-		return getCurrent().captureScreenshotToString();
+		if (isIE()) {
+			return ((InternetExplorerDriver) getWebDriver()).getScreenshotAs(OutputType.BASE64);
+		} else {
+			return getCurrent().captureScreenshotToString();
+		}
 	}
 
 	@Override
