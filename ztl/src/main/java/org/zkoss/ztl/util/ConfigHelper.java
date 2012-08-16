@@ -43,6 +43,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.iphone.IPhoneDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.safari.SafariDriver;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
@@ -204,6 +205,9 @@ public class ConfigHelper {
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.chrome());
+				} else if ("safaridriver".equalsIgnoreCase(key)) {
+					return new ZKRemoteWebDriver(new URL(remotePath),
+							DesiredCapabilities.safari());
 				} else if ("internetexplorerdriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.internetExplorer());
@@ -222,6 +226,8 @@ public class ConfigHelper {
 					return new FirefoxDriver();
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
 					return new ChromeDriver();
+				} else if ("safaridriver".equalsIgnoreCase(key)) {
+					return new SafariDriver();
 				} else if ("internetexplorerdriver".equalsIgnoreCase(key)) {
 					return new InternetExplorerDriver();
 				} else if ("operadriver".equalsIgnoreCase(key)) {
