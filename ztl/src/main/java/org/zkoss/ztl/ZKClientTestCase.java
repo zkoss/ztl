@@ -221,7 +221,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		else {			
 			// bug B30-1575048.ztl and B30-1813055.ztl
 			// fixed Selenium 2.3 on Firefox driver issue
-			if (isFirefox()) {
+			if (isFirefox() || isSafari()) {
 				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
 				Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", "2,2");
 			} else {

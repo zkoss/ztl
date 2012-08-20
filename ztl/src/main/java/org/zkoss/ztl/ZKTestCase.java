@@ -42,6 +42,7 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.iphone.IPhoneDriver;
+import org.openqa.selenium.safari.SafariDriver;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.ZKSelenium;
@@ -298,6 +299,17 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		return (driver instanceof ChromeDriver
 				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
 						.getCapabilities().getBrowserName().contains("chrome")));
+	}
+
+	/**
+	 * Returns whether is Chrome Driver
+	 * @since 2.0.0
+	 */
+	public boolean isSafari() {
+		WebDriver driver = getWebDriver();
+		return (driver instanceof SafariDriver
+				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+						.getCapabilities().getBrowserName().contains("safari")));
 	}
 
 	/**
