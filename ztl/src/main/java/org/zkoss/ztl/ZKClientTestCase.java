@@ -598,10 +598,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 	
 	public void mouseUp(ClientWidget locator) {
-		if (ZK.is("ie"))
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", "1,1");
-		else
-			super.mouseUp(locator.toLocator());
+		Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", "1,1");
 	}
 
 	public void mouseUpAt(ClientWidget locator, String coordString) {
