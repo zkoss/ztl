@@ -216,19 +216,12 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void click(ClientWidget locator) {
-		if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName")))
+		if (isHtmlUnit()) {
 			super.click(locator.toLocator());
-		else {			
-			// bug B30-1575048.ztl and B30-1813055.ztl
-			// fixed Selenium 2.3 on Firefox driver issue
-			// fixed Selenium 2.25 on Oprea driver issue
-			if (isOpera() || isFirefox() || isSafari()) {
-				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
-				Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", "2,2");
-			} else {
-				// bug B30-1575048.ztl, B30-1813055.ztl and B30-1769047.ztl for listitem
-				getActions().moveToElement(findElement(locator), 2,2).click().perform();
-			}
+		} else {
+			// fixed Selenium 2.25 issues
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", "2,2");
 		}
 	}
 	
@@ -261,23 +254,9 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (isHtmlUnit()) {
 			super.click(locator.toLocator());
 			return;
-		} else if (isOpera()) {
+		} else {
 			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", coordString);
 			Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
-		} else {
-			try {
-				super.clickAt(locator.toLocator(), coordString);
-			} catch (SeleniumException e) {
-				// Opera seems not to support clickAt() fixed for B30-2562880.ztl
-				// Firefox3 for B30-1903399.ztl
-				try {
-					Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
-					Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
-					Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
-				} catch (SeleniumException ee){
-					throw e;
-				}
-			}
 		}
 	}
 
