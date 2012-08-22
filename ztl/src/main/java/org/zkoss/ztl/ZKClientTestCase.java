@@ -224,8 +224,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			else {			
 				// bug B30-1575048.ztl and B30-1813055.ztl
 				// fixed Selenium 2.3 on Firefox driver issue
-				// fixed Selenium 2.25 on Oprea driver issue
-				if (isOpera() || isFirefox() || isSafari()) {
+				if (isFirefox() || isSafari()) {
 					Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
 					Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", "2,2");
 				} else {
@@ -264,9 +263,6 @@ public class ZKClientTestCase extends ZKTestCase {
 	public void clickAt(ClientWidget locator, String coordString) {
 		if (isHtmlUnit()) {
 			super.click(locator.toLocator());
-		} else if (isOpera()) {
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", coordString);
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
 		} else {
 			try {
 				super.clickAt(locator.toLocator(), coordString);
