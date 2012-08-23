@@ -215,7 +215,7 @@ public class ConfigHelper {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.opera());
 				} else if ("androiddriver".equalsIgnoreCase(key)) {
-					return new ZKRemoteWebDriver(new URL(remotePath),
+					return new AndroidDriver(new URL(remotePath),
 							DesiredCapabilities.android());
 				} else if ("iphonedriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
