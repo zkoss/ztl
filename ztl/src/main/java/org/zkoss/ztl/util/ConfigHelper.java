@@ -43,6 +43,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.iphone.IPhoneDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
@@ -215,8 +216,7 @@ public class ConfigHelper {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.opera());
 				} else if ("androiddriver".equalsIgnoreCase(key)) {
-					return new ZKRemoteWebDriver(new URL(remotePath),
-							DesiredCapabilities.android());
+					return new AndroidDriver(remotePath);
 				} else if ("iphonedriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.iphone());
