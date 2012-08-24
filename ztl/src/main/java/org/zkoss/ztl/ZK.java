@@ -64,6 +64,13 @@ public class ZK extends ClientWidget {
 	}
 	
 	/**
+	 * focus the current element
+	 */
+	public void focus() {
+		ZKTestCase.getCurrent().getEval(_out.toString() + ".focus()");
+	}
+	
+	/**
 	 * Switches to the JQuery object.
 	 */
 	public JQuery jq() {

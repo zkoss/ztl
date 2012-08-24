@@ -356,7 +356,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	public void focus(ClientWidget locator) {
 		// fixed for IE9 on Webdriver
 		if (isIE())
-			click(locator);
+			zk(locator).focus();
 		else
 			super.focus(locator.toLocator());
 	}
