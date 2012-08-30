@@ -17,13 +17,17 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.ztl;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.HasTouchScreen;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.Rotatable;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.interactions.touch.TouchActions;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
-import org.zkoss.ztl.util.ZKSelenium;
 import org.zkoss.ztl.util.image.Comparator;
 
 import com.thoughtworks.selenium.SeleniumException;
@@ -716,6 +720,258 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public void uncheck(ClientWidget locator) {
 		super.uncheck(locator.toLocator());
+	}
+
+	/**
+	 * Performs a single tap on the element found by locator, analogous to click using a mouse 
+	 * @param locator an element locator
+	 * @since 2.0.1
+	 * @category HasTouchScreen
+	 */
+	public void singleTap(ClientWidget locator) {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof HasTouchScreen))
+			throw new UnsupportedOperationException("device not touchable");
+		
+		WebElement toTap = findElement(locator);
+		new TouchActions(driver).singleTap(toTap).perform();
+	}
+
+	/**
+	 * Performs a double tap on the element found by locator, analogous to double click using a mouse
+	 * @param locator an element locator
+	 * @since 2.0.1
+	 * @category HasTouchScreen
+	 */
+	public void doubleTap(ClientWidget locator) {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof HasTouchScreen))
+			throw new UnsupportedOperationException("device not touchable");
+		
+		WebElement toTap = findElement(locator);
+		new TouchActions(driver).doubleTap(toTap).perform();
+	}
+
+	/**
+	 * Performs a long press gesture on the element found by locator
+	 * @param locator an element locator
+	 * @since 2.0.1
+	 * @category HasTouchScreen
+	 */
+	public void longPress(ClientWidget locator) {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof HasTouchScreen))
+			throw new UnsupportedOperationException("device not touchable");
+		
+		WebElement toPress = findElement(locator);
+		new TouchActions(driver).longPress(toPress).perform();
+	}
+	
+	private static final int SWIPE_STEPS = 5; 
+	
+	/**
+	 * Swipe up at the bottom edge of the element found by locator
+	 * @param locator  an element locator
+	 * @param distance amount to swipe (in device pixel)
+	 * @since 2.0.1
+	 * @category HasTouchScreen
+	 */
+	public void swipeUp(ClientWidget locator, int distance) {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof HasTouchScreen))
+			throw new UnsupportedOperationException("device not touchable");
+		
+		WebElement toSwipe = findElement(locator);
+		Point topLeft = toSwipe.getLocation();
+		Dimension size = toSwipe.getSize();
+		
+		Point origin = topLeft.moveBy(size.getWidth()/2, size.getHeight()-1);
+		Point dest   = origin.moveBy(0, -distance);
+		
+		double yStep = (dest.getY() - origin.getY()) / SWIPE_STEPS;
+		int x = origin.getX();
+		int y = origin.getY(); 
+		
+		TouchActions actions = new TouchActions(driver);
+		actions.down(x, y);
+		for (int i = 0; i < SWIPE_STEPS - 1; i++) {
+			y += yStep;
+			actions.move(x, y);
+		}
+		actions.up(dest.getX(), dest.getY());
+		actions.perform();
+	}
+
+	/**
+	 * Swipe down at the top edge of the element found by locator
+	 * @param locator  an element locator
+	 * @param distance amount to swipe (in device pixel)
+	 * @since 2.0.1
+	 * @category HasTouchScreen
+	 */
+	public void swipeDown(ClientWidget locator, int distance) {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof HasTouchScreen))
+			throw new UnsupportedOperationException("device not touchable");
+		
+		WebElement toSwipe = findElement(locator);
+		Point topLeft = toSwipe.getLocation();
+		Dimension size = toSwipe.getSize();
+		
+		Point origin = topLeft.moveBy(size.getWidth()/2, 1);
+		Point dest   = origin.moveBy(0, distance);
+		
+		double yStep = (dest.getY() - origin.getY()) / SWIPE_STEPS;
+		int x = origin.getX();
+		int y = origin.getY(); 
+		
+		TouchActions actions = new TouchActions(driver);
+		actions.down(x, y);
+		for (int i = 0; i < SWIPE_STEPS - 1; i++) {
+			y += yStep;
+			actions.move(x, y);
+		}
+		actions.up(dest.getX(), dest.getY());
+		actions.perform();
+	}
+
+	/**
+	 * Swipe left at the right edge of the element found by locator
+	 * @param locator  an element locator
+	 * @param distance amount to swipe (in device pixel)
+	 * @since 2.0.1
+	 * @category HasTouchScreen
+	 */
+	public void swipeLeft(ClientWidget locator, int distance) {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof HasTouchScreen))
+			throw new UnsupportedOperationException("device not touchable");
+		
+		WebElement toSwipe = findElement(locator);
+		Point topLeft = toSwipe.getLocation();
+		Dimension size = toSwipe.getSize();
+		
+		Point origin = topLeft.moveBy(size.getWidth()-1, size.getHeight()/2);
+		Point dest   = origin.moveBy(-distance, 0);
+		
+		double yStep = (dest.getY() - origin.getY()) / SWIPE_STEPS;
+		int x = origin.getX();
+		int y = origin.getY(); 
+		
+		TouchActions actions = new TouchActions(driver);
+		actions.down(x, y);
+		for (int i = 0; i < SWIPE_STEPS - 1; i++) {
+			x += yStep;
+			actions.move(x, y);
+		}
+		actions.up(dest.getX(), dest.getY());
+		actions.perform();
+	}
+
+	/**
+	 * Swipe right at the left edge of the element found by locator
+	 * @param locator  an element locator
+	 * @param distance amount to swipe (in device pixel)
+	 * @since 2.0.1
+	 * @category HasTouchScreen
+	 */
+	public void swipeRight(ClientWidget locator, int distance) {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof HasTouchScreen))
+			throw new UnsupportedOperationException("device not touchable");
+		
+		WebElement toSwipe = findElement(locator);
+		Point topLeft = toSwipe.getLocation();
+		Dimension size = toSwipe.getSize();
+		
+		Point origin = topLeft.moveBy(1, size.getHeight()/2);
+		Point dest   = origin.moveBy(distance, 0);
+		
+		double yStep = (dest.getY() - origin.getY()) / SWIPE_STEPS;
+		int x = origin.getX();
+		int y = origin.getY(); 
+		
+		TouchActions actions = new TouchActions(driver);
+		actions.down(x, y);
+		for (int i = 0; i < SWIPE_STEPS - 1; i++) {
+			x += yStep;
+			actions.move(x, y);
+		}
+		actions.up(dest.getX(), dest.getY());
+		actions.perform();
+	}
+	
+	/**
+	 * Returns the current device orientation
+	 * @return the current device orientation
+	 * @since 2.0.1
+	 * @category Rotatable
+	 */
+	public String getOrientation() {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof Rotatable))
+			throw new UnsupportedOperationException("device not rotatable");
+		
+		Rotatable device = (Rotatable) driver;
+		ScreenOrientation orient = device.getOrientation();
+		if (ScreenOrientation.PORTRAIT.equals(orient)) {
+			return "portrait";
+		} else {
+			return "landscape";
+		}
+	}
+
+	/**
+	 * Rotate the device
+	 * @since 2.0.1
+	 * @category Rotatable
+	 */
+	public void rotate() {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof Rotatable))
+			throw new UnsupportedOperationException("device not rotatable");
+		
+		Rotatable device = (Rotatable) driver;
+		ScreenOrientation orient = device.getOrientation();
+		if (ScreenOrientation.LANDSCAPE.equals(orient)) {
+			device.rotate(ScreenOrientation.PORTRAIT);
+		} else {
+			device.rotate(ScreenOrientation.LANDSCAPE);
+		}
+	}
+	
+	/**
+	 * Ensures the device is in landscape orientation
+	 * @since 2.0.1
+	 * @category Rotatable
+	 */
+	public void ensureLandscape() {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof Rotatable))
+			throw new UnsupportedOperationException("device not rotatable");
+		
+		Rotatable device = (Rotatable) driver;
+		ScreenOrientation orient = device.getOrientation();
+		if (ScreenOrientation.PORTRAIT.equals(orient)) {
+			device.rotate(ScreenOrientation.LANDSCAPE);
+		}
+	}
+	
+	/**
+	 * Ensures the device is in portrait orientation
+	 * @since 2.0.1
+	 * @category Rotatable
+	 */
+	public void ensurePortrait() {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof Rotatable))
+			throw new UnsupportedOperationException("device not rotatable");
+		
+		Rotatable device = (Rotatable) driver;
+		ScreenOrientation orient = device.getOrientation();
+		if (ScreenOrientation.PORTRAIT.equals(orient)) {
+			device.rotate(ScreenOrientation.LANDSCAPE);
+		}
 	}
 
 }

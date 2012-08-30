@@ -26,12 +26,14 @@ import javax.imageio.ImageIO;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.HasInputDevices;
+import org.openqa.selenium.HasTouchScreen;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keyboard;
 import org.openqa.selenium.Mouse;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.TouchScreen;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.android.AndroidDriver;
@@ -51,7 +53,6 @@ import org.zkoss.ztl.util.image.DefaultComparator;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 
 import com.opera.core.systems.OperaDriver;
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import com.thoughtworks.selenium.Selenium;
 /**
  * A skeleton of ZK Selenium test, which implements all of the methods of {@link Selenium}
@@ -249,6 +250,14 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	 */
     public Keyboard getKeyboard() {
 		return ((HasInputDevices) getWebDriver()).getKeyboard(); 	
+    }
+    
+    /**
+     * Returns the touch screen for Selenium 2.x
+     * @since 2.0.1
+     */
+    public TouchScreen getTouch() {
+    	return ((HasTouchScreen) getWebDriver()).getTouch();
     }
     
 	/**
