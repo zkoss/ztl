@@ -43,7 +43,6 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.iphone.IPhoneDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
