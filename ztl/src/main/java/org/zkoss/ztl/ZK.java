@@ -16,6 +16,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl;
 
+import org.openqa.selenium.By;
+
 /**
  * A simulator of ZK client side object, which wraps the ZK client API.
  * @author jumperchen
@@ -97,5 +99,10 @@ public class ZK extends ClientWidget {
 	}
 	public Element toElement() {
 		return jq().toElement();
+	}
+	
+	@Override
+	public By toBy() {
+		throw new UnsupportedOperationException("Please use By.id(), By.className(), and By.cssSelector() instead!");
 	}
 }

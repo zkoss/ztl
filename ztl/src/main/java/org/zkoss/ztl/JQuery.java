@@ -19,6 +19,8 @@ package org.zkoss.ztl;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.openqa.selenium.By;
+
 /**
  * A simulator of JQuery client side object, which wraps the JQuery client side
  * API.
@@ -271,6 +273,14 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 		return new ZK(_out, ".zk");
 	}
 
+	
+	public By toBy() {
+		String id = attr("id");
+		if (!isEmpty(id))
+			return By.id(id);
+		return By.className(attr("className"));
+	}
+	
 	/**
 	 * Returns the scrollbar width.
 	 */

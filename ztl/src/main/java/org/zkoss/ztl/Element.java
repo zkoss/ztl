@@ -16,6 +16,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl;
 
+import org.openqa.selenium.By;
+
 /**
  * A simulator of DOM element object.
  * @author jumperchen
@@ -106,5 +108,13 @@ public class Element extends ClientWidget {
 	}
 	public Element toElement() {
 		return this;
+	}
+	
+	public By toBy() {
+		String id = get("id");
+		if (!isEmpty(id))
+			return By.id(id);
+		else
+			throw new UnsupportedOperationException("Please use By.id(), By.className(), and By.cssSelector() instead!");
 	}
 }

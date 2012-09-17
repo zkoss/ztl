@@ -18,6 +18,7 @@ package org.zkoss.ztl;
 
 import java.util.List;
 
+import org.openqa.selenium.By;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 
@@ -200,5 +201,9 @@ public class Widget extends ClientWidget {
 	 */
 	public boolean exists() {
 		return Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!" + _out.toString() + " && !!" + _out.toString() + ".$n()"));
+	}
+	
+	public By toBy() {
+		return By.id(uuid());
 	}
 }

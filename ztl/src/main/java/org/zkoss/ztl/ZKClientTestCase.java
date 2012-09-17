@@ -781,7 +781,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
 		
-		WebElement toSwipe = findElement(locator);
+		WebElement toSwipe = findElement(locator.toBy());
 		Point topLeft = toSwipe.getLocation();
 		Dimension size = toSwipe.getSize();
 		
@@ -814,7 +814,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
 		
-		WebElement toSwipe = findElement(locator);
+		WebElement toSwipe = findElement(locator.toBy());
 		Point topLeft = toSwipe.getLocation();
 		Dimension size = toSwipe.getSize();
 		
@@ -847,7 +847,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
 		
-		WebElement toSwipe = findElement(locator);
+		WebElement toSwipe = findElement(locator.toBy());
 		Point topLeft = toSwipe.getLocation();
 		Dimension size = toSwipe.getSize();
 		
@@ -880,7 +880,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
 		
-		WebElement toSwipe = findElement(locator);
+		WebElement toSwipe = findElement(locator.toBy());
 		Point topLeft = toSwipe.getLocation();
 		Dimension size = toSwipe.getSize();
 		

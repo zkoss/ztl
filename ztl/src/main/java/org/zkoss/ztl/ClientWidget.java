@@ -95,6 +95,12 @@ public abstract class ClientWidget extends By {
 	 */
 	abstract public Element toElement();
 	
+	/**
+	 * Returns the element as By element, if possible.
+	 * @since 2.0.1
+	 */
+	abstract public By toBy();
+	
 	@Override
 	public List<WebElement> findElements(SearchContext context) {
 		List<WebElement> list = new ArrayList<WebElement>();
