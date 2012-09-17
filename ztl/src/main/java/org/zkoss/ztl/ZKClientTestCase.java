@@ -794,7 +794,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		
 		TouchActions actions = new TouchActions(driver);
 		actions.down(x, y);
-		for (int i = 0; i < SWIPE_STEPS - 1; i++) {
+		for (int i = 0; i < SWIPE_STEPS; i++) {
 			y += yStep;
 			actions.move(x, y);
 		}
@@ -827,7 +827,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		
 		TouchActions actions = new TouchActions(driver);
 		actions.down(x, y);
-		for (int i = 0; i < SWIPE_STEPS - 1; i++) {
+		for (int i = 0; i < SWIPE_STEPS; i++) {
 			y += yStep;
 			actions.move(x, y);
 		}
@@ -854,14 +854,14 @@ public class ZKClientTestCase extends ZKTestCase {
 		Point origin = topLeft.moveBy(size.getWidth()-1, size.getHeight()/2);
 		Point dest   = origin.moveBy(-distance, 0);
 		
-		double yStep = (dest.getY() - origin.getY()) / SWIPE_STEPS;
+		double xStep = (dest.getX() - origin.getX()) / SWIPE_STEPS;
 		int x = origin.getX();
 		int y = origin.getY(); 
 		
 		TouchActions actions = new TouchActions(driver);
 		actions.down(x, y);
-		for (int i = 0; i < SWIPE_STEPS - 1; i++) {
-			x += yStep;
+		for (int i = 0; i < SWIPE_STEPS; i++) {
+			x += xStep;
 			actions.move(x, y);
 		}
 		actions.up(dest.getX(), dest.getY());
@@ -887,14 +887,14 @@ public class ZKClientTestCase extends ZKTestCase {
 		Point origin = topLeft.moveBy(1, size.getHeight()/2);
 		Point dest   = origin.moveBy(distance, 0);
 		
-		double yStep = (dest.getY() - origin.getY()) / SWIPE_STEPS;
+		double xStep = (dest.getX() - origin.getX()) / SWIPE_STEPS;
 		int x = origin.getX();
 		int y = origin.getY(); 
 		
 		TouchActions actions = new TouchActions(driver);
 		actions.down(x, y);
-		for (int i = 0; i < SWIPE_STEPS - 1; i++) {
-			x += yStep;
+		for (int i = 0; i < SWIPE_STEPS; i++) {
+			x += xStep;
 			actions.move(x, y);
 		}
 		actions.up(dest.getX(), dest.getY());
