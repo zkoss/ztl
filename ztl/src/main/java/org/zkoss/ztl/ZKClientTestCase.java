@@ -969,8 +969,8 @@ public class ZKClientTestCase extends ZKTestCase {
 		
 		Rotatable device = (Rotatable) driver;
 		ScreenOrientation orient = device.getOrientation();
-		if (ScreenOrientation.PORTRAIT.equals(orient)) {
-			device.rotate(ScreenOrientation.LANDSCAPE);
+		if (ScreenOrientation.LANDSCAPE.equals(orient)) {
+			device.rotate(ScreenOrientation.PORTRAIT);
 		}
 	}
 
