@@ -252,12 +252,20 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (isSafari() || isOpera() || ZK.is("ff > 10"))
 			Scripts.triggerMouseEventAt(getWebDriver(), jq, "click", x + ",3");
 		else {
-			WebElement element = findElement(jq);
-			getActions().moveToElement(element, x, 3).click().perform();
+			WebElement element = null;
+			if (isAndroid()) {
+				element = findElement(jq.toBy());
+				Point p = element.getLocation();
+				x += p.x;
+				new TouchActions(getWebDriver()).down(x, p.y + 3).up(x, p.y + 3).perform();
+			} else {
+				element = findElement(jq);
+				getActions().moveToElement(element, x, 3).click().perform();
+			}
 
 			// double check again (clicking without padding-right)
 			// sometimes on 64 bit OS will need to close again for IE9.
-			if (jq.exists()) {
+			if (jq.exists() && !isAndroid()) {
 				x -= parseInt(jq.css("padding-right"));
 				getActions().moveToElement(element, x, 3).click().perform();
 			}
