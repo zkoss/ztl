@@ -746,6 +746,24 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	/**
+	 * Performs a single tap on the element found by locator tanalogous to click using a mouse
+     * The tap position is at an offset position.
+	 * @param locator an element locator
+     * @param xOffset px toward the right
+     * @param yOffset px toward the bottom
+	 * @since 2.0.1
+	 * @category HasTouchScreen
+	 */	
+	public void singleTapAt(ClientWidget locator, int xOffset, int yOffset) {
+		WebDriver driver = getWebDriver();
+		if (!(driver instanceof HasTouchScreen))
+			throw new UnsupportedOperationException("device not touchable");
+
+		Point tap = findElement(locator.toBy()).getLocation().moveBy(xOffset, yOffset);
+		new TouchActions(driver).down(tap.x, tap.y).up(tap.x, tap.y).perform();
+	}
+
+	/**
 	 * Performs a double tap on the element found by locator, analogous to double click using a mouse
 	 * @param locator an element locator
 	 * @since 2.0.1
