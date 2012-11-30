@@ -166,6 +166,13 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	public JQuery parent(String selector) {
 		return new JQuery(_out, ".parent('" + selector + "')");
 	}
+	
+	/**
+	 * Returns the parents element in JQuery object.
+	 */
+	public JQuery parents(String selector) {
+		return new JQuery(_out, ".parents('" + selector + "')");
+	}
 
 	/**
 	 * Returns the text content
@@ -342,7 +349,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * @param value
 	 */
 	public void scrollTop(int value){
-		ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollTop(\""+value+"\")");
+		ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollTop('"+value+"')");
 	}
 
 	/**
