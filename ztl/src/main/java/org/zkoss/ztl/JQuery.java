@@ -166,6 +166,13 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	public JQuery parent(String selector) {
 		return new JQuery(_out, ".parent('" + selector + "')");
 	}
+	
+	/**
+	 * Returns the parents element in JQuery object.
+	 */
+	public JQuery parents(String selector) {
+		return new JQuery(_out, ".parents('" + selector + "')");
+	}
 
 	/**
 	 * Returns the text content
