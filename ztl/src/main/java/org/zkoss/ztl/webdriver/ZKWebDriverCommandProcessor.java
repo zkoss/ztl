@@ -272,7 +272,7 @@ public class ZKWebDriverCommandProcessor implements CommandProcessor, WrapsDrive
     seleneseMethods.put("mouseUp", new MouseEvent(elementFinder, javascriptLibrary, "mouseup"));
     seleneseMethods.put("mouseUpAt", new MouseEventAt(elementFinder, javascriptLibrary, "mouseup"));
     seleneseMethods.put("open", new Open(baseUrl));
-    seleneseMethods.put("openWindow", new OpenWindow(new GetEval(scriptMutator)));
+    seleneseMethods.put("openWindow", new OpenWindow(baseUrl, new GetEval(scriptMutator)));
     seleneseMethods.put("refresh", new Refresh());
     seleneseMethods.put("removeAllSelections", new RemoveAllSelections(elementFinder));
     seleneseMethods.put("removeSelection", new RemoveSelection(javascriptLibrary, elementFinder));
