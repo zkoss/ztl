@@ -1,2 +1,2 @@
-selenium-java-srcs.jar -> 2.25.0
-operadriver-source.jar -> 0.17
+selenium-java-srcs.jar -> 2.28.0
+operadriver-source.jar -> 1.1
