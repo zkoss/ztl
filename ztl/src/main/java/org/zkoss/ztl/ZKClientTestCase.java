@@ -691,6 +691,34 @@ public class ZKClientTestCase extends ZKTestCase {
 	public void submit(ClientWidget formLocator) {
 		super.submit(formLocator.toLocator());
 	}
+	
+	/**
+	 * 
+	 * @param locator
+	 * @param percent
+	 * 
+	 * @since 7.0
+	 */
+	public void verScroll(ClientWidget locator, double percent) {
+		Widget sbwgt = jq(locator).find(".z-scrollbar").toWidget();
+		Element ind = sbwgt.$n("ver-indicator");
+		Element rail = sbwgt.$n("ver-rail");
+		dragdropToObject(ind, rail, "8," + jq(ind).outerHeight() / 2, "8," + jq(rail).outerHeight() * percent);
+	}
+	
+	/**
+	 * 
+	 * @param locator
+	 * @param percent
+	 * 
+	 * @since 7.0
+	 */
+	public void horScroll(ClientWidget locator, double percent) {
+		Widget sbwgt = jq(locator).find(".z-scrollbar").toWidget();
+		Element ind = sbwgt.$n("hor-indicator");
+		Element rail = sbwgt.$n("hor-rail");
+		dragdropToObject(ind, rail, jq(ind).outerHeight() / 2 +",8" , jq(rail).outerHeight() * percent + ",8");
+	}
 
 	/**
 	 * Types the value to the locator.
