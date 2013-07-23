@@ -701,9 +701,15 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public void verScroll(ClientWidget locator, double percent) {
 		Widget sbwgt = jq(locator).find(".z-scrollbar").toWidget();
-		Element ind = sbwgt.$n("ver-indicator");
-		Element rail = sbwgt.$n("ver-rail");
-		dragdropToObject(ind, rail, "8," + jq(ind).outerHeight() / 2, "8," + jq(rail).outerHeight() * percent);
+		JQuery ind = jq(sbwgt.$n("ver-indicator"));
+		JQuery rail = jq(sbwgt.$n("ver-rail"));
+		int hgh = ind.outerHeight();
+		int totalhgh = rail.outerHeight();
+		
+		while(Math.abs((totalhgh - hgh) * percent - ind.positionTop()) >= 1) {
+			dragdropToObject(ind, rail, "8," + hgh / 2.0, "8," + (hgh / 2.0 + (totalhgh - hgh) * percent));
+			waitResponse();
+		}
 	}
 	
 	/**
@@ -715,9 +721,16 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public void horScroll(ClientWidget locator, double percent) {
 		Widget sbwgt = jq(locator).find(".z-scrollbar").toWidget();
-		Element ind = sbwgt.$n("hor-indicator");
-		Element rail = sbwgt.$n("hor-rail");
-		dragdropToObject(ind, rail, jq(ind).outerHeight() / 2 +",8" , jq(rail).outerHeight() * percent + ",8");
+		JQuery ind = jq(sbwgt.$n("hor-indicator"));
+		JQuery rail = jq(sbwgt.$n("hor-rail"));
+		int wd = ind.outerWidth();
+		int totalwd = rail.outerWidth();
+		
+		waitResponse();
+		while(Math.abs((totalwd - wd) * percent - ind.positionLeft()) >= 1) {
+			dragdropToObject(ind, rail, wd / 2.0 +",8" , (wd / 2.0 + (jq(rail).outerWidth() - wd) * percent) + ",8");
+			waitResponse();
+		}
 	}
 
 	/**
