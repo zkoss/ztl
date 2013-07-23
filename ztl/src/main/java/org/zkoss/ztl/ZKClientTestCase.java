@@ -38,7 +38,9 @@ import com.thoughtworks.selenium.SeleniumException;
  *
  */
 public class ZKClientTestCase extends ZKTestCase {
+	private final static Boolean SCROLLBAR_FAKE = true;
 	protected int _timeout;
+	
 
 	/**
 	 * Waits for Ajax response. (excluding animation check)
@@ -733,6 +735,28 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 	}
 
+	public int getScrollTop(Widget widget) {
+		if (isFakeScrollbar()) {
+			String str =  widget.$n("cave").toElement().get("style.top").trim();
+			return Integer.parseInt(str.substring(0, str.lastIndexOf("px"))) * -1;
+		} else {
+			return jq(widget.$n("body")).scrollTop();
+		}
+	}
+
+		public int getScrollLeft(Widget widget) {
+		if (isFakeScrollbar()) {
+			String str =  widget.$n("cave").toElement().get("style.left").trim();
+			return Integer.parseInt(str.substring(0, str.lastIndexOf("px"))) * -1;
+		} else {
+			return jq(widget.$n("body")).scrollLeft();
+		}
+	}
+
+	public boolean isFakeScrollbar() {
+		return SCROLLBAR_FAKE;
+	}
+	
 	/**
 	 * Types the value to the locator.
 	 * <p> The method will call focus() before typing and blur() after typed.
