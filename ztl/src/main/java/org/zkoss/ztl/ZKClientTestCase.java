@@ -702,16 +702,24 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @since 7.0
 	 */
 	public void verScroll(ClientWidget locator, double percent) {
-		Widget sbwgt = jq(locator).find(".z-scrollbar").toWidget();
+		JQuery sb = jq(locator).find(".z-scrollbar");
+		
+		mouseOver(sb);
+		waitResponse();
+		
+		Widget sbwgt = sb.toWidget();
 		JQuery ind = jq(sbwgt.$n("ver-indicator"));
 		JQuery rail = jq(sbwgt.$n("ver-rail"));
 		int hgh = ind.outerHeight();
 		int totalhgh = rail.outerHeight();
 		
-		while(Math.abs((totalhgh - hgh) * percent - ind.positionTop()) >= 1) {
-			dragdropToObject(ind, rail, "8," + hgh / 2.0, "8," + (hgh / 2.0 + (totalhgh - hgh) * percent));
+		for(int i = 0; i < 3; i ++) {
+			dragdropToObject(ind, rail, "8," + hgh / 2.0, "8," + (hgh / 2.0 + (totalhgh - hgh) * 1));
 			waitResponse();
 		}
+		
+		dragdropToObject(ind, rail, "8," + hgh / 2.0, "8," + (hgh / 2.0 + (totalhgh - hgh) * percent));
+		waitResponse();
 	}
 	
 	/**
@@ -722,17 +730,24 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @since 7.0
 	 */
 	public void horScroll(ClientWidget locator, double percent) {
-		Widget sbwgt = jq(locator).find(".z-scrollbar").toWidget();
+		JQuery sb = jq(locator).find(".z-scrollbar");
+		
+		mouseOver(sb);
+		waitResponse();
+		
+		Widget sbwgt = sb.toWidget();
 		JQuery ind = jq(sbwgt.$n("hor-indicator"));
 		JQuery rail = jq(sbwgt.$n("hor-rail"));
 		int wd = ind.outerWidth();
 		int totalwd = rail.outerWidth();
 		
-		waitResponse();
-		while(Math.abs((totalwd - wd) * percent - ind.positionLeft()) >= 1) {
-			dragdropToObject(ind, rail, wd / 2.0 +",8" , (wd / 2.0 + (jq(rail).outerWidth() - wd) * percent) + ",8");
+		for(int i = 0; i < 3; i ++) {
+			dragdropToObject(ind, rail, wd / 2.0 +",8" , (wd / 2.0 + (totalwd - wd) * 1) + ",8");
 			waitResponse();
 		}
+		
+		dragdropToObject(ind, rail, wd / 2.0 +",8" , (wd / 2.0 + (totalwd - wd) * percent) + ",8");
+		waitResponse();
 	}
 
 	public int getMeshScrollTop(Widget widget) {
