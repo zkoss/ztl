@@ -735,21 +735,40 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 	}
 
-	public int getScrollTop(Widget widget) {
+	public int getMeshScrollTop(Widget widget) {
 		if (isFakeScrollbar()) {
 			String str =  widget.$n("cave").toElement().get("style.top").trim();
-			return Integer.parseInt(str.substring(0, str.lastIndexOf("px"))) * -1;
+			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
 			return jq(widget.$n("body")).scrollTop();
 		}
 	}
-
-		public int getScrollLeft(Widget widget) {
+	
+	public int getMeshScrollLeft(Widget widget) {
 		if (isFakeScrollbar()) {
+			widget.$n("cave").toElement();
 			String str =  widget.$n("cave").toElement().get("style.left").trim();
-			return Integer.parseInt(str.substring(0, str.lastIndexOf("px"))) * -1;
+			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
 			return jq(widget.$n("body")).scrollLeft();
+		}
+	}
+	
+	public int getScrollTop(Widget widget) {
+		if (isFakeScrollbar()) {
+			String str =  widget.toElement().get("style.top").trim();
+			return Math.round(Float.parseFloat(str.substring(0, str.lastIndexOf("px"))));
+		} else {
+			return jq(widget.$n()).scrollTop();
+		}
+	}
+	
+	public int getScrollLeft(Widget widget) {
+		if (isFakeScrollbar()) {
+			String str =  widget.toElement().get("style.left").trim();
+			return Math.round(Float.parseFloat(str.substring(0, str.lastIndexOf("px")))) ;
+		} else {
+			return jq(widget.$n()).scrollLeft();
 		}
 	}
 
