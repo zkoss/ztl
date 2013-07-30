@@ -225,9 +225,9 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (isHtmlUnit()) {
 			super.click(locator.toLocator());
 		} else {
-			if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName")))
+			if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName"))) {
 				super.click(locator.toLocator());
-			else {			
+			} else {			
 				// bug B30-1575048.ztl and B30-1813055.ztl
 				// fixed Selenium 2.3 on Firefox driver issue
 				if (isFirefox() || isSafari()) {
@@ -239,6 +239,14 @@ public class ZKClientTestCase extends ZKTestCase {
 				}
 			}
 		}
+	}
+	
+	public void fakeClick(ClientWidget locator) {
+		mouseMoveAt(locator, "2,2");
+		waitResponse();
+		mouseDownAt(locator, "2,2");
+		waitResponse();
+		mouseUpAt(locator, "2,2");
 	}
 	
 	/**
@@ -338,7 +346,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mouseup", to);
 		}
 	}
-
+	
 	public void dragdropToObject(ClientWidget locatorOfObjectToBeDragged,
 			ClientWidget locatorOfDragDestinationObject, String from, String to) {
 			
@@ -711,15 +719,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		JQuery ind = jq(sbwgt.$n("ver-indicator"));
 		JQuery rail = jq(sbwgt.$n("ver-rail"));
 		int hgh = ind.outerHeight();
-		int totalhgh = rail.outerHeight();
-		
-		for(int i = 0; i < 3; i ++) {
-			dragdropToObject(ind, rail, "8," + hgh / 2.0, "8," + (hgh / 2.0 + (totalhgh - hgh) * 1));
-			waitResponse();
-		}
-		
-		dragdropToObject(ind, rail, "8," + hgh / 2.0, "8," + (hgh / 2.0 + (totalhgh - hgh) * percent));
-		waitResponse();
+		doScroll(ind, rail, "8," + hgh / 2, "8," + (hgh / 2 + (rail.outerHeight() - hgh ) * percent));
 	}
 	
 	/**
@@ -739,15 +739,18 @@ public class ZKClientTestCase extends ZKTestCase {
 		JQuery ind = jq(sbwgt.$n("hor-indicator"));
 		JQuery rail = jq(sbwgt.$n("hor-rail"));
 		int wd = ind.outerWidth();
-		int totalwd = rail.outerWidth();
-		
-		for(int i = 0; i < 3; i ++) {
-			dragdropToObject(ind, rail, wd / 2.0 +",8" , (wd / 2.0 + (totalwd - wd) * 1) + ",8");
-			waitResponse();
-		}
-		
-		dragdropToObject(ind, rail, wd / 2.0 +",8" , (wd / 2.0 + (totalwd - wd) * percent) + ",8");
+
+		doScroll(ind, rail, wd / 2 + ",8" , wd / 2 + (rail.outerWidth() - wd) * percent + ",8");
+	}
+	
+	
+	public void doScroll(ClientWidget locatorOfObjectToBeDragged,
+			ClientWidget locatorOfDragDestinationObject, String from, String to) {
+		mouseMoveAt(locatorOfObjectToBeDragged, from);
+		mouseDownAt(locatorOfObjectToBeDragged, from);
+		mouseMoveAt(locatorOfDragDestinationObject, to);
 		waitResponse();
+		mouseUpAt(locatorOfDragDestinationObject, to);
 	}
 
 	public int getMeshScrollTop(Widget widget) {
