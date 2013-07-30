@@ -326,7 +326,8 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void dragdropTo(ClientWidget locatorOfObjectToBeDragged, String from, String to) {
-		if (ZK.is("ie9")) {
+		
+		if (ZK.is("ie9_")) {
 			String[] froms = from.split(",");
 			String[] tos = to.split(",");
 			int x0 = (int) Double.parseDouble(froms[0]);
@@ -345,6 +346,14 @@ public class ZKClientTestCase extends ZKTestCase {
 			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
 			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mouseup", to);
 		}
+		
+		// fixed for Selenium 2.5.0 issue
+		Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
+		Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousedown", from);
+		if (isChrome())
+			sleep(Integer.parseInt(ConfigHelper.getInstance().getDelay()));
+		Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
+		Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mouseup", to);
 	}
 	
 	public void dragdropToObject(ClientWidget locatorOfObjectToBeDragged,
@@ -719,7 +728,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		JQuery ind = jq(sbwgt.$n("ver-indicator"));
 		JQuery rail = jq(sbwgt.$n("ver-rail"));
 		int hgh = ind.outerHeight();
-		doScroll(ind, rail, "8," + hgh / 2, "8," + (hgh / 2 + (rail.outerHeight() - hgh ) * percent));
+		doScroll(ind, rail, "8," + hgh / 2, "8," + (hgh / 2 + Math.round((rail.outerHeight() - hgh ) * percent)));
 	}
 	
 	/**
@@ -740,7 +749,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		JQuery rail = jq(sbwgt.$n("hor-rail"));
 		int wd = ind.outerWidth();
 
-		doScroll(ind, rail, wd / 2 + ",8" , wd / 2 + (rail.outerWidth() - wd) * percent + ",8");
+		doScroll(ind, rail, wd / 2 + ",8" , (wd / 2 +  Math.round((rail.outerWidth() - wd) * percent)) + ",8");
 	}
 	
 	
@@ -755,7 +764,7 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public int getMeshScrollTop(Widget widget) {
 		if (isFakeScrollbar()) {
-			String str =  widget.$n("cave").toElement().get("style.top").trim();
+			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.top").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
 			return jq(widget.$n("body")).scrollTop();
@@ -764,8 +773,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	
 	public int getMeshScrollLeft(Widget widget) {
 		if (isFakeScrollbar()) {
-			widget.$n("cave").toElement();
-			String str =  widget.$n("cave").toElement().get("style.left").trim();
+			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.left").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
 			return jq(widget.$n("body")).scrollLeft();
@@ -805,7 +813,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 	
 	/**
-	 * a shortcur for getting alert message.
+	 * a shortcut for getting alert message.
 	 * (Take care about the dom class and model will be different 
 	 * 	when event-thread is enable/disable , so we use title .)  
 	 * @return
