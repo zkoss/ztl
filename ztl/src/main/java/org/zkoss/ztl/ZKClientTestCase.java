@@ -712,16 +712,17 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @since 7.0
 	 */
 	public void verScroll(ClientWidget locator, double percent) {
-		JQuery sb = jq(locator).find(".z-scrollbar");
-		
-		mouseOver(sb);
+		int totalHight;
+		Element bpad = jq(locator).toWidget().$n("bpad"),
+				tpad = jq(locator).toWidget().$n("tpad");
+		if (bpad.exists() && tpad.exists()) {
+			// ROD Scroll
+			totalHight = Integer.parseInt(bpad.get("offsetHeight")) + Integer.parseInt(tpad.get("offsetHeight"));
+		} else {
+			totalHight = jq(jq(locator).toWidget().$n("cave")).height() - jq(jq(locator).toWidget().$n("body")).height();
+		}
+		locator.eval("_scrollbar.scrollTo(0, " + (int) Math.round(totalHight * percent)+")");
 		waitResponse();
-		
-		Widget sbwgt = sb.toWidget();
-		JQuery ind = jq(sbwgt.$n("ver-indicator"));
-		JQuery rail = jq(sbwgt.$n("ver-rail"));
-		int hgh = ind.outerHeight();
-		doScroll(ind, rail, "8," + hgh / 2, "8," + (hgh / 2 + Math.round((rail.outerHeight() - hgh ) * percent)));
 	}
 	
 	/**
@@ -732,17 +733,9 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @since 7.0
 	 */
 	public void horScroll(ClientWidget locator, double percent) {
-		JQuery sb = jq(locator).find(".z-scrollbar");
-		
-		mouseOver(sb);
+		int totalWidth = jq(jq(locator).toWidget().$n("cave")).width() - jq(jq(locator).toWidget().$n("body")).width();
+		locator.eval("_scrollbar.scrollTo(" + (int) Math.round(totalWidth * percent)+", 0)");
 		waitResponse();
-		
-		Widget sbwgt = sb.toWidget();
-		JQuery ind = jq(sbwgt.$n("hor-indicator"));
-		JQuery rail = jq(sbwgt.$n("hor-rail"));
-		int wd = ind.outerWidth();
-
-		doScroll(ind, rail, wd / 2 + ",8" , (wd / 2 +  Math.round((rail.outerWidth() - wd) * percent)) + ",8");
 	}
 	
 	
@@ -750,12 +743,13 @@ public class ZKClientTestCase extends ZKTestCase {
 			ClientWidget locatorOfDragDestinationObject, String from, String to) {
 		mouseMoveAt(locatorOfObjectToBeDragged, from);
 		mouseDownAt(locatorOfObjectToBeDragged, from);
+		waitResponse();
 		mouseMoveAt(locatorOfDragDestinationObject, to);
 		waitResponse();
 		mouseUpAt(locatorOfDragDestinationObject, to);
 	}
-
-	public int getMeshScrollTop(Widget widget) {
+	
+	public int getScrollTop(Widget widget) {
 		if (isFakeScrollbar()) {
 			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.top").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
@@ -764,7 +758,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 	}
 	
-	public int getMeshScrollLeft(Widget widget) {
+	public int getScrollLeft(Widget widget) {
 		if (isFakeScrollbar()) {
 			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.left").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
@@ -773,24 +767,6 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 	}
 	
-	public int getScrollTop(Widget widget) {
-		if (isFakeScrollbar()) {
-			String str =  widget.toElement().get("style.top").trim();
-			return Math.round(Float.parseFloat(str.substring(0, str.lastIndexOf("px"))));
-		} else {
-			return jq(widget.$n()).scrollTop();
-		}
-	}
-	
-	public int getScrollLeft(Widget widget) {
-		if (isFakeScrollbar()) {
-			String str =  widget.toElement().get("style.left").trim();
-			return Math.round(Float.parseFloat(str.substring(0, str.lastIndexOf("px")))) ;
-		} else {
-			return jq(widget.$n()).scrollLeft();
-		}
-	}
-
 	public boolean isFakeScrollbar() {
 		return SCROLLBAR_FAKE;
 	}
