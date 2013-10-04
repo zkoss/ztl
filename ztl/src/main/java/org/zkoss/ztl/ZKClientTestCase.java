@@ -713,18 +713,26 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public void verScroll(ClientWidget locator, double percent) {
 		int totalHight;
-		Element bpad = jq(locator).toWidget().$n("bpad"),
-				tpad = jq(locator).toWidget().$n("tpad");
+		Widget wgt = jq(locator).toWidget();
+		Element bpad = wgt.$n("bpad"),
+				tpad = wgt.$n("tpad");
+		JQuery body = jq(wgt.$n("body")),
+			   cave = jq(wgt.$n("cave"));
 		if (bpad.exists() && tpad.exists()) {
 			// ROD Scroll
 			totalHight = Integer.parseInt(bpad.get("offsetHeight")) + Integer.parseInt(tpad.get("offsetHeight"));
 		} else {
-			totalHight = jq(jq(locator).toWidget().$n("cave")).height() - jq(jq(locator).toWidget().$n("body")).height();
+			totalHight = jq(cave).height() - jq(body).height();
 		}
-		locator.eval("_scrollbar.scrollTo(0, " + (int) Math.round(totalHight * percent)+")");
+		
+		int dist = (int) Math.round(totalHight * percent);
+		
+		if(!ZK.is("ie8"))
+			locator.eval("_scrollbar.scrollTo(0, " + dist +")");
+		else
+			jq(body.exists() ? body : (cave.exists() ? cave : wgt)).scrollTop(dist);
 		waitResponse();
 	}
-	
 	/**
 	 * 
 	 * @param locator
@@ -733,8 +741,16 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @since 7.0
 	 */
 	public void horScroll(ClientWidget locator, double percent) {
-		int totalWidth = jq(jq(locator).toWidget().$n("cave")).width() - jq(jq(locator).toWidget().$n("body")).width();
-		locator.eval("_scrollbar.scrollTo(" + (int) Math.round(totalWidth * percent)+", 0)");
+		Widget wgt = jq(locator).toWidget();
+		JQuery body = jq(wgt.$n("body"));
+		JQuery cave = jq(wgt.$n("cave"));
+		int totalWidth = cave.width() - body.width();		
+		int dist = (int) Math.round(totalWidth * percent);
+		
+		if(!ZK.is("ie8"))
+			locator.eval("_scrollbar.scrollTo(" + dist +", 0)");
+		else 
+			jq(body != null ? body : (cave != null ? cave : wgt)).scrollLeft(dist);
 		waitResponse();
 	}
 	
@@ -768,7 +784,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 	
 	public boolean isFakeScrollbar() {
-		return SCROLLBAR_FAKE;
+		return SCROLLBAR_FAKE && !ZK.is("ie8");
 	}
 	
 	/**
