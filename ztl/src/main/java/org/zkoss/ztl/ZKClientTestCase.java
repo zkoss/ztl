@@ -726,11 +726,12 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 		
 		int dist = (int) Math.round(totalHight * percent);
-		
-		if(!ZK.is("ie8"))
+		String version = ZK.getVersion().substring(0, 1);
+		if(!ZK.is("ie8") && Integer.parseInt(version) >= 7)
 			locator.eval("_scrollbar.scrollTo(0, " + dist +")");
 		else
-			jq(body.exists() ? body : (cave.exists() ? cave : wgt)).scrollTop(dist);
+			jq(body.exists() ? body : (cave.exists() ? cave : wgt))
+			.toElement().set("scrollTop", Math.abs(dist));
 		waitResponse();
 	}
 	/**
@@ -747,10 +748,12 @@ public class ZKClientTestCase extends ZKTestCase {
 		int totalWidth = cave.width() - body.width();		
 		int dist = (int) Math.round(totalWidth * percent);
 		
-		if(!ZK.is("ie8"))
+		String version = ZK.getVersion().substring(0, 1);
+		if(!ZK.is("ie8") && Integer.parseInt(version) >= 7)
 			locator.eval("_scrollbar.scrollTo(" + dist +", 0)");
 		else 
-			jq(body != null ? body : (cave != null ? cave : wgt)).scrollLeft(dist);
+			jq(body.exists() ? body : (cave.exists() ? cave : wgt))
+			.toElement().set("scrollLeft", Math.abs(dist));
 		waitResponse();
 	}
 	
