@@ -182,7 +182,7 @@ public class ZKWebDriverCommandProcessor implements CommandProcessor, WrapsDrive
     ZKElementFinder elementFinder = new ZKElementFinder(javascriptLibrary);
     KeyState keyState = new KeyState();
 
-    AlertOverride alertOverride = new AlertOverride();
+    AlertOverride alertOverride = new AlertOverride(true);
     Windows windows = new Windows(driver);
 
     // Note the we use the names used by the CommandProcessor
