@@ -18,7 +18,7 @@ package org.zkoss.ztl;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.HasTouchScreen;
+import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rotatable;
