@@ -86,6 +86,10 @@ public class ZK extends ClientWidget {
 		return jq().exists();
 	}
 	
+	public static String getVersion() {
+		return ZKTestCase.getCurrent().getEval("zk.version");
+	}
+	
 	/**
 	 * Returns the boolean value from the evaluated name.
 	 * <p>For example,
