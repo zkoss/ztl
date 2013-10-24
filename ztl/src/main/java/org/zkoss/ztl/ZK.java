@@ -27,6 +27,7 @@ public class ZK extends ClientWidget {
 	 * The script of get jq by UUID
 	 */
 	private static String ZK = "zk('%1')";
+	public final static String VERSION = ZKTestCase.getCurrent().getEval("zk.version");
 
 	public ZK(String selector) {
 		if (isEmpty(selector))
