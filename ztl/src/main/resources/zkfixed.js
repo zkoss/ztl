@@ -1,4 +1,4 @@
-(function() {
+ zk.afterLoad('zul', function () {
 var _widget = {};
 // fixed for B50-2988187.ztl
 zk.override(zul.Widget.prototype, _widget, {
@@ -23,4 +23,4 @@ zk.override(zul.Widget.prototype, _widget, {
 			this.$supers('doClick_', arguments);
 	}
 });
-})();
+});
