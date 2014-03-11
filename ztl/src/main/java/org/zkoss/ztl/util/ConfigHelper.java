@@ -96,6 +96,8 @@ public class ConfigHelper {
 	private String _imgsrc;
 
 	private String _imgdest;
+	
+	private String _zktheme; 
 
 	private boolean _comparable;
 
@@ -135,6 +137,10 @@ public class ConfigHelper {
 
 	public boolean isDebuggable() {
 		return _debuggable;
+	}
+	
+	public String getTheme() {
+		return _zktheme;
 	}
 
 	public String getClient() {
@@ -549,6 +555,7 @@ public class ConfigHelper {
 				_timeout = _prop.getProperty("timeout");
 				_imgsrc = _prop.getProperty("imgsrc");
 				_imgdest = _prop.getProperty("imgdest");
+				_zktheme = _prop.getProperty("zktheme");
 				_comparable = Boolean.parseBoolean(_prop.getProperty(
 						"comparable", "false"));
 				_granularity = Integer.parseInt(_prop

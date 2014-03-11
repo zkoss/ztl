@@ -204,7 +204,8 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	protected void start(Selenium selenium) {
 		_selenium.set(selenium);
 		System.out.println("testing:"+((ZKSelenium)selenium).getBrowserName());
-		selenium.open(target);
+		String theme = ConfigHelper.getInstance().getTheme();
+		selenium.open(theme == null ? target : target + "?zktheme=" + theme);
 		
 		// fixed ZK timing issue for ZTL
 		((JavascriptExecutor) getWebDriver()).executeScript(Scripts.ZK_FIXED_SCRIPTS);
