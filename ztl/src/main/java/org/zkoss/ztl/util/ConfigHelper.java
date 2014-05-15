@@ -478,7 +478,7 @@ public class ConfigHelper {
 						// System.err.println("put: " + k +"=" + list);
 						if (_ignoreMap.containsKey(k)) {
 							_ignoreMap.get(k).addAll(list);
-						} else _ignoreMap.put(k, list);
+						} else _ignoreMap.put(k, new ArrayList<String>(list));
 					}
 					list = new ArrayList<String>();
 					key = null;
