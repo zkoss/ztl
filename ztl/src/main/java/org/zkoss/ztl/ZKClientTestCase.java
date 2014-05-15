@@ -733,6 +733,9 @@ public class ZKClientTestCase extends ZKTestCase {
 		jq(wgt.$n("scrollX")).toElement().set("scrollLeft", "" + dist);
 		waitResponse();
 	}
+	public boolean hasNativeScroll(ClientWidget locator) {
+		return !Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!" + locator.toLocator() + "._scrollbar"));
+	}
 	
 	/**
 	 * 
@@ -755,8 +758,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 		
 		int dist = (int) Math.round(totalHight * percent);
-		String version = ZK.VERSION.substring(0, 1);
-		if(!ZK.is("ie8") && Integer.parseInt(version) >= 7)
+		if(!hasNativeScroll(locator))
 			locator.eval("_scrollbar.scrollTo(0, " + dist +")");
 		else
 			jq(body.exists() ? body : (cave.exists() ? cave : wgt))
@@ -776,8 +778,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		int totalWidth = cave.width() - body.width();		
 		int dist = (int) Math.round(totalWidth * percent);
 		
-		String version = ZK.VERSION.substring(0, 1);
-		if(!ZK.is("ie8") && Integer.parseInt(version) >= 7)
+		if(!hasNativeScroll(locator))
 			locator.eval("_scrollbar.scrollTo(" + dist +", 0)");
 		else 
 			jq(body.exists() ? body : (cave.exists() ? cave : wgt))
