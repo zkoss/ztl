@@ -1191,10 +1191,14 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void windowMaximize() {
-		if (this.isIPhone() || this.isAndroid())
-			getCurrent().windowMaximize();
-		else
-			this.getWebDriver().manage().window().maximize();
+		try {
+			if (this.isIPhone() || this.isAndroid())
+				getCurrent().windowMaximize();
+			else
+				this.getWebDriver().manage().window().maximize();
+		} catch (Exception e) {
+			// won't thread exception
+		}
 	}
 
 	@Override
