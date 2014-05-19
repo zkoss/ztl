@@ -112,6 +112,12 @@ public class ConfigHelper {
 	private HashMap<String, List<String>> _ignoreMap;
 
 	private volatile boolean _inited;
+	
+	// for parallel connection management
+	private int _connectionWaitTimes = 10;
+	private int connectionWaitPeriod = 2000;
+	private String mutexDir = "c://";
+	
 
 	/**
 	 * key : Firefox, IE ... value : Selenium browser
@@ -288,6 +294,17 @@ public class ConfigHelper {
 		key = key.toLowerCase();
 		if (_driverSetting.get(key) == null)
 			throw new NullPointerException("Null Browser Type String");
+		
+		for(int i = 1; i < 5; i++) {
+			try {
+				Thread.sleep(1000);
+				System.out.println("test" + i);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 
 		System.out.println("connecting " + key);
 		if (isValidOpenOnce(_openonce)) {
@@ -680,4 +697,27 @@ public class ConfigHelper {
 		return _leniency;
 	}
 
+	public int getConnectionWaitTimes() {
+		return _connectionWaitTimes;
+	}
+
+	public void setConnectionWaitTimes(int _connectionWaitTimes) {
+		this._connectionWaitTimes = _connectionWaitTimes;
+	}
+
+	public int getConnectionWaitPeriod() {
+		return connectionWaitPeriod;
+	}
+
+	public void setConnectionWaitPeriod(int connectionWaitPeriod) {
+		this.connectionWaitPeriod = connectionWaitPeriod;
+	}
+
+	public String getMutexDir() {
+		return mutexDir;
+	}
+
+	public void setMutexDir(String mutexDir) {
+		this.mutexDir = mutexDir;
+	}
 }
