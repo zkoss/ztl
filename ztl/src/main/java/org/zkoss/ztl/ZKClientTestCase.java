@@ -225,19 +225,19 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (isHtmlUnit()) {
 			super.click(locator.toLocator());
 		} else {
-			if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName"))) {
-				super.click(locator.toLocator());
-			} else {			
+//			if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName"))) {
+//				super.click(locator.toLocator());
+//			} else {			
 				// bug B30-1575048.ztl and B30-1813055.ztl
 				// fixed Selenium 2.3 on Firefox driver issue
-				if (isFirefox() || isSafari()) {
+				if (isFirefox() || isSafari() || ZK.is("ie8_")) {
 					Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
 					Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", "2,2");
 				} else {
 					// bug B30-1575048.ztl, B30-1813055.ztl and B30-1769047.ztl for listitem
 					getActions().moveToElement(findElement(locator), 2,2).click().perform();
 				}
-			}
+//			}
 		}
 	}
 	
