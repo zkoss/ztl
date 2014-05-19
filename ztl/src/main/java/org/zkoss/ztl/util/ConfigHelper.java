@@ -571,9 +571,10 @@ public class ConfigHelper {
 						continue;
 					}
 				}
-
-				String[] allBrowsers = System.getProperty("browser", _prop.getProperty(ALL_BROWSERS)).split(
-						",");
+				String allBrowser = System.getProperty("browser");
+				if (allBrowser == null || allBrowser.isEmpty())
+					allBrowser = _prop.getProperty(ALL_BROWSERS);
+				String[] allBrowsers = allBrowser.split(",");
 				for (String browser : allBrowsers) {
 					String browserKey = browser.trim();
 					if (_driverSetting.containsKey(browserKey)) {
