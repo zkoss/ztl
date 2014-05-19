@@ -572,7 +572,7 @@ public class ConfigHelper {
 					}
 				}
 
-				String[] allBrowsers = _prop.getProperty(ALL_BROWSERS).split(
+				String[] allBrowsers = System.getProperty("browser", _prop.getProperty(ALL_BROWSERS)).split(
 						",");
 				for (String browser : allBrowsers) {
 					String browserKey = browser.trim();
