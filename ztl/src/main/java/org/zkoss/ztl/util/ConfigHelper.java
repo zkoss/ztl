@@ -44,6 +44,7 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.iphone.IPhoneDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
+import org.zkoss.ztl.ConnectionManager;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
@@ -107,7 +108,7 @@ public class ConfigHelper {
 
 	private HashMap<String, String> _driverSetting;
 
-	private HashMap<String, String> _browserRemote;
+	private HashMap<String, List<String>> _browserRemote;
 
 	private HashMap<String, List<String>> _ignoreMap;
 
@@ -294,25 +295,14 @@ public class ConfigHelper {
 		key = key.toLowerCase();
 		if (_driverSetting.get(key) == null)
 			throw new NullPointerException("Null Browser Type String");
-		
-		for(int i = 1; i < 5; i++) {
-			try {
-				Thread.sleep(1000);
-				System.out.println("test" + i);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 
 		System.out.println("connecting " + key);
 		if (isValidOpenOnce(_openonce)) {
 			final String driverName = _driverSetting.get(key);
 			ZKSelenium browser = _cacheMap.get(driverName);
 			if (browser == null) {
-				WebDriver driver = getWebDriver(_driverSetting.get(key),
-						_browserRemote.get(key));
+				String url = ConnectionManager.getInstance().getAvailableRemote(key, _browserRemote);
+				WebDriver driver = getWebDriver(_driverSetting.get(key), url);
 				browser = new ZKSelenium(
 						new ZKWebDriverCommandProcessor(getServer()
 								+ getContextPath() + "/" + getAction(), driver),
@@ -322,8 +312,8 @@ public class ConfigHelper {
 			}
 			return browser;
 		} else {
-			WebDriver driver = getWebDriver(_driverSetting.get(key),
-					_browserRemote.get(key));
+			String url = ConnectionManager.getInstance().getAvailableRemote(key, _browserRemote);
+			WebDriver driver = getWebDriver(_driverSetting.get(key), url);
 			Selenium browser = new ZKSelenium(
 					new ZKWebDriverCommandProcessor(getServer()
 							+ getContextPath() + "/" + getAction(), driver),
@@ -433,7 +423,7 @@ public class ConfigHelper {
 			_driverSetting = new HashMap<String, String>();
 		}
 		if (_browserRemote == null) {
-			_browserRemote = new HashMap<String, String>();
+			_browserRemote = new HashMap<String, List<String>>();
 		}
 		if (_ignoreMap == null) {
 			_ignoreMap = new HashMap<String, List<String>>();
@@ -525,7 +515,15 @@ public class ConfigHelper {
 		// for remote driver
 		if (browserPath.indexOf(";") != -1) {
 			String[] tokens = browserPath.split(";");
-			_browserRemote.put(browserName, tokens[0]);
+			
+			// for each remote URL
+			String[] urls = tokens[0].split(",");
+			List<String> urlList = new ArrayList<String>();
+			for (String url : urls) 
+				urlList.add(url);
+			_browserRemote.put(browserName, urlList);
+			
+			// for driver name
 			if (tokens.length > 1) {
 				browserPath = tokens[1];
 			} else {
