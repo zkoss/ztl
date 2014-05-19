@@ -572,8 +572,7 @@ public class ConfigHelper {
 					}
 				}
 				String allBrowser = System.getProperty("browser");
-				System.out.println("------>" + allBrowser + "--");
-				if (allBrowser == null || allBrowser.isEmpty())
+				if (allBrowser == null || allBrowser.isEmpty() || "${browser}".equals(allBrowser))
 					allBrowser = _prop.getProperty(ALL_BROWSERS);
 				String[] allBrowsers = allBrowser.split(",");
 				for (String browser : allBrowsers) {
