@@ -666,8 +666,8 @@ public class ZKClientTestCase extends ZKTestCase {
 		// force to fire onChange event for IE
 		if (isIE())
 			blur(selectLocator);
-		else if (isOpera()) // close the dropdown list and fire onchange
-			sendKeys(selectLocator, Keys.ENTER);
+//		else if (isOpera()) // close the dropdown list and fire onchange
+//			sendKeys(selectLocator, Keys.ENTER);
 	}
 	public void select(ClientWidget selectLocator, int index) {
 		// fixed Opera to fire unnecessary onchange event.
@@ -681,8 +681,8 @@ public class ZKClientTestCase extends ZKTestCase {
 		// force to fire onChange event for IE
 		if (isIE())
 			blur(selectLocator);
-		else if (isOpera()) // close the dropdown list and fire onchange
-			sendKeys(selectLocator, Keys.ENTER);
+//		else if (isOpera()) // close the dropdown list and fire onchange
+//			sendKeys(selectLocator, Keys.ENTER);
 	}
 
 	public void selectFrame(ClientWidget locator) {
