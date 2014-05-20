@@ -16,8 +16,11 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl.util;
 
+import java.io.IOException;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.internal.WrapsDriver;
+import org.zkoss.ztl.ConnectionManager;
 
 import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.DefaultSelenium;
@@ -90,6 +93,11 @@ WrapsDriver {
 				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().close();
 			isBrowserOpened = false;
+			try {
+				ConnectionManager.getInstance().releaseRemote(_browsername);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	public void shutdown() {
@@ -97,11 +105,16 @@ WrapsDriver {
 	}
 	@Override
 	public void stop() {
-		if(!_openonce  || _cyclecount % _maxsize == 0){
+		if(!_openonce || _cyclecount % _maxsize == 0){
 			if (_openonce)
 				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().quit();
 			isBrowserOpened = false;
+			try {
+				ConnectionManager.getInstance().releaseRemote(_browsername);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
