@@ -115,9 +115,9 @@ public class ConfigHelper {
 	private volatile boolean _inited;
 	
 	// for parallel connection management
-	private int _connectionWaitTimes = 10;
-	private int connectionWaitPeriod = 2000;
-	private String mutexDir = "c://";
+	private int _connectionWaitTimes;
+	private int _connectionWaitPeriod;
+	private String _mutexDir;
 	
 
 	/**
@@ -612,6 +612,10 @@ public class ConfigHelper {
 								key.substring(start + 1));
 					}
 				}
+				
+				_connectionWaitTimes = Integer.parseInt(_prop.getProperty("connectionWaitTimes"));
+				_connectionWaitPeriod = Integer.parseInt(_prop.getProperty("connectionWaitPeriod"));
+				_mutexDir = _prop.getProperty("mutexDir");
 			} finally {
 				if (in != null) {
 					in.close();
@@ -704,18 +708,18 @@ public class ConfigHelper {
 	}
 
 	public int getConnectionWaitPeriod() {
-		return connectionWaitPeriod;
+		return _connectionWaitPeriod;
 	}
 
 	public void setConnectionWaitPeriod(int connectionWaitPeriod) {
-		this.connectionWaitPeriod = connectionWaitPeriod;
+		this._connectionWaitPeriod = connectionWaitPeriod;
 	}
 
 	public String getMutexDir() {
-		return mutexDir;
+		return _mutexDir;
 	}
 
 	public void setMutexDir(String mutexDir) {
-		this.mutexDir = mutexDir;
+		this._mutexDir = mutexDir;
 	}
 }

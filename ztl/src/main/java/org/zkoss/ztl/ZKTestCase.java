@@ -213,7 +213,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		if (ConfigHelper.getInstance().isDebuggable()) {
 			((JavascriptExecutor) getWebDriver()).executeScript(Scripts.ZTL_DEBUGGER_SCRIPTS);
 		}
-		this.selenium = selenium;
+		this.selenium.set(selenium);
 		recordCount = 0; // reset
 	}
 	
@@ -1199,7 +1199,10 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void stop() {
-		if (selenium != null) selenium.stop();
+		if (this.selenium.get() != null) {
+			this.selenium.get().stop();
+			this.selenium.remove();
+		}
 		if (_selenium != null) _selenium.remove();	
 	}
 

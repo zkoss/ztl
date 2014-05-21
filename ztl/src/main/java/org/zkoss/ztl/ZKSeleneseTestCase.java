@@ -31,7 +31,7 @@ public class ZKSeleneseTestCase extends TestCase {
     private ZKSeleneseTestBase stb = new ZKSeleneseTestBase();
 
     /** Use this object to run all of your selenium tests */
-    protected Selenium selenium;
+    protected ThreadLocal<Selenium> selenium = new ThreadLocal<Selenium>();
 
     public ZKSeleneseTestCase() {
         super();
@@ -67,7 +67,7 @@ public class ZKSeleneseTestCase extends TestCase {
      */
     public void setUp() throws Exception {
         stb.setUp();
-        selenium = stb.selenium;
+        selenium.set(stb.selenium);
     }
 
     /**
@@ -79,7 +79,7 @@ public class ZKSeleneseTestCase extends TestCase {
      */
     public void setUp(String url) throws Exception {
         stb.setUp(url);
-        selenium = stb.selenium;
+        selenium.set(stb.selenium);
     }
 
     /**
@@ -90,7 +90,7 @@ public class ZKSeleneseTestCase extends TestCase {
      */
     public void setUp(String url, String browserString) throws Exception {
         stb.setUp(url, browserString);
-        selenium = stb.selenium;
+        selenium.set(stb.selenium);
     }
 
     /** checks for verification errors and stops the browser */
@@ -100,80 +100,80 @@ public class ZKSeleneseTestCase extends TestCase {
 
     /** Like assertEquals, but fails at the end of the test (during tearDown) */
     public void verifyEquals(boolean arg1, boolean arg2) {
-        stb.verifyEquals(arg1, arg2, selenium);
+        stb.verifyEquals(arg1, arg2, selenium.get());
     }
 
     /** Like assertEquals, but fails at the end of the test (during tearDown) */
     public void verifyEquals(String message, boolean arg1, boolean arg2) {
-        stb.verifyEquals(message, arg1, arg2, selenium);
+        stb.verifyEquals(message, arg1, arg2, selenium.get());
     }
 
     /** Like assertEquals, but fails at the end of the test (during tearDown) */
     public void verifyEquals(Object s1, Object s2) {
-        stb.verifyEquals(s1, s2, selenium);
+        stb.verifyEquals(s1, s2, selenium.get());
     }
 
     
     public void verifyContains(String message,String s1,String s2){
-		stb.verifyContains(message, s1, s2, selenium);
+		stb.verifyContains(message, s1, s2, selenium.get());
     }
     
     public void verifyNotContains(String message,String s1,String s2){
-		stb.verifyNotContains(message, s1, s2, selenium);
+		stb.verifyNotContains(message, s1, s2, selenium.get());
     }
     
     /** Like assertEquals, but fails at the end of the test (during tearDown) */
     public void verifyEquals(String message, Object s1, Object s2) {
-        stb.verifyEquals(message, s1, s2, selenium);
+        stb.verifyEquals(message, s1, s2, selenium.get());
     }
 
     /** Like assertEquals, but fails at the end of the test (during tearDown) */
     public void verifyEquals(String[] s1, String[] s2) {
-        stb.verifyEquals(s1, s2, selenium);
+        stb.verifyEquals(s1, s2, selenium.get());
     }
 
     /** Like assertEquals, but fails at the end of the test (during tearDown) */
     public void verifyEquals(String message, String[] s1, String[] s2) {
-        stb.verifyEquals(message, s1, s2, selenium);
+        stb.verifyEquals(message, s1, s2, selenium.get());
     }
 
     /** Like assertFalse, but fails at the end of the test (during tearDown) */
     public void verifyFalse(boolean b) {
-        stb.verifyFalse("verification should be false", b, selenium);
+        stb.verifyFalse("verification should be false", b, selenium.get());
     }
     /** Like assertFalse, but fails at the end of the test (during tearDown) */
     public void verifyFalse(String message, boolean b) {
-        stb.verifyFalse(message, b, selenium);
+        stb.verifyFalse(message, b, selenium.get());
     }
 
     /** Like assertNotEquals, but fails at the end of the test (during tearDown) */
     public void verifyNotEquals(boolean s1, boolean s2) {
-        stb.verifyNotEquals(s1, s2, selenium);
+        stb.verifyNotEquals(s1, s2, selenium.get());
     }
 
     /** Like assertNotEquals, but fails at the end of the test (during tearDown) */
     public void verifyNotEquals(String message, boolean s1, boolean s2) {
-        stb.verifyNotEquals(message, s1, s2, selenium);
+        stb.verifyNotEquals(message, s1, s2, selenium.get());
     }
 
     /** Like assertNotEquals, but fails at the end of the test (during tearDown) */
     public void verifyNotEquals(Object s1, Object s2) {
-        stb.verifyNotEquals(s1, s2, selenium);
+        stb.verifyNotEquals(s1, s2, selenium.get());
     }
 
     /** Like assertNotEquals, but fails at the end of the test (during tearDown) */
     public void verifyNotEquals(String message, Object s1, Object s2) {
-        stb.verifyNotEquals(message, s1, s2, selenium);
+        stb.verifyNotEquals(message, s1, s2, selenium.get());
     }
 
     /** Like assertTrue, but fails at the end of the test (during tearDown) */
     public void verifyTrue(boolean b) {
-        stb.verifyTrue("verification should be true", b, selenium);
+        stb.verifyTrue("verification should be true", b, selenium.get());
     }
 
     /** Like assertTrue, but fails at the end of the test (during tearDown) */
     public void verifyTrue(String message, boolean b) {
-        stb.verifyTrue(message, b, selenium);
+        stb.verifyTrue(message, b, selenium.get());
     }
 
 	/**
@@ -279,7 +279,7 @@ public class ZKSeleneseTestCase extends TestCase {
     }
 
     protected void setTestContext() {
-        selenium.setContext(this.getClass().getSimpleName() + "." + getName());
+        selenium.get().setContext(this.getClass().getSimpleName() + "." + getName());
     }
 
     /**
@@ -299,7 +299,7 @@ public class ZKSeleneseTestCase extends TestCase {
             if (selenium != null) {
                 String filename = getName() + ".png";
                 try {
-                    selenium.captureScreenshot(filename);
+                    selenium.get().captureScreenshot(filename);
                     System.err.println("Saved screenshot " + filename);
                 } catch (Exception e) {
                     System.err.println("Couldn't save screenshot " + filename + ": " + e.getMessage());
@@ -316,5 +316,4 @@ public class ZKSeleneseTestCase extends TestCase {
     public String join(String[] array, char c) {
         return stb.join(array, c);
     }
-
 }

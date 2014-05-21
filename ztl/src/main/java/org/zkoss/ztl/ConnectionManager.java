@@ -3,6 +3,8 @@ package org.zkoss.ztl;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.channels.FileLock;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,7 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
 import org.zkoss.ztl.util.ConfigHelper;
 
 public class ConnectionManager {
@@ -67,7 +68,7 @@ public class ConnectionManager {
 		List<String> remotes = remoteMap.get(browserKey);
 		
 		do {
-			String remote = tryLock(remotes);
+			String remote = tryLock(remotes, browserKey);
 			
 			if(remote == null)
 				waitForConnection();
@@ -89,19 +90,33 @@ public class ConnectionManager {
 	/*
 	 * Private method
 	 */
-	private String tryLock(List<String> remotes) {
+	private String tryLock(List<String> remotes, String browserKey) {
 		
 		for (String remote : remotes) {
-			File lockFile = getFile(remote);
+			File lockFile = null;
+			RandomAccessFile file = null;
+			FileLock lock = null;
 			
 			try {
-				RandomAccessFile file = new RandomAccessFile(lockFile, "rw");
-				FileLock lock = file.getChannel().lock();
-				openedFileMap.put(remote, new LockEntity(lockFile, file, lock));
-				System.out.println("get connection... with " + remote);
-				return remote;
+				lockFile = getFile(remote);
+				file = new RandomAccessFile(lockFile, "rw");
+				lock = file.getChannel().tryLock();
+				
+				if(lock != null) {
+					openedFileMap.put(browserKey, new LockEntity(lockFile, file, lock));
+					System.out.println("get connection... with " + remote);
+					return remote;
+				}
 			} catch (Exception e) {
 				System.out.println("can't create or open a file to write");
+			} finally {
+				if(lock == null)
+					try {
+						file.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 			}
 		}
 		
@@ -109,6 +124,11 @@ public class ConnectionManager {
 	}
 
 	private File getFile(String remote) {
+		try {
+			remote = URLEncoder.encode(remote, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		return new File(configHelper.getMutexDir(), remote + ".lock");
 	}
 
@@ -121,7 +141,7 @@ public class ConnectionManager {
 		waitingPeriod -= waitingPeriod/100;
 	}
 	
-	@Test
+//	@Test
 	public void testConnection() throws InterruptedException {
 		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		map.put("ie8", Arrays.asList("10.1.3.1", "10.1.3.2"));
