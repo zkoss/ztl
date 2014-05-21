@@ -798,7 +798,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 	
 	public int getScrollTop(Widget widget) {
-		if (isFakeScrollbar()) {
+		if (!hasNativeScroll(widget)) {
 			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.top").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
@@ -807,18 +807,14 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 	
 	public int getScrollLeft(Widget widget) {
-		if (isFakeScrollbar()) {
+		if (!hasNativeScroll(widget)) {
 			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.left").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
 			return jq(widget.$n("body")).scrollLeft();
 		}
 	}
-	
-	public boolean isFakeScrollbar() {
-		return SCROLLBAR_FAKE && !ZK.is("ie8");
-	}
-	
+		
 	/**
 	 * Types the value to the locator.
 	 * <p> The method will call focus() before typing and blur() after typed.
