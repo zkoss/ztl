@@ -231,12 +231,12 @@ public class ZKClientTestCase extends ZKTestCase {
 				// bug B30-1575048.ztl and B30-1813055.ztl
 				// fixed Selenium 2.3 on Firefox driver issue
 				if (isSafari() || ZK.is("ie8_")) {
-					if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName"))) {
+					//if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName"))) {
 						super.click(locator.toLocator());
-					} else {
-						Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
-						Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", "2,2");
-					}
+//					} else {
+//						Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
+//						Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", "2,2");
+//					}
 				} else {
 					// bug B30-1575048.ztl, B30-1813055.ztl and B30-1769047.ztl for listitem
 					getActions().moveToElement(findElement(locator), 2,2).click().perform();
@@ -824,9 +824,16 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * <p> The method will call focus() before typing and blur() after typed.
 	 */
 	public void type(ClientWidget locator, String value) {
-		focus(locator);
-		super.type(locator.toLocator(), value);
-		blur(locator);
+		if (isOpera()) {
+			findElement(locator).clear();
+			waitResponse();
+			typeKeys(locator, value);
+			waitResponse();
+		} else {
+			focus(locator);
+			super.type(locator.toLocator(), value);
+			blur(locator);
+		}
 	}
 	
 	/**
