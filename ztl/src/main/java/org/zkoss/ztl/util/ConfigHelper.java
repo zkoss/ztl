@@ -115,8 +115,8 @@ public class ConfigHelper {
 	private volatile boolean _inited;
 	
 	// for parallel connection management
-	private int _connectionWaitTimes;
 	private int _connectionWaitPeriod;
+	private int _connectionReducePeriod;
 	private String _mutexDir;
 	
 
@@ -212,6 +212,8 @@ public class ConfigHelper {
 	private WebDriver getWebDriver(String key, String remotePath) {
 		try {
 			if (remotePath != null) {
+				System.out.println("@@@get remote drive..." + key + "," + remotePath + "@@@");
+				
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.firefox());
@@ -234,6 +236,8 @@ public class ConfigHelper {
 							DesiredCapabilities.iphone());
 				}
 			} else {
+				System.out.println("@@@get local drive..." + key + "," + remotePath + "@@@");
+				
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					return new FirefoxDriver();
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
@@ -613,8 +617,8 @@ public class ConfigHelper {
 					}
 				}
 				
-				_connectionWaitTimes = Integer.parseInt(_prop.getProperty("connectionWaitTimes"));
 				_connectionWaitPeriod = Integer.parseInt(_prop.getProperty("connectionWaitPeriod"));
+				_connectionReducePeriod = Integer.parseInt(_prop.getProperty("connectionReducePeriod"));
 				_mutexDir = _prop.getProperty("mutexDir");
 			} finally {
 				if (in != null) {
@@ -699,14 +703,6 @@ public class ConfigHelper {
 		return _leniency;
 	}
 
-	public int getConnectionWaitTimes() {
-		return _connectionWaitTimes;
-	}
-
-	public void setConnectionWaitTimes(int _connectionWaitTimes) {
-		this._connectionWaitTimes = _connectionWaitTimes;
-	}
-
 	public int getConnectionWaitPeriod() {
 		return _connectionWaitPeriod;
 	}
@@ -721,5 +717,13 @@ public class ConfigHelper {
 
 	public void setMutexDir(String mutexDir) {
 		this._mutexDir = mutexDir;
+	}
+
+	public int getConnectionReducePeriod() {
+		return _connectionReducePeriod;
+	}
+
+	public void setConnectionReducePeriod(int connectionReducePeriod) {
+		this._connectionReducePeriod = connectionReducePeriod;
 	}
 }

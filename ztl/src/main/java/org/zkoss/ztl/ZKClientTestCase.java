@@ -225,19 +225,19 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (isHtmlUnit()) {
 			super.click(locator.toLocator());
 		} else {
-			if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName"))) {
-				super.click(locator.toLocator());
-			} else {			
+//			if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName"))) {
+//				super.click(locator.toLocator());
+//			} else {			
 				// bug B30-1575048.ztl and B30-1813055.ztl
 				// fixed Selenium 2.3 on Firefox driver issue
-				if (isFirefox() || isSafari()) {
+				if (isFirefox() || isSafari() || ZK.is("ie8_")) {
 					Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
 					Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", "2,2");
 				} else {
 					// bug B30-1575048.ztl, B30-1813055.ztl and B30-1769047.ztl for listitem
 					getActions().moveToElement(findElement(locator), 2,2).click().perform();
 				}
-			}
+//			}
 		}
 	}
 	
@@ -666,8 +666,8 @@ public class ZKClientTestCase extends ZKTestCase {
 		// force to fire onChange event for IE
 		if (isIE())
 			blur(selectLocator);
-		else if (isOpera()) // close the dropdown list and fire onchange
-			sendKeys(selectLocator, Keys.ENTER);
+//		else if (isOpera()) // close the dropdown list and fire onchange
+//			sendKeys(selectLocator, Keys.ENTER);
 	}
 	public void select(ClientWidget selectLocator, int index) {
 		// fixed Opera to fire unnecessary onchange event.
@@ -681,8 +681,8 @@ public class ZKClientTestCase extends ZKTestCase {
 		// force to fire onChange event for IE
 		if (isIE())
 			blur(selectLocator);
-		else if (isOpera()) // close the dropdown list and fire onchange
-			sendKeys(selectLocator, Keys.ENTER);
+//		else if (isOpera()) // close the dropdown list and fire onchange
+//			sendKeys(selectLocator, Keys.ENTER);
 	}
 
 	public void selectFrame(ClientWidget locator) {
@@ -733,6 +733,9 @@ public class ZKClientTestCase extends ZKTestCase {
 		jq(wgt.$n("scrollX")).toElement().set("scrollLeft", "" + dist);
 		waitResponse();
 	}
+	public boolean hasNativeScroll(ClientWidget locator) {
+		return !Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!" + locator.toLocator() + "._scrollbar"));
+	}
 	
 	/**
 	 * 
@@ -755,8 +758,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 		
 		int dist = (int) Math.round(totalHight * percent);
-		String version = ZK.VERSION.substring(0, 1);
-		if(!ZK.is("ie8") && Integer.parseInt(version) >= 7)
+		if(!hasNativeScroll(locator))
 			locator.eval("_scrollbar.scrollTo(0, " + dist +")");
 		else
 			jq(body.exists() ? body : (cave.exists() ? cave : wgt))
@@ -776,8 +778,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		int totalWidth = cave.width() - body.width();		
 		int dist = (int) Math.round(totalWidth * percent);
 		
-		String version = ZK.VERSION.substring(0, 1);
-		if(!ZK.is("ie8") && Integer.parseInt(version) >= 7)
+		if(!hasNativeScroll(locator))
 			locator.eval("_scrollbar.scrollTo(" + dist +", 0)");
 		else 
 			jq(body.exists() ? body : (cave.exists() ? cave : wgt))
@@ -797,7 +798,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 	
 	public int getScrollTop(Widget widget) {
-		if (isFakeScrollbar()) {
+		if (!hasNativeScroll(widget)) {
 			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.top").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
@@ -806,18 +807,14 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 	
 	public int getScrollLeft(Widget widget) {
-		if (isFakeScrollbar()) {
+		if (!hasNativeScroll(widget)) {
 			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.left").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
 			return jq(widget.$n("body")).scrollLeft();
 		}
 	}
-	
-	public boolean isFakeScrollbar() {
-		return SCROLLBAR_FAKE && !ZK.is("ie8");
-	}
-	
+		
 	/**
 	 * Types the value to the locator.
 	 * <p> The method will call focus() before typing and blur() after typed.

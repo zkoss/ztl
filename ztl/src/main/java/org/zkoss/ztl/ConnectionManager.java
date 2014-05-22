@@ -20,10 +20,11 @@ public class ConnectionManager {
 		
 	private static ConnectionManager instance;
 	private static ConfigHelper configHelper;
+	private static double random = Math.random();
+	private static int reducePeriod;
 	
 	// milliseconds
-	private int waitingPeriod = 1000;
-	private int waitTimes = 0;
+	private ThreadLocal<Integer> waitingPeriod = new ThreadLocal<Integer>();
 	private Map<String, LockEntity> openedFileMap = new HashMap<String, LockEntity>();
 	
 	class LockEntity {
@@ -49,24 +50,24 @@ public class ConnectionManager {
 	}
 	
 	static{
-		instance = new ConnectionManager();
 		configHelper = ConfigHelper.getInstance();
+		reducePeriod = configHelper.getConnectionReducePeriod();
+		instance = new ConnectionManager();
 	}
 	
-	public ConnectionManager(){}
-	
+	private ConnectionManager(){}
+
 	/*
 	 * Public method
 	 */
-	
 	public static ConnectionManager getInstance() {
 		return instance;
 	}
 	
 	public String getAvailableRemote(String browserKey, Map<String, List<String>> remoteMap) {
+		this.waitingPeriod.set(configHelper.getConnectionWaitPeriod());
 		
-		List<String> remotes = remoteMap.get(browserKey);
-		
+		List<String> remotes = remoteMap.get(browserKey);		
 		do {
 			String remote = tryLock(remotes, browserKey);
 			
@@ -74,16 +75,17 @@ public class ConnectionManager {
 				waitForConnection();
 			else
 				return remote;
-		} while(waitTimes <= configHelper.getConnectionWaitTimes());
-		
-		return null;
+			
+		} while(true);
 	}
 	
 	public void releaseRemote(String remote) throws IOException {
+		waitingPeriod.remove();
+		
 		if(openedFileMap.containsKey(remote)) {
 			openedFileMap.get(remote).release();
 			openedFileMap.remove(remote);
-			System.out.println("release remote, " + remote);
+			System.out.println(random + ":release remote, " + remote);
 		}
 	}
 	
@@ -104,17 +106,16 @@ public class ConnectionManager {
 				
 				if(lock != null) {
 					openedFileMap.put(browserKey, new LockEntity(lockFile, file, lock));
-					System.out.println("get connection... with " + remote);
+					System.out.println(random + ":get connection... with " + remote);
 					return remote;
 				}
 			} catch (Exception e) {
-				System.out.println("can't create or open a file to write");
+				System.out.println(random + ":can't create or open a file to write");
 			} finally {
 				if(lock == null)
 					try {
 						file.close();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 			}
@@ -134,11 +135,13 @@ public class ConnectionManager {
 
 	private void waitForConnection() {
 		try {
-			System.out.println("wait for connection...");
+			System.out.println(random + ":wait for connection...");
 			Thread.sleep(configHelper.getConnectionWaitPeriod());
 		} catch (InterruptedException e) {}
 		// like priority queue
-		waitingPeriod -= waitingPeriod/100;
+		int wp = waitingPeriod.get();
+		if(wp > reducePeriod) wp -= wp / reducePeriod;
+		waitingPeriod.set(wp);
 	}
 	
 //	@Test
@@ -198,10 +201,8 @@ public class ConnectionManager {
 				Thread.sleep(10000);
 				manager.releaseRemote(remote);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
