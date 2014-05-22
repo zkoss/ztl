@@ -97,7 +97,7 @@ public class ZKClientTestCase extends ZKTestCase {
 				sleep(ms);
 			}
 			i++;
-			sleep(ms);
+			sleep(includingAnimation ? ms*2 : ms);
 		}
 	}
 	/**
