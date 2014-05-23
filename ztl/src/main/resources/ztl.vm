@@ -27,6 +27,19 @@ import org.zkoss.ztl.util.*;
 import org.openqa.selenium.*;
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.SeleniumException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 #foreach($item in $ztl.import)
 import $item;
 #end
@@ -44,17 +57,30 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 #foreach($case in $ztl.children)
 	@Test(expected = AssertionError.class)
 	public void test${case.id}() {
-		for (Selenium browser : browsers) {
-			try {
-				start(browser);
-				windowFocus();
-				windowMaximize();
-				String zscript = "";
-				Widget engine = new Widget(new StringBuffer("zk.Desktop._dt"));
+		
+		ExecutorService executorService = Executors.newCachedThreadPool();
+		List<Callable<String>> callables = new ArrayList<Callable<String>>();
+		Set<String> browserSet = new HashSet<String>();
+	
+		for (final Selenium browser : browsers) {
+			final ZKSelenium zkSelenium = (ZKSelenium) browser;
+			browserSet.add(zkSelenium.getBrowserName());
+			System.out.println("add browser: " + zkSelenium.getBrowserName());
+			
+			callables.add(new Callable<String>() {
 				
-				// remove all of unnecessary children
-				if (target.endsWith("/service.zul"))
-					removeChildren(engine.firstChild());
+				public String call() throws Exception {
+		
+					try {
+						start(browser);
+						windowFocus();
+						windowMaximize();
+						String zscript = "";
+						Widget engine = new Widget(new StringBuffer("zk.Desktop._dt"));
+						
+						// remove all of unnecessary children
+						if (target.endsWith("/service.zul"))
+							removeChildren(engine.firstChild());
 					
 				/** start **/
 #foreach ($source in $case.children)
@@ -90,15 +116,54 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 	#end	
 #end	
 	/** end **/
-			} catch (SeleniumException e) {
-				ZKSelenium zbrowser = ((ZKSelenium) browser);
-				ConfigHelper.getInstance().clearCache(zbrowser);
-				zbrowser.shutdown();
-				throw e;
-			} finally {
-				stop();	
-			}
+						return zkSelenium.getBrowserName();
+					} catch (SeleniumException e) {
+						ConfigHelper.getInstance().clearCache(zkSelenium);
+						zkSelenium.shutdown();
+						throw e;
+					} finally {
+						stop();	
+					}
+				}
+			});
 		}
+		
+		executorService.shutdown();
+		try {
+			executorService.awaitTermination(_timeout, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+			System.out.println("Thread got interrupted: " + e.getMessage());
+			e.printStackTrace();
+		}
+		
+				List<Future<String>> futures = null;
+		try {
+			futures = executorService.invokeAll(callables, _timeout, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e1) {
+			System.out.println("interrupted...");
+		}
+		
+		for (Future<String> future : futures) {
+			try {
+				browsers.remove(future.get(0, TimeUnit.MILLISECONDS));
+			} catch (Exception e) {}
+		}
+		
+		for (String b : browserSet) {
+			System.out.println("kill thread belong to browser:" + b);
+			
+//			CommandLine cl = new CommandLine(ClassLoader.getSystemResource("test.bat").getFile());
+//			cl.addArgument(b);
+//			DefaultExecutor executor = new DefaultExecutor();
+//			System.out.println("exec:" + executor.execute(cl));
+		}
+		
+//		if(browsers.size() > 0)
+//			try {
+//				Thread.sleep(90000);
+//			} catch (InterruptedException e) {}
+		
+		executorService.shutdownNow();
 	}
 #end
 }
