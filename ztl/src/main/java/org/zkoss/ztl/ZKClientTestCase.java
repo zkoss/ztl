@@ -827,6 +827,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (isOpera()) {
 			findElement(locator).clear();
 			waitResponse();
+			focus(locator);
 			typeKeys(locator, value);
 			waitResponse();
 		} else {
