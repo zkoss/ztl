@@ -490,7 +490,7 @@ public class ConfigHelper {
 						// System.err.println("put: " + k +"=" + list);
 						if (_ignoreMap.containsKey(k)) {
 							_ignoreMap.get(k).addAll(list);
-						} else _ignoreMap.put(k, list);
+						} else _ignoreMap.put(k, new ArrayList<String>(list));
 					}
 					list = new ArrayList<String>();
 					key = null;
@@ -591,9 +591,10 @@ public class ConfigHelper {
 						continue;
 					}
 				}
-
-				String[] allBrowsers = _prop.getProperty(ALL_BROWSERS).split(
-						",");
+				String allBrowser = System.getProperty("browser");
+				if (allBrowser == null || allBrowser.isEmpty() || "${browser}".equals(allBrowser))
+					allBrowser = _prop.getProperty(ALL_BROWSERS);
+				String[] allBrowsers = allBrowser.split(",");
 				for (String browser : allBrowsers) {
 					String browserKey = browser.trim();
 					if (_driverSetting.containsKey(browserKey)) {

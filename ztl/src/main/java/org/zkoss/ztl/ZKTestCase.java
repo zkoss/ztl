@@ -203,6 +203,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	 */
 	protected void start(Selenium selenium) {
 		_selenium.set(selenium);
+		this.selenium.set(selenium); // if some exceptions happened, here is a way to close that browser
 		System.out.println("testing:"+((ZKSelenium)selenium).getBrowserName());
 		String theme = ConfigHelper.getInstance().getTheme();
 		selenium.open(theme == null ? target : target + "?zktheme=" + theme);
@@ -213,7 +214,6 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		if (ConfigHelper.getInstance().isDebuggable()) {
 			((JavascriptExecutor) getWebDriver()).executeScript(Scripts.ZTL_DEBUGGER_SCRIPTS);
 		}
-		this.selenium.set(selenium);
 		recordCount.set(0); // reset
 	}
 	
@@ -1192,10 +1192,14 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void windowMaximize() {
-		if (this.isIPhone() || this.isAndroid())
-			getCurrent().windowMaximize();
-		else
-			this.getWebDriver().manage().window().maximize();
+		try {
+			if (this.isIPhone() || this.isAndroid())
+				getCurrent().windowMaximize();
+			else
+				this.getWebDriver().manage().window().maximize();
+		} catch (Exception e) {
+			// won't thread exception
+		}
 	}
 
 	@Override
