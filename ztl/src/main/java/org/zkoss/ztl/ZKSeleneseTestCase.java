@@ -67,7 +67,7 @@ public class ZKSeleneseTestCase extends TestCase {
      */
     public void setUp() throws Exception {
         stb.setUp();
-        selenium.set(stb.selenium);
+        selenium.set(stb.selenium.get());
     }
 
     /**
@@ -79,7 +79,7 @@ public class ZKSeleneseTestCase extends TestCase {
      */
     public void setUp(String url) throws Exception {
         stb.setUp(url);
-        selenium.set(stb.selenium);
+        selenium.set(stb.selenium.get());
     }
 
     /**
@@ -90,7 +90,7 @@ public class ZKSeleneseTestCase extends TestCase {
      */
     public void setUp(String url, String browserString) throws Exception {
         stb.setUp(url, browserString);
-        selenium.set(stb.selenium);
+        selenium.set(stb.selenium.get());
     }
 
     /** checks for verification errors and stops the browser */

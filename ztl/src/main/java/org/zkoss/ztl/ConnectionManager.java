@@ -28,14 +28,16 @@ public class ConnectionManager {
 	private Map<String, LockEntity> openedFileMap = new HashMap<String, LockEntity>();
 	
 	class LockEntity {
-		File file;
+		private File file;
 		private RandomAccessFile openedFile;
 		private FileLock lock;
+		private String remote;
 		
-		public LockEntity(File file, RandomAccessFile openedFile, FileLock lock) {
+		public LockEntity(File file, RandomAccessFile openedFile, FileLock lock, String remote) {
 			this.file = file;
 			this.openedFile = openedFile;
 			this.lock = lock;
+			this.remote = remote;
 		}
 		
 		public void release() {
@@ -89,6 +91,13 @@ public class ConnectionManager {
 		}
 	}
 	
+	public String getOpenedRemote(String browserKey) {
+		if(openedFileMap.containsKey(browserKey))
+			return openedFileMap.get(browserKey).remote;
+		
+		return null;
+	}
+	
 	/*
 	 * Private method
 	 */
@@ -105,7 +114,7 @@ public class ConnectionManager {
 				lock = file.getChannel().tryLock();
 				
 				if(lock != null) {
-					openedFileMap.put(browserKey, new LockEntity(lockFile, file, lock));
+					openedFileMap.put(browserKey, new LockEntity(lockFile, file, lock, remote));
 					System.out.println(random + ":get connection... with " + remote);
 					return remote;
 				}

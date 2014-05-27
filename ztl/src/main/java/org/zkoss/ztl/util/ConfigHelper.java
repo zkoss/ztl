@@ -118,6 +118,7 @@ public class ConfigHelper {
 	private int _connectionWaitPeriod;
 	private int _connectionReducePeriod;
 	private String _mutexDir;
+	private int _restartSleep;
 	
 
 	/**
@@ -620,6 +621,7 @@ public class ConfigHelper {
 				_connectionWaitPeriod = Integer.parseInt(_prop.getProperty("connectionWaitPeriod"));
 				_connectionReducePeriod = Integer.parseInt(_prop.getProperty("connectionReducePeriod"));
 				_mutexDir = _prop.getProperty("mutexDir");
+				_restartSleep = Integer.parseInt(_prop.getProperty("restartSleep"));
 			} finally {
 				if (in != null) {
 					in.close();
@@ -725,5 +727,13 @@ public class ConfigHelper {
 
 	public void setConnectionReducePeriod(int connectionReducePeriod) {
 		this._connectionReducePeriod = connectionReducePeriod;
+	}
+
+	public int getRestartSleep() {
+		return _restartSleep;
+	}
+
+	public void setRestartSleep(int _restartSleep) {
+		this._restartSleep = _restartSleep;
 	}
 }

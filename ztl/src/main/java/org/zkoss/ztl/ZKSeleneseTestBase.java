@@ -43,7 +43,7 @@ public class ZKSeleneseTestBase {
 	    private boolean captureScreenShotOnFailure = false;
 	    
 	    /** Use this object to run all of your selenium tests */
-	    protected Selenium selenium;
+	    protected ThreadLocal<Selenium> selenium;
 	    
 		HashSet browsers = new HashSet();
 	    StringBuffer verificationErrors = new StringBuffer();
@@ -118,8 +118,9 @@ public class ZKSeleneseTestBase {
 	        if (url == null) {
 	            url = "http://localhost:" + port;
 	        }
-	        selenium = new DefaultSelenium("localhost", port, browserString, url);
-	        selenium.start();
+	        Selenium s = new DefaultSelenium("localhost", port, browserString, url);
+	        selenium.set(s);
+	        s.start();
 	    }
 
 	    /** Like assertTrue, but fails at the end of the test (during tearDown) */
@@ -142,7 +143,7 @@ public class ZKSeleneseTestBase {
 	    
 	    /** Returns the body text of the current page */
 	    public String getText() {
-	        return selenium.getEval("this.page().bodyText()");
+	        return selenium.get().getEval("this.page().bodyText()");
 	    }
 
 	    /** Like assertEquals, but fails at the end of the test (during tearDown) */
@@ -496,7 +497,7 @@ public class ZKSeleneseTestBase {
 	    		checkForVerificationErrors();
 	    	} finally {
 	    	    if (selenium != null) {
-	    	        selenium.stop();
+	    	        selenium.get().stop();
 	    	        selenium = null;
 	    	    }
 	    	}

@@ -196,7 +196,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	protected String target;
 	protected List<Selenium> browsers;
 	protected String caseID;
-	protected int recordCount;
+	protected ThreadLocal<Integer> recordCount = new ThreadLocal<Integer>();
 
 	/**
 	 * Launches the browser with a new Selenium session
@@ -214,7 +214,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 			((JavascriptExecutor) getWebDriver()).executeScript(Scripts.ZTL_DEBUGGER_SCRIPTS);
 		}
 		this.selenium.set(selenium);
-		recordCount = 0; // reset
+		recordCount.set(0); // reset
 	}
 	
 	/**
@@ -503,6 +503,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void close() {
+		recordCount.remove();
 		getCurrent().close();
 	}
 
@@ -1290,7 +1291,9 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
             byte[] imgByteArr = ((TakesScreenshot)((ZKSelenium)getCurrent()).getWrappedDriver()).getScreenshotAs(OutputType.BYTES);
             BufferedImage testBuffImg = ImageIO.read(new ByteArrayInputStream(imgByteArr));
             
-            final String postfix = "_" + recordCount++ + ".png";
+            int rCount = recordCount.get();
+            final String postfix = "_" + rCount + ".png";
+            recordCount.set(rCount + 1);
             if (configHelper.isComparable()) {
             	File basef = new File(baseDir + File.separator + caseID, caseID + "_" + browserName + postfix);
             	if (!basef.isFile()) {

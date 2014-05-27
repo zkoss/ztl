@@ -15,7 +15,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 #if ($ztl.package != "")
 package ${ztl.package};
 #end
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
 import org.junit.Test;
+import org.zkoss.ztl.ConnectionManager;
 import org.zkoss.ztl.Element;
 import org.zkoss.ztl.JQuery;
 import org.zkoss.ztl.Tags;
@@ -27,12 +30,11 @@ import org.zkoss.ztl.util.*;
 import org.openqa.selenium.*;
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.SeleniumException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -127,42 +129,59 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 				}
 			});
 		}
-		
-		executorService.shutdown();
+		System.out.println("p0");
+		List<Future<String>> futures = null;
 		try {
-			executorService.awaitTermination(_timeout, TimeUnit.MILLISECONDS);
+			futures = executorService.invokeAll(callables, _timeout, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 			System.out.println("Thread got interrupted: " + e.getMessage());
 			e.printStackTrace();
 		}
-		
-				List<Future<String>> futures = null;
-		try {
-			futures = executorService.invokeAll(callables, _timeout, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e1) {
-			System.out.println("interrupted...");
-		}
+		System.out.println("p1");
 		
 		for (Future<String> future : futures) {
 			try {
-				browsers.remove(future.get(0, TimeUnit.MILLISECONDS));
+				browserSet.remove(future.get(0, TimeUnit.MILLISECONDS));
 			} catch (Exception e) {}
 		}
-		
-		for (String b : browserSet) {
+		System.out.println("p2");
+		Iterator<String> iter = browserSet.iterator();
+		while (iter.hasNext()) {
+			String b = iter.next();
 			System.out.println("kill thread belong to browser:" + b);
 			
-//			CommandLine cl = new CommandLine(ClassLoader.getSystemResource("test.bat").getFile());
-//			cl.addArgument(b);
-//			DefaultExecutor executor = new DefaultExecutor();
-//			System.out.println("exec:" + executor.execute(cl));
+			String url = ConnectionManager.getInstance().getOpenedRemote(b);
+			
+			// get URL means it got block ....
+			if(url != null) {
+				CommandLine cl = new CommandLine(ClassLoader.getSystemResource("restartVm.sh").getFile());
+				cl.addArgument(b);
+				cl.addArgument(url.replaceAll(".*//", "").replaceAll(":.*", ""));
+				try {
+					new DefaultExecutor().execute(cl);
+				} catch (Exception e) {
+					System.out.println(e);
+					e.printStackTrace();
+				}
+			} else
+				iter.remove();
 		}
 		
-//		if(browsers.size() > 0)
-//			try {
-//				Thread.sleep(90000);
-//			} catch (InterruptedException e) {}
+		System.out.println("p3");
+		if(browserSet.size() > 0)
+			try {
+				Thread.sleep(ConfigHelper.getInstance().getRestartSleep());
+			} catch (InterruptedException e) {}
+		System.out.println("p4");
 		
+		for (String b : browserSet) {
+			try {
+				ConnectionManager.getInstance().releaseRemote(b);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println("p5");
 		executorService.shutdownNow();
 	}
 #end
