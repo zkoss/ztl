@@ -212,9 +212,7 @@ public class ConfigHelper {
 
 	private WebDriver getWebDriver(String key, String remotePath) {
 		try {
-			if (remotePath != null) {
-				System.out.println("@@@get remote drive..." + key + "," + remotePath + "@@@");
-				
+			if (remotePath != null) {				
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.firefox());
@@ -237,8 +235,6 @@ public class ConfigHelper {
 							DesiredCapabilities.iphone());
 				}
 			} else {
-				System.out.println("@@@get local drive..." + key + "," + remotePath + "@@@");
-				
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					return new FirefoxDriver();
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
