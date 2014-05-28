@@ -129,7 +129,6 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 				}
 			});
 		}
-		System.out.println("p0");
 		List<Future<String>> futures = null;
 		try {
 			futures = executorService.invokeAll(callables, _timeout, TimeUnit.MILLISECONDS);
@@ -137,14 +136,12 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			System.out.println("Thread got interrupted: " + e.getMessage());
 			e.printStackTrace();
 		}
-		System.out.println("p1");
 		
 		for (Future<String> future : futures) {
 			try {
 				browserSet.remove(future.get(0, TimeUnit.MILLISECONDS));
 			} catch (Exception e) {}
 		}
-		System.out.println("p2");
 		Iterator<String> iter = browserSet.iterator();
 		while (iter.hasNext()) {
 			String b = iter.next();
@@ -167,12 +164,10 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 				iter.remove();
 		}
 		
-		System.out.println("p3");
 		if(browserSet.size() > 0)
 			try {
 				Thread.sleep(ConfigHelper.getInstance().getRestartSleep());
 			} catch (InterruptedException e) {}
-		System.out.println("p4");
 		
 		for (String b : browserSet) {
 			try {
@@ -181,7 +176,6 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("p5");
 		executorService.shutdownNow();
 	}
 #end

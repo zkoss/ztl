@@ -28,13 +28,11 @@ public class ConnectionManager {
 	private Map<String, LockEntity> openedFileMap = new HashMap<String, LockEntity>();
 	
 	class LockEntity {
-		private File file;
 		private RandomAccessFile openedFile;
 		private FileLock lock;
 		private String remote;
 		
-		public LockEntity(File file, RandomAccessFile openedFile, FileLock lock, String remote) {
-			this.file = file;
+		public LockEntity(RandomAccessFile openedFile, FileLock lock, String remote) {
 			this.openedFile = openedFile;
 			this.lock = lock;
 			this.remote = remote;
@@ -44,7 +42,6 @@ public class ConnectionManager {
 			try {
 				lock.release();
 				openedFile.close();
-				file.delete();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -87,7 +84,7 @@ public class ConnectionManager {
 		if(openedFileMap.containsKey(remote)) {
 			openedFileMap.get(remote).release();
 			openedFileMap.remove(remote);
-			System.out.println(random + ":release remote, " + remote);
+			// System.out.println(random + ":release remote, " + remote);
 		}
 	}
 	
@@ -114,8 +111,8 @@ public class ConnectionManager {
 				lock = file.getChannel().tryLock();
 				
 				if(lock != null) {
-					openedFileMap.put(browserKey, new LockEntity(lockFile, file, lock, remote));
-					System.out.println(random + ":get connection... with " + remote);
+					openedFileMap.put(browserKey, new LockEntity(file, lock, remote));
+					// System.out.println(random + ":get connection... with " + remote);
 					return remote;
 				}
 			} catch (Exception e) {
@@ -144,7 +141,6 @@ public class ConnectionManager {
 
 	private void waitForConnection() {
 		try {
-			System.out.println(random + ":wait for connection...");
 			Thread.sleep(configHelper.getConnectionWaitPeriod());
 		} catch (InterruptedException e) {}
 		// like priority queue
