@@ -1204,10 +1204,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void stop() {
-		if (this.selenium.get() != null) {
-			this.selenium.get().stop();
-			this.selenium.remove();
-		}
+		if (this.selenium.get() != null) this.selenium.get().stop();
 		if (_selenium != null) _selenium.remove();	
 	}
 
