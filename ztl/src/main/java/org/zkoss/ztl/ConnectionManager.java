@@ -21,6 +21,9 @@ public class ConnectionManager {
 	private static ConnectionManager instance;
 	private static ConfigHelper configHelper;
 	private static double random = Math.random();
+	public void printUUID(long uuid) {
+		System.out.println(uuid + "===" + random);
+	}
 	private static int reducePeriod;
 	
 	// milliseconds

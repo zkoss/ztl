@@ -18,6 +18,8 @@ package org.zkoss.ztl;
 
 import java.util.Date;
 
+import org.zkoss.ztl.util.ConfigHelper;
+
 import junit.framework.TestCase;
 
 import com.thoughtworks.selenium.SeleneseTestBase;
@@ -32,6 +34,10 @@ public class ZKSeleneseTestCase extends TestCase {
 
 	// static tag used for debugging parallel test
 	protected static long timeUUID = new Date().getTime();
+	static {
+		// init configHelper
+		ConnectionManager.getInstance().printUUID(timeUUID);
+	}
 	public long getTimeUUID() {return timeUUID;}
 	
     private ZKSeleneseTestBase stb = new ZKSeleneseTestBase();
