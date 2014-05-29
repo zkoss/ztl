@@ -79,6 +79,8 @@ public class ConnectionManager {
 	}
 	
 	public void releaseRemote(String remote) throws IOException {
+		System.out.println("log release remote...");
+		
 		waitingPeriod.remove();
 		
 		if(openedFileMap.containsKey(remote)) {
@@ -150,69 +152,69 @@ public class ConnectionManager {
 	}
 	
 //	@Test
-	public void testConnection() throws InterruptedException {
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
-		map.put("ie8", Arrays.asList("10.1.3.1", "10.1.3.2"));
-		map.put("ie9", Arrays.asList("10.1.3.7", "10.1.3.8"));
-		
-		ExecutorService executor = Executors.newCachedThreadPool();
-		executor.execute(new TestThread("ie8", map));
-		executor.execute(new TestThread("ie9", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
+//	public void testConnection() throws InterruptedException {
+//		Map<String, List<String>> map = new HashMap<String, List<String>>();
+//		map.put("ie8", Arrays.asList("10.1.3.1", "10.1.3.2"));
+//		map.put("ie9", Arrays.asList("10.1.3.7", "10.1.3.8"));
+//		
+//		ExecutorService executor = Executors.newCachedThreadPool();
 //		executor.execute(new TestThread("ie8", map));
 //		executor.execute(new TestThread("ie9", map));
-//		executor.execute(new TestThread("ie9", map));
-//		executor.execute(new TestThread("ie9", map));
-//		executor.execute(new TestThread("ie9", map));
-//		executor.execute(new TestThread("ie9", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-//		executor.execute(new TestThread("ie8", map));
-		
-		executor.shutdown();
-		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-	}
-	
-	class TestThread implements Runnable {
-
-		private String name;
-		private Map<String, List<String>> remoteMap;
-		
-		public TestThread(String name, Map<String, List<String>> remoteMap) {
-			this.name = name;
-			this.remoteMap = remoteMap;
-		}
-		
-		@Override
-		public void run() {
-			ConnectionManager manager = ConnectionManager.getInstance();
-			String remote = manager.getAvailableRemote(name, remoteMap);
-			
-			try {
-				Thread.sleep(10000);
-				manager.releaseRemote(remote);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			
-		}
-		
-	}
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie9", map));
+////		executor.execute(new TestThread("ie9", map));
+////		executor.execute(new TestThread("ie9", map));
+////		executor.execute(new TestThread("ie9", map));
+////		executor.execute(new TestThread("ie9", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+////		executor.execute(new TestThread("ie8", map));
+//		
+//		executor.shutdown();
+//		executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+//	}
+//	
+//	class TestThread implements Runnable {
+//
+//		private String name;
+//		private Map<String, List<String>> remoteMap;
+//		
+//		public TestThread(String name, Map<String, List<String>> remoteMap) {
+//			this.name = name;
+//			this.remoteMap = remoteMap;
+//		}
+//		
+//		@Override
+//		public void run() {
+//			ConnectionManager manager = ConnectionManager.getInstance();
+//			String remote = manager.getAvailableRemote(name, remoteMap);
+//			
+//			try {
+//				Thread.sleep(10000);
+//				manager.releaseRemote(remote);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			
+//			
+//		}
+//		
+//	}
 }

@@ -61,13 +61,13 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 	@Test(expected = AssertionError.class)
 	public void test${case.id}() {
 		final long luuid = new Date().getTime();
-		System.out.println(luuid + ":log 1");
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 1");
 		ExecutorService executorService = Executors.newCachedThreadPool();
 		List<Callable<String>> callables = new ArrayList<Callable<String>>();
 		Set<String> browserSet = new HashSet<String>();
 		for (final Selenium browser : browsers) {
 		
-			System.out.println(luuid + ":log 2");
+			System.out.println(getTimeUUID() + "-" + luuid + ":log 2");
 			final ZKSelenium zkSelenium = (ZKSelenium) browser;
 			browserSet.add(zkSelenium.getBrowserName());
 			System.out.println("add browser: " + zkSelenium.getBrowserName());
@@ -75,7 +75,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			callables.add(new Callable<String>() {
 				
 				public String call() throws Exception {
-					System.out.println(luuid + ":log 3");
+					System.out.println(getTimeUUID() + "-" + luuid + ":log 3");
 					try {
 						start(browser);
 						windowFocus();
@@ -127,7 +127,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 						zkSelenium.shutdown();
 						throw e;
 					} finally {
-						System.out.println(luuid + ":log 4");
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4");
 						stop();	
 					}
 				}
@@ -142,7 +142,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			e.printStackTrace();
 		}
 		
-		System.out.println(luuid + ":log 5");
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 5");
 		
 		for (Future<String> future : futures) {
 			try {
@@ -171,7 +171,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 				iter.remove();
 		}
 		
-		System.out.println(luuid + ":log 6");
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 6");
 		
 		if(browserSet.size() > 0)
 			try {
@@ -186,7 +186,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			}
 		}
 		
-		System.out.println(luuid + ":log 7");
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 7");
 		
 		executorService.shutdownNow();
 	}

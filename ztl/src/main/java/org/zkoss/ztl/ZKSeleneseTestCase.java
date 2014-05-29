@@ -16,6 +16,8 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl;
 
+import java.util.Date;
+
 import junit.framework.TestCase;
 
 import com.thoughtworks.selenium.SeleneseTestBase;
@@ -28,6 +30,10 @@ import com.thoughtworks.selenium.Selenium;
  */
 public class ZKSeleneseTestCase extends TestCase {
 
+	// static tag used for debugging parallel test
+	protected static long timeUUID = new Date().getTime();
+	public long getTimeUUID() {return timeUUID;}
+	
     private ZKSeleneseTestBase stb = new ZKSeleneseTestBase();
 
     /** Use this object to run all of your selenium tests */
