@@ -125,7 +125,6 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 #end	
 	/** end **/
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-3");
-						return zkSelenium.getBrowserName();
 					} catch (SeleniumException e) {
 						ConfigHelper.getInstance().clearCache(zkSelenium);
 						zkSelenium.shutdown();
@@ -133,7 +132,10 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 					} finally {
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-4");
 						stop();	
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-5");
 					}
+					
+					return zkSelenium.getBrowserName();
 				}
 			});
 		}
