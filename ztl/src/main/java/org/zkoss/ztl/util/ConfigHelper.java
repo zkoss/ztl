@@ -264,6 +264,7 @@ public class ConfigHelper {
 		if (isValidOpenOnce(_openonce)) {
 			final String driverName = _driverSetting.get(browser.getBrowserName());
 			_cacheMap.remove(driverName);
+			ConnectionManager.getInstance().releaseRemote(browser.getBrowserName());
 			System.out.println("Reopen Browser: " + browser.getBrowserName());
 		}
 	}
@@ -285,6 +286,8 @@ public class ConfigHelper {
 			for (ZKSelenium browser :_cacheMap.values())
 				browser.shutdown();
 			_cacheMap.clear();
+			for (ZKSelenium s : _cacheMap.values())
+				ConnectionManager.getInstance().releaseRemote(s.getBrowserName());
 		}
 	}
 	/**

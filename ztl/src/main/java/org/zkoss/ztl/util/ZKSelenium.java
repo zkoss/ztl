@@ -16,8 +16,6 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl.util;
 
-import java.io.IOException;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.zkoss.ztl.ConnectionManager;
@@ -93,15 +91,18 @@ WrapsDriver {
 				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().close();
 			isBrowserOpened = false;
-			try {
-				ConnectionManager.getInstance().releaseRemote(_browsername);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			ConnectionManager.getInstance().releaseRemote(_browsername);
 		}
 	}
+	
+	/*
+	 * the caller will invoke the following line first
+	 * ConfigHelper.getInstance().clearCache(zkSelenium);
+	 * please see in ztl.vm in ZTL project
+	 */
 	public void shutdown() {
 		getWrappedDriver().quit();
+		ConnectionManager.getInstance().releaseRemote(_browsername);
 	}
 	@Override
 	public void stop() {
@@ -110,11 +111,7 @@ WrapsDriver {
 				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().quit();
 			isBrowserOpened = false;
-			try {
-				ConnectionManager.getInstance().releaseRemote(_browsername);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			ConnectionManager.getInstance().releaseRemote(_browsername);
 		}
 	}
 	

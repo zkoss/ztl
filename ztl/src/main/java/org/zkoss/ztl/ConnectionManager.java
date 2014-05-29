@@ -82,7 +82,7 @@ public class ConnectionManager {
 		} while(true);
 	}
 	
-	public void releaseRemote(String remote) throws IOException {
+	public void releaseRemote(String remote) {
 		System.out.println("log release remote...");
 		
 		waitingPeriod.remove();

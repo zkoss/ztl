@@ -31,16 +31,13 @@ import org.openqa.selenium.*;
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.SeleniumException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.Date;
 #foreach($item in $ztl.import)
@@ -63,8 +60,8 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 		final long luuid = new Date().getTime();
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 1");
 		ExecutorService executorService = Executors.newCachedThreadPool();
-		List<Callable<String>> callables = new ArrayList<Callable<String>>();
-		Set<String> browserSet = new HashSet<String>();
+		final Set<String> browserSet = new HashSet<String>();
+		
 		for (final Selenium browser : browsers) {
 		
 			System.out.println(getTimeUUID() + "-" + luuid + ":log 2");
@@ -72,9 +69,9 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			browserSet.add(zkSelenium.getBrowserName());
 			System.out.println("add browser: " + zkSelenium.getBrowserName());
 			
-			callables.add(new Callable<String>() {
+			executorService.execute(new Runnable() {
 				
-				public String call() throws Exception {
+				public void run(){
 					System.out.println(getTimeUUID() + "-" + luuid + ":log 3");
 					try {
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-1");
@@ -125,38 +122,31 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 #end	
 	/** end **/
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-3");
+						browserSet.remove(zkSelenium.getBrowserName());
 					} catch (SeleniumException e) {
+						System.out.println(getTimeUUID() + "-" + luuid + "selenium exception...");
 						ConfigHelper.getInstance().clearCache(zkSelenium);
 						zkSelenium.shutdown();
+						browserSet.remove(zkSelenium.getBrowserName());
+						throw e;
+					} catch (AssertionError e) {
+						browserSet.remove(zkSelenium.getBrowserName());
 						throw e;
 					} finally {
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-4");
 						stop();	
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-5");
 					}
-					
-					return zkSelenium.getBrowserName();
 				}
 			});
 		}
 		
-		List<Future<String>> futures = null;
-		try {
-			futures = executorService.invokeAll(callables, _timeout, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			System.out.println("Thread got interrupted: " + e.getMessage());
-			e.printStackTrace();
-		}
-		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 5");
 		
-		for (Future<String> future : futures) {
-			try {
-				browserSet.remove(future.get(0, TimeUnit.MILLISECONDS));
-			} catch (Exception e) {
-				System.out.println(getTimeUUID() + "-" + luuid + ": in catch: " + e.getMessage());
-			}
-		}
+		executorService.shutdown();
+		try {
+			executorService.awaitTermination(_timeout, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {}
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 5-1");
 		
@@ -189,17 +179,10 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 				Thread.sleep(ConfigHelper.getInstance().getRestartSleep());
 			} catch (InterruptedException e) {}
 				
-		for (String b : browserSet) {
-			try {
-				ConnectionManager.getInstance().releaseRemote(b);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		for (String b : browserSet)
+			ConnectionManager.getInstance().releaseRemote(b);
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 7");
-		
-		executorService.shutdownNow();
 	}
 #end
 }
