@@ -77,11 +77,14 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 				public String call() throws Exception {
 					System.out.println(getTimeUUID() + "-" + luuid + ":log 3");
 					try {
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-1");
 						start(browser);
 						windowFocus();
 						windowMaximize();
 						String zscript = "";
 						Widget engine = new Widget(new StringBuffer("zk.Desktop._dt"));
+						
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-2");
 						
 						// remove all of unnecessary children
 						if (target.endsWith("/service.zul"))
@@ -121,13 +124,14 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 	#end	
 #end	
 	/** end **/
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-3");
 						return zkSelenium.getBrowserName();
 					} catch (SeleniumException e) {
 						ConfigHelper.getInstance().clearCache(zkSelenium);
 						zkSelenium.shutdown();
 						throw e;
 					} finally {
-						System.out.println(getTimeUUID() + "-" + luuid + ":log 4");
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-4");
 						stop();	
 					}
 				}
