@@ -153,8 +153,13 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 		for (Future<String> future : futures) {
 			try {
 				browserSet.remove(future.get(0, TimeUnit.MILLISECONDS));
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				System.out.println(getTimeUUID() + "-" + luuid + ": in catch: " + e.getMessage());
+			}
 		}
+		
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 5-1");
+		
 		Iterator<String> iter = browserSet.iterator();
 		while (iter.hasNext()) {
 			String b = iter.next();
