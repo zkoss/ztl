@@ -42,6 +42,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.Date
 #foreach($item in $ztl.import)
 import $item;
 #end
@@ -59,12 +60,14 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 #foreach($case in $ztl.children)
 	@Test(expected = AssertionError.class)
 	public void test${case.id}() {
-		
+		final long luuid = new Date().getTime();
+		System.out.println(luuid + ":log 1");
 		ExecutorService executorService = Executors.newCachedThreadPool();
 		List<Callable<String>> callables = new ArrayList<Callable<String>>();
 		Set<String> browserSet = new HashSet<String>();
-	
 		for (final Selenium browser : browsers) {
+		
+			System.out.println(luuid + ":log 2");
 			final ZKSelenium zkSelenium = (ZKSelenium) browser;
 			browserSet.add(zkSelenium.getBrowserName());
 			System.out.println("add browser: " + zkSelenium.getBrowserName());
@@ -72,7 +75,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			callables.add(new Callable<String>() {
 				
 				public String call() throws Exception {
-		
+					System.out.println(luuid + ":log 3");
 					try {
 						start(browser);
 						windowFocus();
@@ -124,11 +127,13 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 						zkSelenium.shutdown();
 						throw e;
 					} finally {
+						System.out.println(luuid + ":log 4");
 						stop();	
 					}
 				}
 			});
 		}
+		
 		List<Future<String>> futures = null;
 		try {
 			futures = executorService.invokeAll(callables, _timeout, TimeUnit.MILLISECONDS);
@@ -136,6 +141,8 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			System.out.println("Thread got interrupted: " + e.getMessage());
 			e.printStackTrace();
 		}
+		
+		System.out.println(luuid + ":log 5");
 		
 		for (Future<String> future : futures) {
 			try {
@@ -164,11 +171,13 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 				iter.remove();
 		}
 		
+		System.out.println(luuid + ":log 6");
+		
 		if(browserSet.size() > 0)
 			try {
 				Thread.sleep(ConfigHelper.getInstance().getRestartSleep());
 			} catch (InterruptedException e) {}
-		
+				
 		for (String b : browserSet) {
 			try {
 				ConnectionManager.getInstance().releaseRemote(b);
@@ -176,6 +185,9 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 				e.printStackTrace();
 			}
 		}
+		
+		System.out.println(luuid + ":log 7");
+		
 		executorService.shutdownNow();
 	}
 #end
