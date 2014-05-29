@@ -20,9 +20,10 @@ public class ConnectionManager {
 		
 	private static ConnectionManager instance;
 	private static ConfigHelper configHelper;
-	private static double random = Math.random();
+	private static long uuid = 0L;
 	public void printUUID(long uuid) {
-		System.out.println(uuid + "===" + random);
+		this.uuid = uuid;
+		
 	}
 	private static int reducePeriod;
 	
@@ -121,8 +122,7 @@ public class ConnectionManager {
 					return remote;
 				}
 			} catch (Exception e) {
-				System.out.println(random + ":can't create or open a file to write: " + e.getMessage());
-				e.printStackTrace();
+				System.out.println(uuid + ":can't create or open a file to write: " + e.getMessage());
 			} finally {
 				if(lock == null)
 					try {
