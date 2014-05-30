@@ -122,7 +122,8 @@ public class ConnectionManager {
 					return remote;
 				}
 			} catch (Exception e) {
-				System.out.println(uuid + ":can't create or open a file to write: " + e.getMessage());
+				System.out.println(uuid + ":can't create or open a file to write - " + remote + ":" + e.getMessage());
+				e.printStackTrace();
 			} finally {
 				if(lock == null)
 					try {

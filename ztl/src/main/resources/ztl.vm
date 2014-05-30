@@ -130,10 +130,11 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 					} finally {
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-4");
 						stop();
-						browserSet.remove(zkSelenium.getBrowserName());	
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-5");
+						browserSet.remove(zkSelenium.getBrowserName());	
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-6");
 					}
-					System.out.println(getTimeUUID() + "-" + luuid + ":log 4-6");
+					System.out.println(getTimeUUID() + "-" + luuid + ":log 4-7");
 				}
 			});
 		}
