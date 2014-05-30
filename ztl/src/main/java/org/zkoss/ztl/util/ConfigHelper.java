@@ -303,6 +303,24 @@ public class ConfigHelper {
 			final String driverName = _driverSetting.get(key);
 			ZKSelenium browser = _cacheMap.get(driverName);
 			if (browser == null) {
+				try {
+					String url = ConnectionManager.getInstance().getAvailableRemote(key, _browserRemote);
+					WebDriver driver = getWebDriver(_driverSetting.get(key), url);
+					browser = new ZKSelenium(
+							new ZKWebDriverCommandProcessor(getServer()
+									+ getContextPath() + "/" + getAction(), driver),
+							key, _openonce);
+					browser.setSpeed(getDelay());
+					_cacheMap.put(driverName, browser);
+				} catch (RuntimeException e) {
+					ConnectionManager.getInstance().releaseRemote(key);
+					throw e;
+				}
+			}
+			return browser;
+		} else {
+			Selenium browser = null;
+			try {
 				String url = ConnectionManager.getInstance().getAvailableRemote(key, _browserRemote);
 				WebDriver driver = getWebDriver(_driverSetting.get(key), url);
 				browser = new ZKSelenium(
@@ -310,17 +328,9 @@ public class ConfigHelper {
 								+ getContextPath() + "/" + getAction(), driver),
 						key, _openonce);
 				browser.setSpeed(getDelay());
-				_cacheMap.put(driverName, browser);
+			} catch (RuntimeException e) {
+				ConnectionManager.getInstance().releaseRemote(key);
 			}
-			return browser;
-		} else {
-			String url = ConnectionManager.getInstance().getAvailableRemote(key, _browserRemote);
-			WebDriver driver = getWebDriver(_driverSetting.get(key), url);
-			Selenium browser = new ZKSelenium(
-					new ZKWebDriverCommandProcessor(getServer()
-							+ getContextPath() + "/" + getAction(), driver),
-					key, _openonce);
-			browser.setSpeed(getDelay());
 			return browser;
 		}
 	}
