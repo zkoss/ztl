@@ -118,7 +118,6 @@ public class ConnectionManager {
 				
 				if(lock != null) {
 					openedFileMap.put(browserKey, new LockEntity(file, lock, remote));
-					// System.out.println(random + ":get connection... with " + remote);
 					return remote;
 				}
 			} catch (Exception e) {
