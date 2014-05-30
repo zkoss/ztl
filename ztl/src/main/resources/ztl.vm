@@ -72,7 +72,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			executorService.execute(new Runnable() {
 				
 				public void run(){
-					System.out.println(getTimeUUID() + "-" + luuid + ":log 3");
+					System.out.println(getTimeUUID() + "-" + luuid + ":log 3" + ConnectionManager.getInstance().getOpenedRemote(zkSelenium.getBrowserName()));
 					try {
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-1");
 						start(browser);
