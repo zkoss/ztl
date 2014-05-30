@@ -122,19 +122,15 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 #end	
 	/** end **/
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-3");
-						browserSet.remove(zkSelenium.getBrowserName());
 					} catch (SeleniumException e) {
 						System.out.println(getTimeUUID() + "-" + luuid + "selenium exception...");
 						ConfigHelper.getInstance().clearCache(zkSelenium);
 						zkSelenium.shutdown();
-						browserSet.remove(zkSelenium.getBrowserName());
-						throw e;
-					} catch (AssertionError e) {
-						browserSet.remove(zkSelenium.getBrowserName());
 						throw e;
 					} finally {
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-4");
-						stop();	
+						stop();
+						browserSet.remove(zkSelenium.getBrowserName());	
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-5");
 					}
 				}
@@ -146,7 +142,9 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 		executorService.shutdown();
 		try {
 			executorService.awaitTermination(_timeout, TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {}
+		} catch (InterruptedException e) {
+			System.out.println(getTimeUUID() + "-" + luuid + ":in termination...");
+		}
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 5-1");
 		
