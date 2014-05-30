@@ -123,6 +123,9 @@ public class ConnectionManager {
 				}
 			} catch (Exception e) {
 				System.out.println(uuid + ":can't create or open a file to write - " + remote + ":" + e.getMessage());
+				for (LockEntity entity : openedFileMap.values()) {
+					System.out.println("remaining entity:" + entity.remote);
+				}
 				e.printStackTrace();
 			} finally {
 				if(lock == null)
