@@ -133,6 +133,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 						browserSet.remove(zkSelenium.getBrowserName());	
 						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-5");
 					}
+					System.out.println(getTimeUUID() + "-" + luuid + ":log 4-6");
 				}
 			});
 		}
@@ -141,9 +142,11 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 		
 		executorService.shutdown();
 		try {
-			executorService.awaitTermination(_timeout, TimeUnit.MILLISECONDS);
+			if(!executorService.awaitTermination(_timeout, TimeUnit.MILLISECONDS))
+				executorService.shutdownNow();
 		} catch (InterruptedException e) {
-			System.out.println(getTimeUUID() + "-" + luuid + ":in termination...");
+			System.out.println(getTimeUUID() + "-" + luuid + ":in termination ex..." + e.getMessage());
+			e.printStackTrace();
 		}
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 5-1");
@@ -157,6 +160,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			
 			// get URL means it got block ....
 			if(url != null) {
+				System.out.println(getTimeUUID() + "-" + luuid + ":restart browser-" + url);
 				CommandLine cl = new CommandLine("/bin/bash");
 				cl.addArgument(ClassLoader.getSystemResource("restartVm.sh").getFile());
 				cl.addArgument(b);
