@@ -178,7 +178,7 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 6");
 		
-		if(browserSet.size() > 0)
+		if(browserSet.size() > 0)	
 			try {
 				Thread.sleep(ConfigHelper.getInstance().getRestartSleep());
 			} catch (InterruptedException e) {}
@@ -187,6 +187,9 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 			ConnectionManager.getInstance().releaseRemote(b);
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 7");
+		
+		if(browserSet.size() > 0)
+			throw new SeleniumException("case time out for browser:" + Arrays.toString(browserSet.toArray()));
 	}
 #end
 }
