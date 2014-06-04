@@ -44,6 +44,7 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.iphone.IPhoneDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
+import org.zkoss.ztl.ConnectionManager;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
@@ -107,11 +108,18 @@ public class ConfigHelper {
 
 	private HashMap<String, String> _driverSetting;
 
-	private HashMap<String, String> _browserRemote;
+	private HashMap<String, List<String>> _browserRemote;
 
 	private HashMap<String, List<String>> _ignoreMap;
 
 	private volatile boolean _inited;
+	
+	// for parallel connection management
+	private int _connectionWaitPeriod;
+	private int _connectionReducePeriod;
+	private String _mutexDir;
+	private int _restartSleep;
+	
 
 	/**
 	 * key : Firefox, IE ... value : Selenium browser
@@ -204,7 +212,7 @@ public class ConfigHelper {
 
 	private WebDriver getWebDriver(String key, String remotePath) {
 		try {
-			if (remotePath != null) {
+			if (remotePath != null) {				
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.firefox());
@@ -256,6 +264,7 @@ public class ConfigHelper {
 		if (isValidOpenOnce(_openonce)) {
 			final String driverName = _driverSetting.get(browser.getBrowserName());
 			_cacheMap.remove(driverName);
+			ConnectionManager.getInstance().releaseRemote(browser.getBrowserName());
 			System.out.println("Reopen Browser: " + browser.getBrowserName());
 		}
 	}
@@ -294,24 +303,34 @@ public class ConfigHelper {
 			final String driverName = _driverSetting.get(key);
 			ZKSelenium browser = _cacheMap.get(driverName);
 			if (browser == null) {
-				WebDriver driver = getWebDriver(_driverSetting.get(key),
-						_browserRemote.get(key));
+				try {
+					String url = ConnectionManager.getInstance().getAvailableRemote(key, _browserRemote);
+					WebDriver driver = getWebDriver(_driverSetting.get(key), url);
+					browser = new ZKSelenium(
+							new ZKWebDriverCommandProcessor(getServer()
+									+ getContextPath() + "/" + getAction(), driver),
+							key, _openonce);
+					browser.setSpeed(getDelay());
+					_cacheMap.put(driverName, browser);
+				} catch (RuntimeException e) {
+					ConnectionManager.getInstance().releaseRemote(key);
+					throw e;
+				}
+			}
+			return browser;
+		} else {
+			Selenium browser = null;
+			try {
+				String url = ConnectionManager.getInstance().getAvailableRemote(key, _browserRemote);
+				WebDriver driver = getWebDriver(_driverSetting.get(key), url);
 				browser = new ZKSelenium(
 						new ZKWebDriverCommandProcessor(getServer()
 								+ getContextPath() + "/" + getAction(), driver),
 						key, _openonce);
 				browser.setSpeed(getDelay());
-				_cacheMap.put(driverName, browser);
+			} catch (RuntimeException e) {
+				ConnectionManager.getInstance().releaseRemote(key);
 			}
-			return browser;
-		} else {
-			WebDriver driver = getWebDriver(_driverSetting.get(key),
-					_browserRemote.get(key));
-			Selenium browser = new ZKSelenium(
-					new ZKWebDriverCommandProcessor(getServer()
-							+ getContextPath() + "/" + getAction(), driver),
-					key, _openonce);
-			browser.setSpeed(getDelay());
 			return browser;
 		}
 	}
@@ -416,7 +435,7 @@ public class ConfigHelper {
 			_driverSetting = new HashMap<String, String>();
 		}
 		if (_browserRemote == null) {
-			_browserRemote = new HashMap<String, String>();
+			_browserRemote = new HashMap<String, List<String>>();
 		}
 		if (_ignoreMap == null) {
 			_ignoreMap = new HashMap<String, List<String>>();
@@ -508,7 +527,15 @@ public class ConfigHelper {
 		// for remote driver
 		if (browserPath.indexOf(";") != -1) {
 			String[] tokens = browserPath.split(";");
-			_browserRemote.put(browserName, tokens[0]);
+			
+			// for each remote URL
+			String[] urls = tokens[0].split(",");
+			List<String> urlList = new ArrayList<String>();
+			for (String url : urls) 
+				urlList.add(url);
+			_browserRemote.put(browserName, urlList);
+			
+			// for driver name
 			if (tokens.length > 1) {
 				browserPath = tokens[1];
 			} else {
@@ -598,6 +625,11 @@ public class ConfigHelper {
 								key.substring(start + 1));
 					}
 				}
+				
+				_connectionWaitPeriod = Integer.parseInt(_prop.getProperty("connectionWaitPeriod"));
+				_connectionReducePeriod = Integer.parseInt(_prop.getProperty("connectionReducePeriod"));
+				_mutexDir = _prop.getProperty("mutexDir");
+				_restartSleep = Integer.parseInt(_prop.getProperty("restartSleep"));
 			} finally {
 				if (in != null) {
 					in.close();
@@ -681,4 +713,35 @@ public class ConfigHelper {
 		return _leniency;
 	}
 
+	public int getConnectionWaitPeriod() {
+		return _connectionWaitPeriod;
+	}
+
+	public void setConnectionWaitPeriod(int connectionWaitPeriod) {
+		this._connectionWaitPeriod = connectionWaitPeriod;
+	}
+
+	public String getMutexDir() {
+		return _mutexDir;
+	}
+
+	public void setMutexDir(String mutexDir) {
+		this._mutexDir = mutexDir;
+	}
+
+	public int getConnectionReducePeriod() {
+		return _connectionReducePeriod;
+	}
+
+	public void setConnectionReducePeriod(int connectionReducePeriod) {
+		this._connectionReducePeriod = connectionReducePeriod;
+	}
+
+	public int getRestartSleep() {
+		return _restartSleep;
+	}
+
+	public void setRestartSleep(int _restartSleep) {
+		this._restartSleep = _restartSleep;
+	}
 }

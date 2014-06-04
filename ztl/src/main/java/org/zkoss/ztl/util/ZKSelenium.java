@@ -18,6 +18,7 @@ package org.zkoss.ztl.util;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.internal.WrapsDriver;
+import org.zkoss.ztl.ConnectionManager;
 
 import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.DefaultSelenium;
@@ -90,18 +91,27 @@ WrapsDriver {
 				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().close();
 			isBrowserOpened = false;
+			ConnectionManager.getInstance().releaseRemote(_browsername);
 		}
 	}
+	
+	/*
+	 * the caller will invoke the following line first
+	 * ConfigHelper.getInstance().clearCache(zkSelenium);
+	 * please see in ztl.vm in ZTL project
+	 */
 	public void shutdown() {
 		getWrappedDriver().quit();
+		ConnectionManager.getInstance().releaseRemote(_browsername);
 	}
 	@Override
 	public void stop() {
-		if(!_openonce  || _cyclecount % _maxsize == 0){
+		if(!_openonce || _cyclecount % _maxsize == 0){
 			if (_openonce)
 				ConfigHelper.getInstance().clearCache(this);
 			getWrappedDriver().quit();
 			isBrowserOpened = false;
+			ConnectionManager.getInstance().releaseRemote(_browsername);
 		}
 	}
 	
@@ -130,5 +140,7 @@ WrapsDriver {
 	public String getSpeed() {
 		return _speed;
 	}
+	
+	
 	
 }

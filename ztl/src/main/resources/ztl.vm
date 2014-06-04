@@ -15,7 +15,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 #if ($ztl.package != "")
 package ${ztl.package};
 #end
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
 import org.junit.Test;
+import org.zkoss.ztl.ConnectionManager;
 import org.zkoss.ztl.Element;
 import org.zkoss.ztl.JQuery;
 import org.zkoss.ztl.Tags;
@@ -27,6 +30,17 @@ import org.zkoss.ztl.util.*;
 import org.openqa.selenium.*;
 import com.thoughtworks.selenium.Selenium;
 import com.thoughtworks.selenium.SeleniumException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.Date;
 #foreach($item in $ztl.import)
 import $item;
 #end
@@ -44,17 +58,35 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 #foreach($case in $ztl.children)
 	@Test(expected = AssertionError.class)
 	public void test${case.id}() {
-		for (Selenium browser : browsers) {
-			try {
-				start(browser);
-				windowFocus();
-				windowMaximize();
-				String zscript = "";
-				Widget engine = new Widget(new StringBuffer("zk.Desktop._dt"));
+		final long luuid = new Date().getTime();
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 1");
+		ExecutorService executorService = Executors.newCachedThreadPool();
+		final Set<String> browserSet = new HashSet<String>();
+		
+		for (final Selenium browser : browsers) {
+		
+			System.out.println(getTimeUUID() + "-" + luuid + ":log 2");
+			final ZKSelenium zkSelenium = (ZKSelenium) browser;
+			browserSet.add(zkSelenium.getBrowserName());
+			System.out.println("add browser: " + zkSelenium.getBrowserName());
+			
+			executorService.execute(new Runnable() {
 				
-				// remove all of unnecessary children
-				if (target.endsWith("/service.zul"))
-					removeChildren(engine.firstChild());
+				public void run(){
+					System.out.println(getTimeUUID() + "-" + luuid + ":log 3" + ConnectionManager.getInstance().getOpenedRemote(zkSelenium.getBrowserName()));
+					try {
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-1");
+						start(browser);
+						windowFocus();
+						windowMaximize();
+						String zscript = "";
+						Widget engine = new Widget(new StringBuffer("zk.Desktop._dt"));
+						
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-2");
+						
+						// remove all of unnecessary children
+						if (target.endsWith("/service.zul"))
+							removeChildren(engine.firstChild());
 					
 				/** start **/
 #foreach ($source in $case.children)
@@ -90,15 +122,75 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 	#end	
 #end	
 	/** end **/
-			} catch (SeleniumException e) {
-				ZKSelenium zbrowser = ((ZKSelenium) browser);
-				ConfigHelper.getInstance().clearCache(zbrowser);
-				zbrowser.shutdown();
-				throw e;
-			} finally {
-				stop();	
-			}
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-3");
+					} catch (SeleniumException e) {
+						System.out.println(getTimeUUID() + "-" + luuid + "selenium exception...");
+						ConfigHelper.getInstance().clearCache(zkSelenium);
+						zkSelenium.shutdown();
+						throw e;
+					} finally {
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-4");
+						stop();
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-5");
+						browserSet.remove(zkSelenium.getBrowserName());	
+						System.out.println(getTimeUUID() + "-" + luuid + ":log 4-6");
+					}
+					System.out.println(getTimeUUID() + "-" + luuid + ":log 4-7");
+				}
+			});
 		}
+		
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 5");
+		
+		executorService.shutdown();
+		try {
+			if(!executorService.awaitTermination(_timeout, TimeUnit.MILLISECONDS))
+				executorService.shutdownNow();
+		} catch (InterruptedException e) {
+			System.out.println(getTimeUUID() + "-" + luuid + ":in termination ex..." + e.getMessage());
+			e.printStackTrace();
+		}
+		
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 5-1");
+		
+		Iterator<String> iter = browserSet.iterator();
+		while (iter.hasNext()) {
+			String b = iter.next();
+			System.out.println("kill thread belong to browser:" + b);
+			
+			String url = ConnectionManager.getInstance().getOpenedRemote(b);
+			
+			// get URL means it got block ....
+			if(url != null) {
+				System.out.println(getTimeUUID() + "-" + luuid + ":restart browser-" + url);
+				CommandLine cl = new CommandLine("/bin/bash");
+				cl.addArgument(ClassLoader.getSystemResource("restartVm.sh").getFile());
+				cl.addArgument(b);
+				cl.addArgument(url.replaceAll(".*//", "").replaceAll(":.*", ""));
+				try {
+					new DefaultExecutor().execute(cl);
+				} catch (Exception e) {
+					System.out.println(e);
+					e.printStackTrace();
+				}
+			} else
+				iter.remove();
+		}
+		
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 6");
+		
+		if(browserSet.size() > 0)	
+			try {
+				Thread.sleep(ConfigHelper.getInstance().getRestartSleep());
+			} catch (InterruptedException e) {}
+				
+		for (String b : browserSet)
+			ConnectionManager.getInstance().releaseRemote(b);
+		
+		System.out.println(getTimeUUID() + "-" + luuid + ":log 7");
+		
+		if(browserSet.size() > 0)
+			throw new SeleniumException("case time out for browser:" + Arrays.toString(browserSet.toArray()));
 	}
 #end
 }

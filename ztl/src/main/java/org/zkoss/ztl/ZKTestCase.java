@@ -196,14 +196,14 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	protected String target;
 	protected List<Selenium> browsers;
 	protected String caseID;
-	protected int recordCount;
+	protected ThreadLocal<Integer> recordCount = new ThreadLocal<Integer>();
 
 	/**
 	 * Launches the browser with a new Selenium session
 	 */
 	protected void start(Selenium selenium) {
 		_selenium.set(selenium);
-		this.selenium = selenium; // if some exceptions happened, here is a way to close that browser
+		this.selenium.set(selenium); // if some exceptions happened, here is a way to close that browser
 		System.out.println("testing:"+((ZKSelenium)selenium).getBrowserName());
 		String theme = ConfigHelper.getInstance().getTheme();
 		selenium.open(theme == null ? target : target + "?zktheme=" + theme);
@@ -214,7 +214,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		if (ConfigHelper.getInstance().isDebuggable()) {
 			((JavascriptExecutor) getWebDriver()).executeScript(Scripts.ZTL_DEBUGGER_SCRIPTS);
 		}
-		recordCount = 0; // reset
+		recordCount.set(0); // reset
 	}
 	
 	/**
@@ -503,6 +503,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void close() {
+		recordCount.remove();
 		getCurrent().close();
 	}
 
@@ -1203,7 +1204,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void stop() {
-		if (selenium != null) selenium.stop();
+		if (this.selenium.get() != null) this.selenium.get().stop();
 		if (_selenium != null) _selenium.remove();	
 	}
 
@@ -1291,7 +1292,9 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
             byte[] imgByteArr = ((TakesScreenshot)((ZKSelenium)getCurrent()).getWrappedDriver()).getScreenshotAs(OutputType.BYTES);
             BufferedImage testBuffImg = ImageIO.read(new ByteArrayInputStream(imgByteArr));
             
-            final String postfix = "_" + recordCount++ + ".png";
+            int rCount = recordCount.get();
+            final String postfix = "_" + rCount + ".png";
+            recordCount.set(rCount + 1);
             if (configHelper.isComparable()) {
             	File basef = new File(baseDir + File.separator + caseID, caseID + "_" + browserName + postfix);
             	if (!basef.isFile()) {
