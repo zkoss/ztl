@@ -70,7 +70,11 @@ public class ConnectionManager {
 	public String getAvailableRemote(String browserKey, Map<String, List<String>> remoteMap) {
 		this.waitingPeriod.set(configHelper.getConnectionWaitPeriod());
 		
-		List<String> remotes = remoteMap.get(browserKey);		
+		List<String> remotes = remoteMap.get(browserKey);	
+		
+		if(remotes == null)
+			return null;
+		
 		do {
 			String remote = tryLock(remotes, browserKey);
 			

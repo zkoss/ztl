@@ -16,8 +16,6 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl;
 
-import java.util.Date;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.interactions.HasTouchScreen;
@@ -40,7 +38,6 @@ import com.thoughtworks.selenium.SeleniumException;
  *
  */
 public class ZKClientTestCase extends ZKTestCase {
-	private final static Boolean SCROLLBAR_FAKE = true;
 	protected int _timeout;
 
 	/**
@@ -1134,5 +1131,4 @@ public class ZKClientTestCase extends ZKTestCase {
 			device.rotate(ScreenOrientation.PORTRAIT);
 		}
 	}
-
 }

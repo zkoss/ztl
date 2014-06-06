@@ -24,7 +24,7 @@ import org.zkoss.ztl.JQuery;
 import org.zkoss.ztl.Tags;
 import org.zkoss.ztl.Widget;
 import org.zkoss.ztl.ZK;
-import org.zkoss.ztl.ZKClientTestCase;
+import org.zkoss.ztl.ZKParallelClientTestCase;
 import org.zkoss.ztl.util.*;
 
 import org.openqa.selenium.*;
@@ -46,7 +46,7 @@ import $item;
 #end
 
 @Tags(tags = "${ztl.tags}")
-public class ${ztl.fileName} extends ZKClientTestCase {
+public class ${ztl.fileName} extends ZKParallelClientTestCase {
 	
 	public ${ztl.fileName}() {
 		target = "$ztl.server$ztl.contextPath/$ztl.action";
@@ -153,44 +153,13 @@ public class ${ztl.fileName} extends ZKClientTestCase {
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 5-1");
 		
-		Iterator<String> iter = browserSet.iterator();
-		while (iter.hasNext()) {
-			String b = iter.next();
-			System.out.println("kill thread belong to browser:" + b);
-			
-			String url = ConnectionManager.getInstance().getOpenedRemote(b);
-			
-			// get URL means it got block ....
-			if(url != null) {
-				System.out.println(getTimeUUID() + "-" + luuid + ":restart browser-" + url);
-				CommandLine cl = new CommandLine("/bin/bash");
-				cl.addArgument(ClassLoader.getSystemResource("restartVm.sh").getFile());
-				cl.addArgument(b);
-				cl.addArgument(url.replaceAll(".*//", "").replaceAll(":.*", ""));
-				try {
-					new DefaultExecutor().execute(cl);
-				} catch (Exception e) {
-					System.out.println(e);
-					e.printStackTrace();
-				}
-			} else
-				iter.remove();
-		}
+		handleTimeout(browserSet, luuid);
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 6");
 		
-		if(browserSet.size() > 0)	
-			try {
-				Thread.sleep(ConfigHelper.getInstance().getRestartSleep());
-			} catch (InterruptedException e) {}
-				
-		for (String b : browserSet)
-			ConnectionManager.getInstance().releaseRemote(b);
+		waitAndRelease(browserSet);
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 7");
-		
-		if(browserSet.size() > 0)
-			throw new SeleniumException("case time out for browser:" + Arrays.toString(browserSet.toArray()));
 	}
 #end
 }
