@@ -18,6 +18,7 @@ package org.zkoss.ztl;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,8 @@ public class ZKParallelClientTestCase extends ZKClientTestCase {
 	// used to decide if we need to restart remote VM
 	private static Map<String, Integer> timeoutCount = new HashMap<String, Integer>();
 	private final int maxTimeoutCount = ConfigHelper.getInstance().getMaxTimeoutCount();
+	// save the name of timeout browser, which can't get connection before timeout
+	private final Set<String> emptyUrlSet = new HashSet<String>();
 	
 	/**
 	 * Wait for restarting VM and release connection in the case of VM set to restart
@@ -45,7 +48,11 @@ public class ZKParallelClientTestCase extends ZKClientTestCase {
 			for (String b : browserSet)
 				ConnectionManager.getInstance().releaseRemote(b);
 			
-			throw new SeleniumException("case time out for browser:" + Arrays.toString(browserSet.toArray()));
+			String message = "Case timeout for browser:" + Arrays.toString(browserSet.toArray());
+			
+			if(emptyUrlSet.size() > 0)
+				message += "\nCase timeout for connection acquirement, browser:" + Arrays.toString(emptyUrlSet.toArray()); 
+			throw new SeleniumException(message);
 		}
 	}
 	
@@ -55,17 +62,18 @@ public class ZKParallelClientTestCase extends ZKClientTestCase {
 	public void handleTimeout(Set<String> browserSet, long luuid) {
 		Iterator<String> iter = browserSet.iterator();
 		while (iter.hasNext()) {
-			String b = iter.next();
-			System.out.println("kill thread belong to browser:" + b);
+			String browser = iter.next();
+			System.out.println("kill thread belong to browser:" + browser);
 			
-			String url = ConnectionManager.getInstance().getOpenedRemote(b);
+			String url = ConnectionManager.getInstance().getOpenedRemote(browser);
 			
 			// get URL means it got block ....
-			if(url != null && isTimeoutToRestart(b)) {
+			if(url != null && isTimeoutToRestart(browser)) {
 				System.out.println(getTimeUUID() + "-" + luuid + ":restart browser-" + url);
-				restartVM(b, url);
+				restartVM(browser, url);
 			} else {
 				System.out.println(getTimeUUID() + "-" + luuid + "Can't wait for connection. timeout.");
+				emptyUrlSet.add(browser);
 				iter.remove();
 			}
 		}
