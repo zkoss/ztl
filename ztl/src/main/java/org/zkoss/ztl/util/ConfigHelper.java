@@ -119,7 +119,7 @@ public class ConfigHelper {
 	private int _connectionReducePeriod;
 	private String _mutexDir;
 	private int _restartSleep;
-	
+	private int _maxTimeoutCount;
 
 	/**
 	 * key : Firefox, IE ... value : Selenium browser
@@ -531,8 +531,10 @@ public class ConfigHelper {
 			// for each remote URL
 			String[] urls = tokens[0].split(",");
 			List<String> urlList = new ArrayList<String>();
-			for (String url : urls) 
+			for (String url : urls) {
+				System.out.println("URL of " + browserName + ":" + url);
 				urlList.add(url);
+			}
 			_browserRemote.put(browserName, urlList);
 			
 			// for driver name
@@ -630,6 +632,7 @@ public class ConfigHelper {
 				_connectionReducePeriod = Integer.parseInt(_prop.getProperty("connectionReducePeriod"));
 				_mutexDir = _prop.getProperty("mutexDir");
 				_restartSleep = Integer.parseInt(_prop.getProperty("restartSleep"));
+				_maxTimeoutCount = Integer.parseInt(_prop.getProperty("maxTimeoutCount"));
 			} finally {
 				if (in != null) {
 					in.close();
@@ -743,5 +746,13 @@ public class ConfigHelper {
 
 	public void setRestartSleep(int _restartSleep) {
 		this._restartSleep = _restartSleep;
+	}
+
+	public int getMaxTimeoutCount() {
+		return _maxTimeoutCount;
+	}
+
+	public void setMaxTimeoutCount(int maxTimeoutCount) {
+		this._maxTimeoutCount = maxTimeoutCount;
 	}
 }
