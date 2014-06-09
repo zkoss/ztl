@@ -20,11 +20,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.zkoss.ztl.util.AggregateError;
 import org.zkoss.ztl.util.ConfigHelper;
 
 import com.thoughtworks.selenium.SeleniumException;
@@ -35,6 +39,25 @@ public class ZKParallelClientTestCase extends ZKClientTestCase {
 	private final int maxTimeoutCount = ConfigHelper.getInstance().getMaxTimeoutCount();
 	// save the name of timeout browser, which can't get connection before timeout
 	private final Set<String> emptyUrlSet = new HashSet<String>();
+	
+	/**
+	 * Collect all exceptions thrown from threads
+	 */
+	public void detectException(List<Future<?>> futures) throws Exception, AggregateError {
+		AggregateError error = null;
+		
+		for (Future<?> future : futures) {
+			try {
+				future.get(0, TimeUnit.MILLISECONDS);
+			} catch (ExecutionException e) {
+				error = (error == null) ? 
+						new AggregateError(e.getCause()) : 
+							new AggregateError(e.getCause(), error);
+			}
+		}
+		
+		if(error != null) throw error;
+	}
 	
 	/**
 	 * Wait for restarting VM and release connection in the case of VM set to restart

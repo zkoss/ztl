@@ -37,10 +37,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.Date;
+import org.zkoss.ztl.util.AggregateError;
+
 #foreach($item in $ztl.import)
 import $item;
 #end
@@ -57,11 +60,12 @@ public class ${ztl.fileName} extends ZKParallelClientTestCase {
 	
 #foreach($case in $ztl.children)
 	@Test(expected = AssertionError.class)
-	public void test${case.id}() {
+	public void test${case.id}() throws AggregateError {
 		final long luuid = new Date().getTime();
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 1");
 		ExecutorService executorService = Executors.newCachedThreadPool();
 		final Set<String> browserSet = new HashSet<String>();
+		List<Future<?>> futures = new ArrayList<Future<?>>();
 		
 		for (final Selenium browser : browsers) {
 		
@@ -70,7 +74,7 @@ public class ${ztl.fileName} extends ZKParallelClientTestCase {
 			browserSet.add(zkSelenium.getBrowserName());
 			System.out.println("add browser: " + zkSelenium.getBrowserName());
 			
-			executorService.execute(new Runnable() {
+			futures.add(executorService.submit(new Runnable() {
 				
 				public void run(){
 					System.out.println(getTimeUUID() + "-" + luuid + ":log 3" + ConnectionManager.getInstance().getOpenedRemote(zkSelenium.getBrowserName()));
@@ -137,7 +141,7 @@ public class ${ztl.fileName} extends ZKParallelClientTestCase {
 					}
 					System.out.println(getTimeUUID() + "-" + luuid + ":log 4-7");
 				}
-			});
+			}));
 		}
 		
 		System.out.println(getTimeUUID() + "-" + luuid + ":log 5");
@@ -146,7 +150,11 @@ public class ${ztl.fileName} extends ZKParallelClientTestCase {
 		try {
 			if(!executorService.awaitTermination(_timeout, TimeUnit.MILLISECONDS))
 				executorService.shutdownNow();
-		} catch (InterruptedException e) {
+			
+			detectException(futures);
+		} catch (AggregateError e) {
+			throw e;
+		} catch (Exception e) {
 			System.out.println(getTimeUUID() + "-" + luuid + ":in termination ex..." + e.getMessage());
 			e.printStackTrace();
 		}
