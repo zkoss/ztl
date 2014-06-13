@@ -788,6 +788,29 @@ public class ZKClientTestCase extends ZKTestCase {
 		waitResponse();
 	}
 	
+	/**
+	 * detect if it has a horizontal scroll bar
+	 * @param locator
+	 * @return
+	 */
+	public boolean hasHScrollbar(ClientWidget locator) {
+		if(hasNativeScroll(jq(locator).toWidget())) {
+			return Integer.parseInt(zk(locator).eval("hasHScroll()")) > 0;
+		} else
+			return jq(locator).find(".z-scrollbar-horizontal").exists();
+	}
+	
+	/**
+	 * detect if it has a vertical scroll bar
+	 * @param locator
+	 * @return
+	 */
+	public boolean hasVScrollbar(ClientWidget locator) {
+		if(hasNativeScroll(jq(locator).toWidget())) {
+			return Integer.parseInt(zk(locator).eval("hasVScroll()")) > 0;
+		} else
+			return jq(locator).find(".z-scrollbar-vertical").exists();
+	}
 	
 	public void doScroll(ClientWidget locatorOfObjectToBeDragged,
 			ClientWidget locatorOfDragDestinationObject, String from, String to) {
