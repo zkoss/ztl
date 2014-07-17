@@ -228,7 +228,7 @@ public class ZKClientTestCase extends ZKTestCase {
 //			} else {			
 				// bug B30-1575048.ztl and B30-1813055.ztl
 				// fixed Selenium 2.3 on Firefox driver issue
-				if (isSafari() || ZK.is("ie8_")) {
+				if (isSafari() || isChrome() || ZK.is("ie8_")) {
 					//if (!"tr".equalsIgnoreCase(locator.toElement().get("tagName"))) {
 						super.click(locator.toLocator());
 //					} else {
