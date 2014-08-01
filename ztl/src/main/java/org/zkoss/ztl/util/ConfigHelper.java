@@ -212,6 +212,7 @@ public class ConfigHelper {
 
 	private WebDriver getWebDriver(String key, String remotePath) {
 		try {
+			System.out.println("remotePath: " + remotePath + ", and key:" + key);
 			if (remotePath != null) {				
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
