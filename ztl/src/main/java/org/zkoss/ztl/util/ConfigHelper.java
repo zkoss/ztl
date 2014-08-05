@@ -568,7 +568,9 @@ public class ConfigHelper {
 
 				_prop = new Properties();
 				_prop.load(in);
-				_openonce = _prop.getProperty("openonce");
+				_openonce = System.getProperty("openonce");
+				if(_openonce == null)
+					_openonce = _prop.getProperty("openonce");
 				if (isValidOpenOnce(_openonce)) {
 					_cacheMap = new HashMap<String, ZKSelenium>(15);
 					System.out.println("openonce="+_openonce);
