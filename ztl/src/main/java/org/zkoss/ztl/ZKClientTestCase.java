@@ -712,9 +712,6 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public void frozenScroll(ClientWidget locator, int num) {
 		String lo = locator.toLocator();
-		if (lo == null || 
-				(!lo.contains("z-tree") && !lo.contains("z-grid") && !lo.contains("z-listbox")))
-			return;
 		
 		Widget wgt = jq(locator).toWidget();
 		wgt.eval("frozen._doScrollNow(" + num + ")");
