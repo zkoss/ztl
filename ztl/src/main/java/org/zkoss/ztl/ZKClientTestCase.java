@@ -786,6 +786,56 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 	
 	/**
+	 * In a case that widget only has 'cave' but 'body',
+	 * we will calculate sum of all children's width of cave,
+	 * and move widget's scrollbar
+	 * @param locator
+	 * @param percent
+	 * 
+	 */
+	public void horScrollNoBody(ClientWidget locator, double percent) {
+		Widget wgt = jq(locator).toWidget();
+		JQuery cave = jq(wgt.$n("cave"));
+		int childrenWidth = 0;
+		for (JQuery child : cave.children()) {
+			childrenWidth += child.width();
+		}
+		int totalWidth = childrenWidth - jq(locator).width();		
+		int dist = (int) Math.round(totalWidth * percent);
+		
+		if(!hasNativeScroll(locator))
+			locator.eval("_scrollbar.scrollTo(" + dist +", 0)");
+		else
+			jq(wgt).toElement().set("scrollLeft", Math.abs(dist));
+		waitResponse();
+	}
+	
+	/**
+	 * In a case that widget only has 'cave' but 'body',
+	 * we will calculate sum of all children's height of cave,
+	 * and move widget's scrollbar
+	 * @param locator
+	 * @param percent
+	 * 
+	 */
+	public void verScrollNoBody(ClientWidget locator, double percent) {
+		Widget wgt = jq(locator).toWidget();
+		JQuery cave = jq(wgt.$n("cave"));
+		int childrenHeight = 0;
+		for (JQuery child : cave.children()) {
+			childrenHeight += child.height();
+		}
+		int totalHeight = childrenHeight - jq(locator).height();		
+		int dist = (int) Math.round(totalHeight * percent);
+		
+		if(!hasNativeScroll(locator))
+			locator.eval("_scrollbar.scrollTo(" + dist +", 0)");
+		else
+			jq(wgt).toElement().set("scrollTop", Math.abs(dist));
+		waitResponse();
+	}
+	
+	/**
 	 * detect if it has a horizontal scroll bar
 	 * @param locator
 	 * @return
