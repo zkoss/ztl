@@ -20,15 +20,21 @@ package org.zkoss.ztl.webdriver;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
-
 import com.thoughtworks.selenium.CommandProcessor;
 import com.thoughtworks.selenium.SeleniumException;
-
+import com.thoughtworks.selenium.webdriven.CompoundMutator;
+import com.thoughtworks.selenium.webdriven.JavascriptLibrary;
+import com.thoughtworks.selenium.webdriven.ScriptMutator;
+import com.thoughtworks.selenium.webdriven.SeleneseCommand;
+import com.thoughtworks.selenium.webdriven.Timer;
+import com.thoughtworks.selenium.webdriven.Windows;
+import com.thoughtworks.selenium.webdriven.commands.*;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.internal.WrapsDriver;
-import org.openqa.selenium.internal.seleniumemulation.*;
+import org.openqa.selenium.internal.seleniumemulation.ZKElementFinder;
+import org.openqa.selenium.internal.seleniumemulation.ZKGetText;
 import org.zkoss.ztl.util.Scripts;
 
 import java.util.Map;
@@ -48,14 +54,14 @@ public class ZKWebDriverCommandProcessor implements CommandProcessor, WrapsDrive
 
 
   public ZKWebDriverCommandProcessor(String baseUrl, WebDriver driver) {
-	    if (baseUrl.endsWith("/")) {
-	      this.baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
-	    } else {
-	      this.baseUrl = baseUrl;
-	    }
+    if (baseUrl.endsWith("/")) {
+      this.baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+    } else {
+      this.baseUrl = baseUrl;
+    }
 
-	    this.timer = new Timer(30000);
-	    this.scriptMutator = new CompoundMutator(baseUrl);
+    this.timer = new Timer(30000);
+    this.scriptMutator = new CompoundMutator(baseUrl);
     this.driver = driver;
 
     assertDriverSupportsJavascript(driver);
@@ -67,7 +73,7 @@ public class ZKWebDriverCommandProcessor implements CommandProcessor, WrapsDrive
     return driver;
   }
 
-    public String getRemoteControlServerLocation() {
+  public String getRemoteControlServerLocation() {
     throw new UnsupportedOperationException();
   }
 

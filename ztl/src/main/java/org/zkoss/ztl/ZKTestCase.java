@@ -36,14 +36,12 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.interactions.TouchScreen;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.android.AndroidDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
-import org.openqa.selenium.iphone.IPhoneDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
@@ -340,9 +338,10 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	 */
 	public boolean isIPhone() {
 		WebDriver driver = getWebDriver();
-		return (driver instanceof IPhoneDriver
-				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
-						.getCapabilities().getBrowserName().contains("iphone")));
+		return false; //not support iphone
+//		return (driver instanceof IPhoneDriver
+//				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+//						.getCapabilities().getBrowserName().contains("iphone")));
 	}
 
 
@@ -352,9 +351,9 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	 */
 	public boolean isAndroid() {
 		WebDriver driver = getWebDriver();
-		return (driver instanceof AndroidDriver
-				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
-						.getCapabilities().getBrowserName().contains("android")));
+		//android must be remote driver
+		return (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+						.getCapabilities().getBrowserName().contains("android"));
 	}
 	
 	/**

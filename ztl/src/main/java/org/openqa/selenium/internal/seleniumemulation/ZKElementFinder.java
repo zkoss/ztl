@@ -16,19 +16,18 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 */
 package org.openqa.selenium.internal.seleniumemulation;
 
+import com.opera.core.systems.OperaDriver;
+import com.thoughtworks.selenium.webdriven.ElementFinder;
+import com.thoughtworks.selenium.webdriven.JavascriptLibrary;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.internal.seleniumemulation.ElementFinder;
-import org.openqa.selenium.internal.seleniumemulation.JavascriptLibrary;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
-
-import com.opera.core.systems.OperaDriver;
 
 /**
  * An element finder for ZK's client widget.

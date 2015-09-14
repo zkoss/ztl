@@ -36,12 +36,10 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.android.AndroidDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.iphone.IPhoneDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 import org.zkoss.ztl.ConnectionManager;
@@ -230,7 +228,8 @@ public class ConfigHelper {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.opera());
 				} else if ("androiddriver".equalsIgnoreCase(key)) {
-					return new AndroidDriver(remotePath);
+					return new ZKRemoteWebDriver(new URL(remotePath),
+							DesiredCapabilities.android());
 				} else if ("iphonedriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.iphone());
@@ -247,9 +246,9 @@ public class ConfigHelper {
 				} else if ("operadriver".equalsIgnoreCase(key)) {
 					return new OperaDriver();
 				} else if ("androiddriver".equalsIgnoreCase(key)) {
-					return new AndroidDriver();
+					return null; //new AndroidDriver();
 				} else if ("iphonedriver".equalsIgnoreCase(key)) {
-					return new IPhoneDriver();
+					return null; //new IPhoneDriver();
 				} else if ("htmlunitdriver".equalsIgnoreCase(key)) {
 					return new HtmlUnitDriver(true);
 				}
