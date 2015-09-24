@@ -50,7 +50,6 @@ import org.zkoss.ztl.util.image.Comparator;
 import org.zkoss.ztl.util.image.DefaultComparator;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 
-import com.opera.core.systems.OperaDriver;
 import com.thoughtworks.selenium.Selenium;
 /**
  * A skeleton of ZK Selenium test, which implements all of the methods of {@link Selenium}
@@ -326,9 +325,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	 */
 	public boolean isOpera() {
 		WebDriver driver = getWebDriver();
-		return (driver instanceof OperaDriver
-				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
-						.getCapabilities().getBrowserName().contains("opera")));
+		return false; //not support opera
 	}
 
 

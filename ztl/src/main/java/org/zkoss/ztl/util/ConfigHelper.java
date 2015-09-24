@@ -46,7 +46,6 @@ import org.zkoss.ztl.ConnectionManager;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
-import com.opera.core.systems.OperaDriver;
 import com.thoughtworks.selenium.Selenium;
 
 /**
@@ -244,7 +243,7 @@ public class ConfigHelper {
 				} else if ("internetexplorerdriver".equalsIgnoreCase(key)) {
 					return new InternetExplorerDriver();
 				} else if ("operadriver".equalsIgnoreCase(key)) {
-					return new OperaDriver();
+					return null;
 				} else if ("androiddriver".equalsIgnoreCase(key)) {
 					return null; //new AndroidDriver();
 				} else if ("iphonedriver".equalsIgnoreCase(key)) {

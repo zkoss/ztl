@@ -16,7 +16,6 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 */
 package org.openqa.selenium.internal.seleniumemulation;
 
-import com.opera.core.systems.OperaDriver;
 import com.thoughtworks.selenium.webdriven.ElementFinder;
 import com.thoughtworks.selenium.webdriven.JavascriptLibrary;
 import org.openqa.selenium.JavascriptExecutor;
@@ -46,9 +45,8 @@ public class ZKElementFinder extends ElementFinder {
 	
 	public static WebElement findChildElementX(WebDriver driver, String id, String locator) {
 		try {
-			String replaced = (driver instanceof OperaDriver
-					|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
-							.getCapabilities().getBrowserName().contains("opera"))) ?
+			String replaced = (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+							.getCapabilities().getBrowserName().contains("opera")) ?
 									"\\\\\\\\\"" : "\\\\\""; 
 			Object result = ((JavascriptExecutor) driver).executeScript(
 					"return (" + _childFinderJS + ")(arguments[0],arguments[1]);",
@@ -63,8 +61,7 @@ public class ZKElementFinder extends ElementFinder {
 	public static WebElement findElementX(WebDriver driver, String locator) {
 		try {
 		// fixed B30-1615919.ztl for OperaDriver
-		String replaced = (driver instanceof OperaDriver
-				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+		String replaced = ((driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
 						.getCapabilities().getBrowserName().contains("opera"))) ?
 								"\\\\\\\\\"" : "\\\\\""; 
 		Object result = ((JavascriptExecutor) driver).executeScript(
