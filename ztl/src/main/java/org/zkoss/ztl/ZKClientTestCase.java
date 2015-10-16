@@ -174,6 +174,13 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	/**
+	 * Returns boolean to indicate if there is any js error or erro window
+	 * @return
+	 */
+	protected boolean hasError() {
+		return (jq(".z-messagebox-error").exists()) || (jq(".z-errorbox").exists()) || (jq(".z-error").exists());
+	}
+	/**
 	 * Returns the ZK object of the ZKClientObject.
 	 * @param el the ZKClientObject
 	 */
@@ -724,10 +731,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public void nativeFrozenScroll(ClientWidget locator, double dist) {
 		String lo = locator.toLocator();
-		if (lo == null || 
-				(!lo.contains("z-tree") && !lo.contains("z-grid") && !lo.contains("z-listbox")))
-			return;
-		
+
 		Widget wgt = jq(locator).find(".z-frozen").toWidget();
 		jq(wgt.$n("scrollX")).toElement().set("scrollLeft", "" + dist);
 		waitResponse();
@@ -912,6 +916,14 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public String getAlertMessage(){
 		return jq("@window[title=\"ZK Test\"] @label").text();
+	}
+
+	/**
+	 * a shortcut to get the value in zk.log textarea
+	 * @return
+	 */
+	public String getZKLog() {
+		return jq("#zk_log").val();
 	}
 	
 	public void clickAlert(){
