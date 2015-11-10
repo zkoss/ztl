@@ -16,15 +16,20 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rotatable;
 import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.interactions.touch.TouchActions;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
@@ -1212,5 +1217,18 @@ public class ZKClientTestCase extends ZKTestCase {
 		if (ScreenOrientation.LANDSCAPE.equals(orient)) {
 			device.rotate(ScreenOrientation.PORTRAIT);
 		}
+	}
+	
+	/**
+	 * Switch to the next tab by sending "CTRL + TAB" to the browser, if current
+	 * tab is the last tab, will switch to the first tab.
+	 * <p>
+	 * Will also switch WebDriver's focus to the newly switched tab, so other
+	 * operations can proceed as normal.
+	 */
+	public void switchTab() {
+		WebDriver driver = getWebDriver();
+		driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL +"\t");
+		driver.switchTo().defaultContent();
 	}
 }
