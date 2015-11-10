@@ -95,7 +95,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	}
 
 	/**
-	 * a short cut for visble
+	 * a short cut for visible
 	 */
 	public boolean isVisible() {
 		return is(":visible");
