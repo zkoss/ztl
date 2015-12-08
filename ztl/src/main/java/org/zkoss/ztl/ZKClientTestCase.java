@@ -543,14 +543,6 @@ public class ZKClientTestCase extends ZKTestCase {
 	public void sendKeys(By by, CharSequence... keysToSend) {
 		// fixed firefox Keys.ENTER is 14, not 13
 		if (isFirefox()) {
-			// fixed B30-1943783.ztl
-			if (keysToSend.length == 1 && keysToSend[0] == Keys.ENTER) {
-				try {
-					Scripts.callEmbeddedSelenium(getWebDriver(), "triggerKeyEvent", by, "keydown", 13);
-					Scripts.callEmbeddedSelenium(getWebDriver(), "triggerKeyEvent", by, "keyup", 13);
-				} catch (SeleniumException e) {}
-				return;
-			}
 			for (int i = 0; i < keysToSend.length; i++)
 				if (keysToSend[i] == Keys.ENTER)
 					keysToSend[i] = Keys.RETURN;
