@@ -349,7 +349,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			int x1 = (int) Double.parseDouble(tos[0]);
 			int y1 = (int) Double.parseDouble(tos[1]);
 			WebElement element = findElement(locatorOfObjectToBeDragged);
-			getActions().moveToElement(element, x0, y0).clickAndHold()
+			getActions().moveToElement(element).clickAndHold()
 				.moveByOffset(x1-x0, y1-y0).release().perform();
 		} else {
 			// fixed for Selenium 2.5.0 issue
