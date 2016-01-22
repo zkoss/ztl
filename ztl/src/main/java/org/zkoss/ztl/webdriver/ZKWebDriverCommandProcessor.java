@@ -303,5 +303,6 @@ public class ZKWebDriverCommandProcessor implements CommandProcessor, WrapsDrive
     seleneseMethods.put("waitForPopUp", new WaitForPopup(windows));
     seleneseMethods.put("windowFocus", new WindowFocus(javascriptLibrary));
     seleneseMethods.put("windowMaximize", new WindowMaximize(javascriptLibrary));
+    seleneseMethods.put("keyPressNative", new KeyPressNative());
   }
 }
