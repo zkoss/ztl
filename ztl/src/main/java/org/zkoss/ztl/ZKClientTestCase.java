@@ -16,11 +16,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import com.thoughtworks.selenium.SeleniumException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
@@ -31,11 +27,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.interactions.touch.TouchActions;
+
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.image.Comparator;
-
-import com.thoughtworks.selenium.SeleniumException;
 
 /**
  * A skeleton of ZK client widget.
@@ -46,12 +41,12 @@ public class ZKClientTestCase extends ZKTestCase {
 	protected int _timeout;
 
 	/**
-	 * Waits for Ajax response. (excluding animation check)
+	 * Waits for Ajax response. (includes animation check by default)
 	 * <p>By default the timeout time is specified in config.properties
 	 * @see #waitResponse(int)
 	 */
 	protected void waitResponse() {
-		waitResponse(_timeout);
+		waitResponse(_timeout, true);
 	}
 
 	/**
