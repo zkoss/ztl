@@ -212,8 +212,10 @@ public class ConfigHelper {
 			System.out.println("remotePath: " + remotePath + ", and key:" + key);
 			if (remotePath != null) {				
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
+					DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+					capabilities.setCapability("marionette", true);
 					return new ZKRemoteWebDriver(new URL(remotePath),
-							DesiredCapabilities.firefox());
+							capabilities);
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.chrome());
@@ -235,7 +237,9 @@ public class ConfigHelper {
 				}
 			} else {
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
-					return new FirefoxDriver();
+					DesiredCapabilities capabilities = DesiredCapabilities.firefox();
+					capabilities.setCapability("marionette", true);
+					return new FirefoxDriver(capabilities);
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
 					return new ChromeDriver();
 				} else if ("safaridriver".equalsIgnoreCase(key)) {

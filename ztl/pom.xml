@@ -9,7 +9,8 @@
 		ZK applications
 	</description>
 	<properties>
-		 <selenium.version>2.47.1</selenium.version>
+        <selenium.version>2.53.1</selenium.version>
+        <selenium.htmlunit.version>2.52.0</selenium.htmlunit.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -20,7 +21,7 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-htmlunit-driver</artifactId>
-			<version>${selenium.version}</version>
+			<version>${selenium.htmlunit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
