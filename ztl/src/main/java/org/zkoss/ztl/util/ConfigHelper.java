@@ -213,7 +213,7 @@ public class ConfigHelper {
 			if (remotePath != null) {				
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-					capabilities.setCapability("marionette", true);
+					//capabilities.setCapability("marionette", true);
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							capabilities);
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
@@ -238,7 +238,7 @@ public class ConfigHelper {
 			} else {
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-					capabilities.setCapability("marionette", true);
+					//capabilities.setCapability("marionette", true);
 					return new FirefoxDriver(capabilities);
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
 					return new ChromeDriver();
