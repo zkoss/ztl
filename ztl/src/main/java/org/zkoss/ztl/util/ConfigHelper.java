@@ -338,15 +338,21 @@ public class ConfigHelper {
 		}
 	}
 
-	public List<Selenium> getBrowsersForLazy(String keys, String caseName) {
-		final List<String> browser = new ArrayList<String>(Arrays.asList(keys
-				.split(",")));
+	public List<Selenium> getBrowsersForLazy(String keys, String caseName, String ignoreBrowsers) {
+		final List<String> browser = new ArrayList<String>(Arrays.asList(keys.split(",")));
 		if (browser.contains(ALL_BROWSERS)) {
 			browser.remove(ALL_BROWSERS);
 			browser.addAll(_allBrowsers);
 		}
+		List<String> ignoreBrowserList = null;
+		if (ignoreBrowsers != null && ignoreBrowsers.length() != 0)
+			ignoreBrowserList = new ArrayList<String>(Arrays.asList(ignoreBrowsers.split(",")));
+
 		for (Iterator<String> it = browser.iterator(); it.hasNext();) {
-			if (isIgnoreCase(it.next(), caseName))
+			String key = it.next();
+			if (isIgnoreCase(key, caseName))
+				it.remove();
+			else if (ignoreBrowserList != null && ignoreBrowserList.contains(key))
 				it.remove();
 		}
 		List<Selenium> list = new AbstractSequentialList<Selenium>() {
@@ -430,7 +436,7 @@ public class ConfigHelper {
 	 */
 	@Deprecated
 	public List<Selenium> getBrowsers(String keys) {
-		return getBrowsersForLazy(keys, null);
+		return getBrowsersForLazy(keys, null, null);
 	}
 
 	private void init() throws IOException, Exception {

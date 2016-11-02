@@ -922,7 +922,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	public String getZKLog() {
 		return jq("#zk_log").val();
 	}
-	
+
 	public void clickAlert(){
 		click(jq("@window[title=\"ZK Test\"] @button"));
 	}

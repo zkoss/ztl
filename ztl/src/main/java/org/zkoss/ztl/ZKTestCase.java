@@ -386,7 +386,12 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	
 	protected List<Selenium> getBrowsers(String browsers) {
 		return ConfigHelper.getInstance().getBrowsersForLazy(browsers, 
-				getTestCaseName());
+				getTestCaseName(), null);
+	}
+
+	protected List<Selenium> getBrowsers(String browsers, String ignoreList) {
+		return ConfigHelper.getInstance().getBrowsersForLazy(browsers,
+				getTestCaseName(), ignoreList);
 	}
 	
 	private String getTestCaseName() {
