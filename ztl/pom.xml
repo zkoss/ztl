@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.ztl</groupId>
 	<artifactId>ztl</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<name>ZUL Testing Language</name>
 	<description>ZTL is an automatic testing tool for recording and testing
 		ZK applications
 	</description>
 	<properties>
-        <selenium.version>2.53.1</selenium.version>
+        <selenium.version>3.0.1</selenium.version>
         <selenium.htmlunit.version>2.52.0</selenium.htmlunit.version>
 	</properties>
 	<dependencies>
@@ -18,6 +18,11 @@
 			<artifactId>selenium-java</artifactId>
 			<version>${selenium.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-leg-rc</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-htmlunit-driver</artifactId>
