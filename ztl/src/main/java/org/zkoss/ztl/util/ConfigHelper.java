@@ -37,6 +37,7 @@ import java.util.Properties;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -58,7 +59,7 @@ import com.thoughtworks.selenium.Selenium;
 public class ConfigHelper {
 
 	private final static String[] SUPPORTED_BROWSER = { "firefox", "chrome",
-			"opera", "ie", "htmlunit", "iexplore", "ff", "iphone", "android",
+			"opera", "ie", "htmlunit", "iexplore", "edge", "ff", "iphone", "android",
 			"safari" };
 
 	private final static String ALL_BROWSERS = "all";
@@ -213,7 +214,6 @@ public class ConfigHelper {
 			if (remotePath != null) {				
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-					//capabilities.setCapability("marionette", true);
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							capabilities);
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
@@ -225,6 +225,9 @@ public class ConfigHelper {
 				} else if ("internetexplorerdriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.internetExplorer());
+				} else if ("edgedriver".equalsIgnoreCase(key)) {
+					return new ZKRemoteWebDriver(new URL(remotePath),
+							DesiredCapabilities.edge());
 				} else if ("operadriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.opera());
@@ -246,6 +249,8 @@ public class ConfigHelper {
 					return new SafariDriver();
 				} else if ("internetexplorerdriver".equalsIgnoreCase(key)) {
 					return new InternetExplorerDriver();
+				} else if ("edgedriver".equalsIgnoreCase(key)) {
+					return new EdgeDriver();
 				} else if ("operadriver".equalsIgnoreCase(key)) {
 					return null;
 				} else if ("androiddriver".equalsIgnoreCase(key)) {

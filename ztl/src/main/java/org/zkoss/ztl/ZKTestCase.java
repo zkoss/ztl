@@ -25,6 +25,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.interactions.HasInputDevices;
 import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.JavascriptExecutor;
@@ -287,6 +288,17 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	}
 
 	/**
+	 * Returns whether is Edge Driver
+	 * @since 3.0.0
+	 */
+	public boolean isEdge() {
+		WebDriver driver = getWebDriver();
+		return (driver instanceof EdgeDriver
+				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
+				.getCapabilities().getBrowserName().contains("edge")));
+	}
+
+	/**
 	 * Returns whether is Firefox Driver
 	 * @since 2.0.0
 	 */
@@ -309,7 +321,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	}
 
 	/**
-	 * Returns whether is Chrome Driver
+	 * Returns whether is Safari Driver
 	 * @since 2.0.0
 	 */
 	public boolean isSafari() {
