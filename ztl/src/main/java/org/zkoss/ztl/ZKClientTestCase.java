@@ -983,7 +983,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	public void doubleTap(ClientWidget locator) {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
-			throw new UnsupportedOperationExceptioZKTestCasen("device not touchable");
+			throw new UnsupportedOperationException("device not touchable");
 		
 		WebElement toTap = findElement(locator);
 		new TouchActions(driver).doubleTap(toTap).perform();
