@@ -27,9 +27,8 @@ import org.zkoss.ztl.util.Scripts;
 
 /**
  * A class to fix OperaDirver issue
- * 
+ * Ref: Selenium GetText
  * @author jumperchen
- * @see {@link GetText}
  */
 public class ZKGetText extends SeleneseCommand<String> {
 	private final JavascriptLibrary library;

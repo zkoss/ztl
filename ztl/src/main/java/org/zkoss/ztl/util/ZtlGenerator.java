@@ -47,11 +47,11 @@ import org.zkoss.ztl.parser.SAXParser;
  * Usage:
  * <ol>
  * <li>
- * Generate the java class. <br/>
+ * Generate the java class. <br>
  * java org.zkoss.ztl.util.ZtlGenerator -src ./test -dest ./codegen
  * </li>
  * <li>
- * Run all of test cases that match with the tags<br/>
+ * Run all of test cases that match with the tags<br>
  * java org.zkoss.ztl.util.ZtlGenerator -run [srcdir] [grid,listbox,button...]
  * </li>
  *</ol>

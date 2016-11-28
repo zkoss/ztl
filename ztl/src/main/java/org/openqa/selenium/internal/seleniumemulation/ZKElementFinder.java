@@ -30,7 +30,7 @@ import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 
 /**
  * An element finder for ZK's client widget.
- * <p> Note: due to the relative classpath for {@ElementFinder}, we have to put
+ * <p> Note: due to the relative classpath for selenium ElementFinder, we have to put
  * this class under the package of <code>org.openqa.selenium.internal.seleniumemulation</code>
  * @author jumperchen
  */

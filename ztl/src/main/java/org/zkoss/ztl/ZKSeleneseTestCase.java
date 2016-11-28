@@ -253,7 +253,7 @@ public class ZKSeleneseTestCase extends TestCase {
 
     /** Compares two strings, but handles "regexp:" strings like HTML Selenese
      *
-     * @param expectedPattern
+     * @param expected pattern
      * @param actual
      * @return true if actual matches the expectedPattern, or false otherwise
      */

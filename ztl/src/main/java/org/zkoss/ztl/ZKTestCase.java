@@ -417,12 +417,6 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		getCurrent().getEval("window.resizeTo("+width + "," + height+")");
 	}
 	
-	/** untested yet
-	protected List<LoggingSelenium> getLoggingBrowsers(String browsers, BufferedWriter loggingWriter){
-		return ConfigHelper.getInstance().getLoggingBrowsers(browsers, loggingWriter);
-	}
-	*/
-	
 	@Override
 	public void addLocationStrategy(String strategyName,
 			String functionDefinition) {
@@ -572,7 +566,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	
 	/**
 	 * Drags and drops the specific element from its specific area to another area.
-	 * <p>For example,<br/>
+	 * <p>For example,<br>
 	 * 		draggdropTo("z-xxx", "10,20", "20,20")
 	 * <p>The result of the "z-xxx" is moved 10px right.
 	 * @param locatorOfObjectToBeDragged the draggable UUID
@@ -592,7 +586,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	}
 	/**
 	 * Drags and drops the specific element from its specific area to another element.
-	 * <p>For example,<br/>
+	 * <p>For example,<br>
 	 * 		draggdropToObject("z-xxx", "z-yyy", "10,20", "10,20")
 	 * <p>The result of the "z-xxx" is moved to the position(10,20) of the "z-yyy".
 	 * @param locatorOfObjectToBeDragged the draggable UUID
@@ -1361,7 +1355,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	 * <p> If true, it will load base image from the specified path, and compare
 	 * the current screen shot of the testing result. Otherwise, it just captures
 	 * the current screen shot and put into the base image path.
-	 * <p> The default comparator is to use {@link Defaultcomparator}. You can
+	 * <p> The default comparator is to use {@link DefaultComparator}. You can
 	 * also use {@link #verifyImage(Comparator)} to specify your own comparator.
 	 * @see DefaultComparator
 	 */

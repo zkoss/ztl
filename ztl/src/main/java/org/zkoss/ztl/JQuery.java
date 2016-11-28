@@ -240,7 +240,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * Returns the current computed width for the first element, including
 	 * padding and border, it will including margin, if true
 	 *
-	 * @param boolean includeMargin
+	 * @param includeMargin
 	 */
 	public int outerWidth(boolean includeMargin) {
 		return ZKClientTestCase.parseInt(ZKTestCase.getCurrent().getEval(
@@ -259,7 +259,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * Returns the current computed height for the first element, including
 	 * padding and border, it will including margin, if true
 	 *
-	 * @param boolean includeMargin
+	 * @param includeMargin
 	 */
 	public int outerHeight(boolean includeMargin) {
 		return ZKClientTestCase.parseInt(ZKTestCase.getCurrent().getEval(
@@ -364,7 +364,6 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	/**
 	 * setter for scrollLeft 
 	 * @param value
-	 * @return
 	 */
 	public void scrollLeft(int value){
 		ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollLeft(\""+value+"\")");

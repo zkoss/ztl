@@ -90,10 +90,8 @@ public class ZK extends ClientWidget {
 	/**
 	 * Returns the boolean value from the evaluated name.
 	 * <p>For example,
-	 * <br/>
 	 * <code>ZK.is("ie");</code>
-	 * <br/>
-	 * The invoking JavaScript code will be "zk.ie", and return the boolean value. 
+	 * The invoking JavaScript code will be "zk.ie", and return the boolean value.
 	 */
 	public static boolean is(String name) {
 		return Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!(zk." + name + ")"));

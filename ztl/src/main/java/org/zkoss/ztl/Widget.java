@@ -101,9 +101,9 @@ public class Widget extends ClientWidget {
 	/**
 	 * Returns the value of the evaluated name.
 	 * <p>For example,
-	 * <br/><code>grid.get("width");</code>
-	 * <br/>in JavaScript
-	 * <br/><code>grid.getWidth();</code>
+	 * <br><code>grid.get("width");</code>
+	 * <br>in JavaScript
+	 * <br><code>grid.getWidth();</code>
 	 * @param name any allowed property of the widget.
 	 */
 	public String get(String name) {
@@ -113,9 +113,9 @@ public class Widget extends ClientWidget {
 	/**
 	 * Returns the boolean value of the evaluated name.
 	 * <p>For example,
-	 * <br/><code>grid.is("vflex");</code>
-	 * <br/>in JavaScript
-	 * <br/><code>grid.isVflex();</code>
+	 * <br><code>grid.is("vflex");</code>
+	 * <br>in JavaScript
+	 * <br><code>grid.isVflex();</code>
 	 * @param name any allowed property of the widget.
 	 */
 	public boolean is(String name) {

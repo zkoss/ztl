@@ -564,9 +564,9 @@ public class ZKClientTestCase extends ZKTestCase {
 	 *
 	 * It is a issue for selenium.
 	 * 
-	 * @note it will trigger onChanging that we unexpect.
+	 * Note: it will trigger onChanging that we unexpect.
 	 * </pre>
-	 * @browsers firefox,safari402,chrome,ie8,ie7,ie6 .
+	 * Browsers: firefox,safari402,chrome,ie8,ie7,ie6 .
 	 */
 	public void keyPressEnter(ClientWidget locator){
 		focus(locator);
@@ -724,7 +724,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	
 	/**
 	 * @param locator
-	 * @param percent
+	 * @param dist
 	 */
 	public void nativeFrozenScroll(ClientWidget locator, double dist) {
 		String lo = locator.toLocator();
@@ -945,7 +945,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * Performs a single tap on the element found by locator, analogous to click using a mouse 
 	 * @param locator an element locator
 	 * @since 2.0.1
-	 * @category HasTouchScreen
+	 * Category - HasTouchScreen
 	 */
 	public void singleTap(ClientWidget locator) {
 		WebDriver driver = getWebDriver();
@@ -958,12 +958,12 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	/**
 	 * Performs a single tap on the element found by locator tanalogous to click using a mouse
-     * The tap position is at an offset position.
+	 * The tap position is at an offset position.
 	 * @param locator an element locator
-     * @param xOffset px toward the right
-     * @param yOffset px toward the bottom
+	 * @param xOffset px toward the right
+	 * @param yOffset px toward the bottom
 	 * @since 2.0.1
-	 * @category HasTouchScreen
+	 * Category - HasTouchScreen
 	 */	
 	public void singleTapAt(ClientWidget locator, int xOffset, int yOffset) {
 		WebDriver driver = getWebDriver();
@@ -978,12 +978,12 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * Performs a double tap on the element found by locator, analogous to double click using a mouse
 	 * @param locator an element locator
 	 * @since 2.0.1
-	 * @category HasTouchScreen
+	 * Category - HasTouchScreen
 	 */
 	public void doubleTap(ClientWidget locator) {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
-			throw new UnsupportedOperationException("device not touchable");
+			throw new UnsupportedOperationExceptioZKTestCasen("device not touchable");
 		
 		WebElement toTap = findElement(locator);
 		new TouchActions(driver).doubleTap(toTap).perform();
@@ -993,7 +993,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * Performs a long press gesture on the element found by locator
 	 * @param locator an element locator
 	 * @since 2.0.1
-	 * @category HasTouchScreen
+	 * Category - HasTouchScreen
 	 */
 	public void longPress(ClientWidget locator) {
 		WebDriver driver = getWebDriver();
@@ -1011,7 +1011,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @param locator  an element locator
 	 * @param distance amount to swipe (in device pixel)
 	 * @since 2.0.1
-	 * @category HasTouchScreen
+	 * Category - HasTouchScreen
 	 */
 	public void swipeUp(ClientWidget locator, int distance) {
 		WebDriver driver = getWebDriver();
@@ -1044,7 +1044,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @param locator  an element locator
 	 * @param distance amount to swipe (in device pixel)
 	 * @since 2.0.1
-	 * @category HasTouchScreen
+	 * Category - HasTouchScreen
 	 */
 	public void swipeDown(ClientWidget locator, int distance) {
 		WebDriver driver = getWebDriver();
@@ -1077,7 +1077,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @param locator  an element locator
 	 * @param distance amount to swipe (in device pixel)
 	 * @since 2.0.1
-	 * @category HasTouchScreen
+	 * Category - HasTouchScreen
 	 */
 	public void swipeLeft(ClientWidget locator, int distance) {
 		WebDriver driver = getWebDriver();
@@ -1110,7 +1110,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @param locator  an element locator
 	 * @param distance amount to swipe (in device pixel)
 	 * @since 2.0.1
-	 * @category HasTouchScreen
+	 * Category - HasTouchScreen
 	 */
 	public void swipeRight(ClientWidget locator, int distance) {
 		WebDriver driver = getWebDriver();
@@ -1142,7 +1142,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * Returns the current device orientation
 	 * @return the current device orientation
 	 * @since 2.0.1
-	 * @category Rotatable
+	 * Category - Rotatable
 	 */
 	public String getOrientation() {
 		WebDriver driver = getWebDriver();
@@ -1161,7 +1161,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	/**
 	 * Rotate the device
 	 * @since 2.0.1
-	 * @category Rotatable
+	 * Category - Rotatable
 	 */
 	public void rotate() {
 		WebDriver driver = getWebDriver();
@@ -1180,7 +1180,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	/**
 	 * Ensures the device is in landscape orientation
 	 * @since 2.0.1
-	 * @category Rotatable
+	 * Category - Rotatable
 	 */
 	public void ensureLandscape() {
 		WebDriver driver = getWebDriver();
@@ -1197,7 +1197,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	/**
 	 * Ensures the device is in portrait orientation
 	 * @since 2.0.1
-	 * @category Rotatable
+	 * Category - Rotatable
 	 */
 	public void ensurePortrait() {
 		WebDriver driver = getWebDriver();
