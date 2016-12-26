@@ -295,7 +295,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		WebDriver driver = getWebDriver();
 		return (driver instanceof EdgeDriver
 				|| (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver)
-				.getCapabilities().getBrowserName().contains("edge")));
+				.getCapabilities().getBrowserName().toLowerCase().contains("edge")));
 	}
 
 	/**
