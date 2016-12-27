@@ -35,6 +35,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.internal.WrapsDriver;
 import org.openqa.selenium.internal.seleniumemulation.ZKElementFinder;
 import org.openqa.selenium.internal.seleniumemulation.ZKGetText;
+import org.openqa.selenium.safari.SafariDriver;
 import org.zkoss.ztl.util.Scripts;
 
 import java.util.Map;
@@ -187,8 +188,12 @@ public class ZKWebDriverCommandProcessor implements CommandProcessor, WrapsDrive
     JavascriptLibrary javascriptLibrary = Scripts.JS;
     ZKElementFinder elementFinder = new ZKElementFinder(javascriptLibrary);
     KeyState keyState = new KeyState();
+    boolean shouldAlertOverride = true;
 
-    AlertOverride alertOverride = new AlertOverride(true);
+    if (driver instanceof SafariDriver || (driver instanceof ZKRemoteWebDriver && ((ZKRemoteWebDriver) driver).getCapabilities().getBrowserName().contains("safari"))) {
+      shouldAlertOverride = false;
+    }
+    AlertOverride alertOverride = new AlertOverride(shouldAlertOverride);
     Windows windows = new Windows(driver);
 
     // Note the we use the names used by the CommandProcessor
