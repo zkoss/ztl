@@ -526,6 +526,30 @@ public class ZKClientTestCase extends ZKTestCase {
 			for (int i = 0; i < keysToSend.length; i++)
 				if (keysToSend[i] == Keys.ENTER)
 					keysToSend[i] = Keys.RETURN;
+		} else if (isSafari()) {
+			String keycode = "";
+			for (int i = 0; i < keysToSend.length; i++) {
+				if (keysToSend[i] == Keys.ENTER) {
+					keycode = "13";
+					break;
+				} else if (keysToSend[i] == Keys.TAB) {
+					keycode = "9";
+					break;
+				} else if (keysToSend[i] == Keys.SPACE) {
+					keycode = "32";
+					break;
+				} else if (keysToSend[i] == Keys.ESCAPE) {
+					keycode = "27";
+					break;
+				} else if (keysToSend[i] == Keys.ARROW_DOWN) {
+					keycode = "40";
+					break;
+				}
+			}
+			if (keycode.length() != 0) {
+				keyPressNative(keycode);
+				return;
+			}
 		}
 		getWebDriver().findElement(by).sendKeys(keysToSend);
 	}
