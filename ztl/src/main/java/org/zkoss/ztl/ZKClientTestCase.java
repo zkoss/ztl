@@ -544,6 +544,9 @@ public class ZKClientTestCase extends ZKTestCase {
 				} else if (keysToSend[i] == Keys.ARROW_DOWN) {
 					keycode = "40";
 					break;
+				} else if (keysToSend[i] == Keys.END) {
+					keycode = "35";
+					break;
 				}
 			}
 			if (keycode.length() != 0) {
