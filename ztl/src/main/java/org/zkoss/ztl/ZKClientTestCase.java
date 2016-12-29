@@ -529,23 +529,26 @@ public class ZKClientTestCase extends ZKTestCase {
 		} else if (isSafari()) {
 			String keycode = "";
 			for (int i = 0; i < keysToSend.length; i++) {
-				if (keysToSend[i] == Keys.ENTER) {
-					keycode = "13";
+				if (keysToSend[i] == Keys.BACK_SPACE) {
+					keycode = "8";
 					break;
 				} else if (keysToSend[i] == Keys.TAB) {
 					keycode = "9";
 					break;
-				} else if (keysToSend[i] == Keys.SPACE) {
-					keycode = "32";
+				} else if (keysToSend[i] == Keys.ENTER) {
+					keycode = "13";
 					break;
 				} else if (keysToSend[i] == Keys.ESCAPE) {
 					keycode = "27";
 					break;
-				} else if (keysToSend[i] == Keys.ARROW_DOWN) {
-					keycode = "40";
+				} else if (keysToSend[i] == Keys.SPACE) {
+					keycode = "32";
 					break;
 				} else if (keysToSend[i] == Keys.END) {
 					keycode = "35";
+					break;
+				} else if (keysToSend[i] == Keys.ARROW_DOWN) {
+					keycode = "40";
 					break;
 				}
 			}
