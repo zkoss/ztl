@@ -547,6 +547,15 @@ public class ZKClientTestCase extends ZKTestCase {
 				} else if (keysToSend[i] == Keys.END) {
 					keycode = "35";
 					break;
+				} else if (keysToSend[i] == Keys.ARROW_LEFT) {
+					keycode = "37";
+					break;
+				} else if (keysToSend[i] == Keys.ARROW_UP) {
+					keycode = "38";
+					break;
+				} else if (keysToSend[i] == Keys.ARROW_RIGHT) {
+					keycode = "39";
+					break;
 				} else if (keysToSend[i] == Keys.ARROW_DOWN) {
 					keycode = "40";
 					break;
@@ -671,24 +680,15 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void select(ClientWidget selectLocator, String optionLocator) {
-		// fixed Opera to fire unnecessary onchange event.
-		if (isOpera())
-			click(selectLocator);
 		// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
 		// of selenium 2.2+ to fix the following API.
 		// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
 		findElement(jq(selectLocator).find("option:contains(\""+ optionLocator + "\")")).click();
-		
 		// force to fire onChange event for IE
 		if (isIE())
 			blur(selectLocator);
-//		else if (isOpera()) // close the dropdown list and fire onchange
-//			sendKeys(selectLocator, Keys.ENTER);
 	}
 	public void select(ClientWidget selectLocator, int index) {
-		// fixed Opera to fire unnecessary onchange event.
-		if (isOpera())
-			click(selectLocator);
 		// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
 		// of selenium 2.2+ to fix the following API.
 		// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
@@ -697,8 +697,6 @@ public class ZKClientTestCase extends ZKTestCase {
 		// force to fire onChange event for IE
 		if (isIE())
 			blur(selectLocator);
-//		else if (isOpera()) // close the dropdown list and fire onchange
-//			sendKeys(selectLocator, Keys.ENTER);
 	}
 
 	public void selectFrame(ClientWidget locator) {
