@@ -498,6 +498,8 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public boolean isVisible(ClientWidget locator) {
+		if (isSafari())
+			return jq(locator).isVisible();
 		return super.isVisible(locator.toLocator());
 	}
 
