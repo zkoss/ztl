@@ -39,7 +39,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.WrapsDriver;
@@ -267,15 +266,6 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 		return new Actions(getWebDriver());
 	}
 
-	/**
-	 * Returns whether is HTML Unit Driver
-	 * @since 2.0.0
-	 */
-	public boolean isHtmlUnit() {
-		WebDriver driver = getWebDriver();
-		return (driver instanceof HtmlUnitDriver);
-	}
-	
 	/**
 	 * Returns whether is InternatExplorer Driver
 	 * @since 2.0.0

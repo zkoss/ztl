@@ -39,7 +39,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
@@ -257,8 +256,6 @@ public class ConfigHelper {
 					return null; //new AndroidDriver();
 				} else if ("iphonedriver".equalsIgnoreCase(key)) {
 					return null; //new IPhoneDriver();
-				} else if ("htmlunitdriver".equalsIgnoreCase(key)) {
-					return new HtmlUnitDriver(true);
 				}
 			}
 		} catch (Exception e) {

@@ -272,21 +272,17 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void clickAt(ClientWidget locator, String coordString) {
-		if (isHtmlUnit()) {
-			super.click(locator.toLocator());
-		} else {
+		try {
+			super.clickAt(locator.toLocator(), coordString);
+		} catch (SeleniumException e) {
+			// Opera seems not to support clickAt() fixed for B30-2562880.ztl
+			// Firefox3 for B30-1903399.ztl
 			try {
-				super.clickAt(locator.toLocator(), coordString);
-			} catch (SeleniumException e) {
-				// Opera seems not to support clickAt() fixed for B30-2562880.ztl
-				// Firefox3 for B30-1903399.ztl
-				try {
-					Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
-					Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
-					Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
-				} catch (SeleniumException ee){
-					throw e;
-				}
+				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
+				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
+				Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
+			} catch (SeleniumException ee){
+				throw e;
 			}
 		}
 	}

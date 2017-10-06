@@ -10,7 +10,6 @@
 	</description>
 	<properties>
         <selenium.version>3.6.0</selenium.version>
-        <selenium.htmlunit.version>2.27</selenium.htmlunit.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -23,11 +22,6 @@
             <artifactId>selenium-leg-rc</artifactId>
             <version>${selenium.version}</version>
         </dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>htmlunit-driver</artifactId>
-			<version>${selenium.htmlunit.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
