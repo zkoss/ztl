@@ -524,45 +524,6 @@ public class ZKClientTestCase extends ZKTestCase {
 			for (int i = 0; i < keysToSend.length; i++)
 				if (keysToSend[i] == Keys.ENTER)
 					keysToSend[i] = Keys.RETURN;
-		} else if (isSafari()) {
-			String keycode = "";
-			for (int i = 0; i < keysToSend.length; i++) {
-				if (keysToSend[i] == Keys.BACK_SPACE) {
-					keycode = "8";
-					break;
-				} else if (keysToSend[i] == Keys.TAB) {
-					keycode = "9";
-					break;
-				} else if (keysToSend[i] == Keys.ENTER) {
-					keycode = "13";
-					break;
-				} else if (keysToSend[i] == Keys.ESCAPE) {
-					keycode = "27";
-					break;
-				} else if (keysToSend[i] == Keys.SPACE) {
-					keycode = "32";
-					break;
-				} else if (keysToSend[i] == Keys.END) {
-					keycode = "35";
-					break;
-				} else if (keysToSend[i] == Keys.ARROW_LEFT) {
-					keycode = "37";
-					break;
-				} else if (keysToSend[i] == Keys.ARROW_UP) {
-					keycode = "38";
-					break;
-				} else if (keysToSend[i] == Keys.ARROW_RIGHT) {
-					keycode = "39";
-					break;
-				} else if (keysToSend[i] == Keys.ARROW_DOWN) {
-					keycode = "40";
-					break;
-				}
-			}
-			if (keycode.length() != 0) {
-				keyPressNative(keycode);
-				return;
-			}
 		}
 		getWebDriver().findElement(by).sendKeys(keysToSend);
 	}
@@ -678,13 +639,17 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void select(ClientWidget selectLocator, String optionLocator) {
-		// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
-		// of selenium 2.2+ to fix the following API.
-		// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
-		findElement(jq(selectLocator).find("option:contains(\""+ optionLocator + "\")")).click();
-		// force to fire onChange event for IE
-		if (isIE())
-			blur(selectLocator);
+		if (!isSafari()) {
+			// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
+			// of selenium 2.2+ to fix the following API.
+			// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
+			findElement(jq(selectLocator).find("option:contains(\"" + optionLocator + "\")")).click();
+			// force to fire onChange event for IE
+			if (isIE())
+				blur(selectLocator);
+		} else {
+			return; //now it is bug in select
+		}
 	}
 	public void select(ClientWidget selectLocator, int index) {
 		// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
