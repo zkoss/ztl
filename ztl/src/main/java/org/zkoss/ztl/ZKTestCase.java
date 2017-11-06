@@ -1227,13 +1227,18 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public void verifyEquals(Object obj1, Object obj2){
-		if(obj1 == obj2)return;
-		
-		if( obj1!=null && obj2!=null && (obj1 instanceof Number) && (obj2 instanceof Number)){
-			super.verifyEquals(""+obj1, ""+obj2);
-		} else super.verifyEquals(obj1, obj2);
+		verifyEquals(null, obj1, obj2);
 	}
-	
+
+	@Override
+	public void verifyEquals(String message, Object obj1, Object obj2){
+		if (obj1 == obj2) return;
+
+		if (obj1 != null && obj2 != null && obj1 instanceof Number && obj2 instanceof Number){
+			super.verifyEquals(message, "" + obj1, "" + obj2);
+		} else super.verifyEquals(message, obj1, obj2);
+	}
+
 	public void verifyContains(String word1,String contains){
     	String msg = "["+word1+"] didn't contains string ["+contains+"]";
     	super.verifyContains(msg, word1, contains);
