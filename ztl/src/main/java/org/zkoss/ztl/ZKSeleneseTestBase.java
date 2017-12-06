@@ -23,14 +23,13 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.regex.Pattern;
 
-import junit.framework.AssertionFailedError;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.zkoss.ztl.util.ZKSelenium;
-
 import com.thoughtworks.selenium.DefaultSelenium;
 import com.thoughtworks.selenium.Selenium;
+import junit.framework.AssertionFailedError;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import org.zkoss.ztl.util.ZKSelenium;
 
 /**
  * This is a copy of SeleneseTestCaseBase.java and improve the log mechanism.
@@ -207,6 +206,7 @@ public class ZKSeleneseTestBase {
 
 	    /** Like JUnit's Assert.assertEquals, but knows how to compare string arrays */
 	    public static void assertEquals(String message, Object s1, Object s2) {
+	        if (s1 == s2) return;
 	        if (s1 instanceof String && s2 instanceof String) {
 	            assertEquals((String)s1, (String)s2);
 	        } else if (s1 instanceof String && s2 instanceof String[]) {
@@ -228,6 +228,8 @@ public class ZKSeleneseTestBase {
 	                for (int j = 0; j < sa1.length; j++) {
 	                    assertEquals(sa1[j], sa2[j]);
 	                }
+	            } else {
+		            assertEquals(message, String.valueOf(s1), String.valueOf(s2));
 	            }
 	        }
 	    }
