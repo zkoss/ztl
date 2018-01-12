@@ -349,7 +349,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * @param value
 	 */
 	public void scrollTop(int value){
-		ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollTop(\""+value+"\")");
+		ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollTop(" + value + ");1;");
 	}
 
 	/**
@@ -366,7 +366,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * @param value
 	 */
 	public void scrollLeft(int value){
-		ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollLeft(\""+value+"\")");
+		ZKTestCase.getCurrent().getEval(_out.toString() + ".scrollLeft(" + value + ");1;");
 	}
 	
 	/**

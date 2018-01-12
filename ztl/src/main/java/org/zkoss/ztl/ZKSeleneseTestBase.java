@@ -229,7 +229,10 @@ public class ZKSeleneseTestBase {
 	                    assertEquals(sa1[j], sa2[j]);
 	                }
 	            } else {
-		            assertEquals(message, String.valueOf(s1), String.valueOf(s2));
+	                if (message == null)
+	                    assertEquals(String.valueOf(s1), String.valueOf(s2));
+	                else
+	                    assertEquals(message, String.valueOf(s1), String.valueOf(s2));
 	            }
 	        }
 	    }
