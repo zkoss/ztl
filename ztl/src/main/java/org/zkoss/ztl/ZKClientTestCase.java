@@ -32,6 +32,9 @@ import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.image.Comparator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A skeleton of ZK client widget.
  * @author jumperchen
@@ -1191,7 +1194,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public void switchTab() {
 		WebDriver driver = getWebDriver();
-		driver.findElement(By.cssSelector("body")).sendKeys(Keys.CONTROL +"\t");
-		driver.switchTo().defaultContent();
+		List<String> tabs = new ArrayList<String>(driver.getWindowHandles());
+		driver.switchTo().window(tabs.get(0));
 	}
 }
