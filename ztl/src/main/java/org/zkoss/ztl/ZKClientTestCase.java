@@ -897,6 +897,14 @@ public class ZKClientTestCase extends ZKTestCase {
 		return jq("#zk_log").val();
 	}
 
+	/**
+	 * a shortcut to close zk log
+	 */
+	public void closeZKLog() {
+		ZKTestCase.getCurrent().getEval("jq('#zk_logbox').remove();");
+		waitResponse();
+	}
+
 	public void clickAlert(){
 		click(jq("@window[title=\"ZK Test\"] @button"));
 	}
