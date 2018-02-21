@@ -667,18 +667,33 @@ public class ZKClientTestCase extends ZKTestCase {
 			if (isIE())
 				blur(selectLocator);
 		} else {
-			return; //now it is bug in select
+			//use javascript to simulate
+			String id = selectLocator.toElement().get("id");
+			executeScript("jq('#" + id + "').val('" + optionLocator + "');");
+			waitResponse();
+			executeScript("jq('#" + id + "').change()");
+			waitResponse();
 		}
 	}
 	public void select(ClientWidget selectLocator, int index) {
-		// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
-		// of selenium 2.2+ to fix the following API.
-		// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
-		findElement(jq(selectLocator).find("option").get(index)).click();
-		
-		// force to fire onChange event for IE
-		if (isIE())
-			blur(selectLocator);
+		if (!isSafari()) {
+			// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
+			// of selenium 2.2+ to fix the following API.
+			// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
+			findElement(jq(selectLocator).find("option").get(index)).click();
+
+			// force to fire onChange event for IE
+			if (isIE())
+				blur(selectLocator);
+		} else {
+			//use javascript to simulate
+			String id = selectLocator.toElement().get("id");
+			String selectionTargetScript = "jq('#" + id + "').children()[" + index + "].text";
+			executeScript("jq('#" + id + "').val(" + selectionTargetScript + ");");
+			waitResponse();
+			executeScript("jq('#" + id + "').change()");
+			waitResponse();
+		}
 	}
 
 	public void selectFrame(ClientWidget locator) {
