@@ -274,8 +274,24 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 	}
 
+	/**
+	 * Clicks the element at the offset point.
+	 *
+	 * @param locator element
+	 * @param coordString x, y offset. Start from top-left.
+	 */
 	public void clickAt(ClientWidget locator, String coordString) {
 		try {
+			// workaround for https://github.com/SeleniumHQ/selenium/issues/4847
+			if (isFirefox()) {
+				String[] froms = coordString.split(",");
+				int x0 = Integer.parseInt(froms[0].trim());
+				int y0 = Integer.parseInt(froms[1].trim());
+				Dimension dim = findElement(locator).getSize();
+				int x1 = x0 - dim.width / 2;
+				int y1 = y0 - dim.height / 2;
+				coordString = String.format("%d,%d", x1, y1);
+			}
 			super.clickAt(locator.toLocator(), coordString);
 		} catch (SeleniumException e) {
 			// Opera seems not to support clickAt() fixed for B30-2562880.ztl
@@ -901,7 +917,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * a shortcut to close zk log
 	 */
 	public void closeZKLog() {
-		ZKTestCase.getCurrent().getEval("jq('#zk_logbox').remove();");
+		ZKTestCase.getCurrent().getEval("!!jq('#zk_logbox').remove();");
 		waitResponse();
 	}
 
