@@ -240,7 +240,6 @@ public class ConfigHelper {
 			} else {
 				if ("firefoxdriver".equalsIgnoreCase(key)) {
 					DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-					//capabilities.setCapability("marionette", true);
 					return new FirefoxDriver(capabilities);
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
 					return new ChromeDriver();
