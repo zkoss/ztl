@@ -533,6 +533,8 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	/**
 	 * Use this method to simulate typing into an element, which may set its value.
+	 * Notice: The element must get a focus before sendKeys. Most likely a click action is needed before calling this method.
+	 *
 	 * @param by The locating mechanism to use
 	 * @param keysToSend
 	 * @since 2.0.0
@@ -543,6 +545,23 @@ public class ZKClientTestCase extends ZKTestCase {
 			for (int i = 0; i < keysToSend.length; i++)
 				if (keysToSend[i] == Keys.ENTER)
 					keysToSend[i] = Keys.RETURN;
+			getActions().sendKeys(keysToSend).perform();
+			return;
+		}
+		// fixed Safari send 0..9
+		if (isSafari()) {
+			for (int i = 0; i < keysToSend.length; i++) {
+				StringBuilder chseq = new StringBuilder(keysToSend[i]);
+				boolean modified = false;
+				for (int j = 0; j < chseq.length(); j++) {
+					char c = chseq.charAt(j);
+					if (c >= '0' && c <= '9') {
+						chseq.deleteCharAt(j).insert(j, Keys.valueOf("NUMPAD" + c));
+						modified = true;
+					}
+				}
+				if (modified) keysToSend[i] = chseq;
+			}
 		}
 		getWebDriver().findElement(by).sendKeys(keysToSend);
 	}
