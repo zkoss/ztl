@@ -782,6 +782,20 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 		
 		int dist = (int) Math.round(totalHight * percent);
+
+		verScrollAbs(locator, dist);
+	}
+	/**
+	 *
+	 * @param locator
+	 * @param dist
+	 *
+	 */
+	public void verScrollAbs(ClientWidget locator, int dist) {
+		int totalHight;
+		Widget wgt = jq(locator).toWidget();
+		JQuery body = jq(wgt.$n("body")),
+				cave = jq(wgt.$n("cave"));
 		if(!hasNativeScroll(locator))
 			locator.eval("_scrollbar.scrollTo(0, " + dist +")");
 		else
@@ -801,7 +815,19 @@ public class ZKClientTestCase extends ZKTestCase {
 		JQuery cave = jq(wgt.$n("cave"));
 		int totalWidth = cave.width() - body.width();		
 		int dist = (int) Math.round(totalWidth * percent);
-		
+
+		horScrollAbs(locator,  dist);
+	}
+	/**
+	 *
+	 * @param locator
+	 * @param dist
+	 *
+	 */
+	public void horScrollAbs(ClientWidget locator, int dist) {
+		Widget wgt = jq(locator).toWidget();
+		JQuery body = jq(wgt.$n("body"));
+		JQuery cave = jq(wgt.$n("cave"));
 		if(!hasNativeScroll(locator))
 			locator.eval("_scrollbar.scrollTo(" + dist +", 0)");
 		else 
@@ -827,7 +853,19 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 		int totalWidth = childrenWidth - jq(locator).width();		
 		int dist = (int) Math.round(totalWidth * percent);
-		
+
+		horScrollNoBodyAbs(locator, dist);
+	}
+	/**
+	 * In a case that widget only has 'cave' but 'body',
+	 * we will calculate sum of all children's width of cave,
+	 * and move widget's scrollbar
+	 * @param locator
+	 * @param dist
+	 *
+	 */
+	public void horScrollNoBodyAbs(ClientWidget locator, int dist) {
+		Widget wgt = jq(locator).toWidget();
 		if(!hasNativeScroll(locator))
 			locator.eval("_scrollbar.scrollTo(" + dist +", 0)");
 		else
@@ -853,13 +891,25 @@ public class ZKClientTestCase extends ZKTestCase {
 		int totalHeight = childrenHeight - jq(locator).height();		
 		int dist = (int) Math.round(totalHeight * percent);
 		
+		verScrollNoBodyAbs(locator, dist);
+	}
+
+	/**
+	 * In a case that widget only has 'cave' but 'body',
+	 * we will calculate sum of all children's height of cave,
+	 * and move widget's scrollbar
+	 * @param locator
+	 * @param dist
+	 *
+	 */
+	public void verScrollNoBodyAbs(ClientWidget locator, int dist) {
+		Widget wgt = jq(locator).toWidget();
 		if(!hasNativeScroll(locator))
 			locator.eval("_scrollbar.scrollTo(" + dist +", 0)");
 		else
 			jq(wgt).toElement().set("scrollTop", Math.abs(dist));
 		waitResponse();
 	}
-	
 	/**
 	 * detect if it has a horizontal scroll bar
 	 * @param locator
