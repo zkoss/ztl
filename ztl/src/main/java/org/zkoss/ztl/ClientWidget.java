@@ -74,7 +74,7 @@ public abstract class ClientWidget extends By {
 	 * @param withDot if true, the dot '.' is added before the script.
 	 */
 	public String eval(String script, boolean withDot) {
-		return ZKTestCase.getCurrent().getEval(_out.toString() + (withDot ? "." : "") + script);
+		return ZKClientTestCaseCafe.callEval(_out.toString() + (withDot ? "." : "") + script);
 	}
 	/**
 	 * Returns the evaluation string that is JavaScript format. 

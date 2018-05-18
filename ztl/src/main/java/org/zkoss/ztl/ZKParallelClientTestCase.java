@@ -33,7 +33,7 @@ import org.zkoss.ztl.util.ConfigHelper;
 
 import com.thoughtworks.selenium.SeleniumException;
 
-public class ZKParallelClientTestCase extends ZKClientTestCase {
+public class ZKParallelClientTestCase extends ZKClientTestCaseCafe {
 	// used to decide if we need to restart remote VM
 	private static Map<String, Integer> timeoutCount = new HashMap<String, Integer>();
 	private final int maxTimeoutCount = ConfigHelper.getInstance().getMaxTimeoutCount();

@@ -56,15 +56,14 @@ import com.thoughtworks.selenium.Selenium;
  * 
  */
 public class ConfigHelper {
-
-	private final static String[] SUPPORTED_BROWSER = { "firefox", "chrome",
-			"opera", "ie", "htmlunit", "iexplore", "edge", "ff", "iphone", "android",
-			"safari" };
+	private final static String[] SUPPORTED_BROWSER = { "firefox", "chrome", "ie",
+			"iexplore", "edge", "ff", "safari", "iphone", "android"};
 
 	private final static String ALL_BROWSERS = "all";
 
 	private static List<String> _allBrowsers = new LinkedList<String>();
 
+	private String _testingEnvironment = "selenium"; // use selenium or testcafe
 	private String _client;
 
 	private String _server;
@@ -148,6 +147,9 @@ public class ConfigHelper {
 		return _zktheme;
 	}
 
+	public String getTestingEnvironment() {
+		return _testingEnvironment;
+	}
 	public String getClient() {
 		return _client;
 	}
@@ -216,8 +218,11 @@ public class ConfigHelper {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							capabilities);
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
+					System.out.println(">>>>>>>> here 1");
+					DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+					capabilities.setBrowserName("chrome");
 					return new ZKRemoteWebDriver(new URL(remotePath),
-							DesiredCapabilities.chrome());
+							capabilities);
 				} else if ("safaridriver".equalsIgnoreCase(key)) {
 					return new ZKRemoteWebDriver(new URL(remotePath),
 							DesiredCapabilities.safari());
@@ -242,7 +247,10 @@ public class ConfigHelper {
 					DesiredCapabilities capabilities = DesiredCapabilities.firefox();
 					return new FirefoxDriver(capabilities);
 				} else if ("chromedriver".equalsIgnoreCase(key)) {
-					return new ChromeDriver();
+					System.out.println(">>>>>>>> here 2");
+					DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+					capabilities.setBrowserName("chrome");
+					return new ChromeDriver(capabilities);
 				} else if ("safaridriver".equalsIgnoreCase(key)) {
 					return new SafariDriver();
 				} else if ("internetexplorerdriver".equalsIgnoreCase(key)) {
@@ -585,6 +593,7 @@ public class ConfigHelper {
 					System.out.println("openonce="+_openonce);
 				}
 				_lastModified = f.lastModified();
+				_testingEnvironment = _prop.getProperty("testingEnvironment");
 				// _client = _prop.getProperty("client");
 				_debuggable = Boolean.parseBoolean(_prop
 						.getProperty("debuggable"));

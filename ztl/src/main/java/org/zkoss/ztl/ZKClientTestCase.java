@@ -124,6 +124,15 @@ public class ZKClientTestCase extends ZKTestCase {
 		getEval("zAu.send(new zk.Event(null, 'onZTLService', '"+ zscript + "', 10))");
 	}
 
+	protected void runRawZscript(String zscript) {
+		runZscript(zscript.trim()
+				.replace("\\", "\\\\")
+				.replace("'", "\\'")
+				.replaceAll("\r", "")
+				.replaceAll("\n", "\\\\n")
+		);
+	}
+
 	/**
 	 * Verify image after waitResponse(). (including animation time)
 	 * @since 2.0.0
@@ -217,28 +226,16 @@ public class ZKClientTestCase extends ZKTestCase {
 		}
 		return 0;
 	}
-	public void addSelection(ClientWidget locator, String optionLocator) {
-		super.addSelection(locator.toLocator(), optionLocator);
-	}
-
-	public void assignId(ClientWidget locator, String identifier) {
-		super.assignId(locator.toLocator(), identifier);
-	}
 
 	public void check(ClientWidget locator) {
 		super.check(locator.toLocator());
 	}
 
 	public void click(ClientWidget locator) {
-		super.click(locator.toLocator());
-	}
-	
-	public void fakeClick(ClientWidget locator) {
-		mouseMoveAt(locator, "2,2");
-		waitResponse();
-		mouseDownAt(locator, "2,2");
-		waitResponse();
-		mouseUpAt(locator, "2,2");
+		if (!isSafari())
+			super.click(locator.toLocator());
+		else
+			clickAt(locator, "2,2");
 	}
 	
 	/**
@@ -251,7 +248,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		int x = jq.width() - 3;
 		x += parseInt(jq.css("padding-right"));
 		
-		if (isSafari() || isOpera() || ZK.is("ff > 10"))
+		if (isSafari() || is("ff > 10"))
 			Scripts.triggerMouseEventAt(getWebDriver(), jq, "click", x + ",3");
 		else {
 			WebElement element = null;
@@ -331,7 +328,7 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public void dragdropTo(ClientWidget locatorOfObjectToBeDragged, String from, String to) {
 		
-		if (ZK.is("ie9_")) {
+		if (is("ie9_")) {
 			String[] froms = from.split(",");
 			String[] tos = to.split(",");
 			int x0 = (int) Double.parseDouble(froms[0]);
@@ -400,7 +397,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		// fixed for IE9 on Webdriver
 		// very tricky way to fire the blur event. In this case we cannot send Keys.Tab,
 		// because it may affect the scrollbar to move.
-		if (ZK.is("ie"))
+		if (is("ie"))
 			Scripts.triggerMouseEventAt(getWebDriver(), locator, "blur", "2,2");
 		else
 			super.fireEvent(locator.toLocator(), "blur");
@@ -535,11 +532,11 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * Use this method to simulate typing into an element, which may set its value.
 	 * Notice: The element must get a focus before sendKeys. Most likely a click action is needed before calling this method.
 	 *
-	 * @param by The locating mechanism to use
+	 * @param locator The locating mechanism to use
 	 * @param keysToSend
 	 * @since 2.0.0
 	 */
-	public void sendKeys(By by, CharSequence... keysToSend) {
+	public void sendKeys(ClientWidget locator, CharSequence... keysToSend) {
 		// fixed firefox Keys.ENTER is 14, not 13
 		if (isFirefox()) {
 			for (int i = 0; i < keysToSend.length; i++)
@@ -562,8 +559,9 @@ public class ZKClientTestCase extends ZKTestCase {
 				}
 				if (modified) keysToSend[i] = chseq;
 			}
+			typeKeys(locator, keysToSend.toString());
 		}
-		getWebDriver().findElement(by).sendKeys(keysToSend);
+		getWebDriver().findElement(locator.toBy()).sendKeys(keysToSend);
 	}
 	/**
 	 * <pre>
@@ -598,7 +596,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseDownAt(ClientWidget locator, String coordString) {
-		if (ZK.is("ie9")) {
+		if (is("ie9")) {
 			//bug for Form.ztl 
 			//Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
 			String[] froms = coordString.split(",");
@@ -626,7 +624,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseMoveAt(ClientWidget locator, String coordString) {
-		if (ZK.is("ie9")) {
+		if (is("ie9")) {
 			String[] froms = coordString.split(",");
 			int x0 = Integer.parseInt(froms[0]);
 			int y0 = Integer.parseInt(froms[1]);
@@ -758,7 +756,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		waitResponse();
 	}
 	public boolean hasNativeScroll(ClientWidget locator) {
-		return !Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!" + locator.toLocator() + "._scrollbar"));
+		return !Boolean.valueOf(ZKClientTestCaseCafe.callEval("!!" + locator.toLocator() + "._scrollbar"));
 	}
 	
 	/**
@@ -1001,7 +999,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * a shortcut to close zk log
 	 */
 	public void closeZKLog() {
-		ZKTestCase.getCurrent().getEval("!!jq('#zk_logbox').remove();");
+		ZKClientTestCaseCafe.callEval("!!jq('#zk_logbox').remove();");
 		waitResponse();
 	}
 
@@ -1304,5 +1302,17 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		List<String> tabs = new ArrayList<String>(driver.getWindowHandles());
 		driver.switchTo().window(tabs.get(0));
+	}
+
+
+	/* migrate from ZK.java */
+	/**
+	 * Returns the boolean value from the evaluated name.
+	 * <p>For example,
+	 * <code>ZK.is("ie");</code>
+	 * The invoking JavaScript code will be "zk.ie", and return the boolean value.
+	 */
+	public static boolean is(String name) {
+		return Boolean.valueOf(ZKClientTestCaseCafe.callEval("!!(zk." + name + ")"));
 	}
 }

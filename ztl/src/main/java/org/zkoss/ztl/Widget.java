@@ -60,7 +60,7 @@ public class Widget extends ClientWidget {
 	 * @param value true or false.
 	 */
 	public void set(String name, boolean value) {
-		ZKTestCase.getCurrent().getEval("!!" + _out.toString() + toUpperCase(".set", name) + "(" + value + ")");
+		ZKClientTestCaseCafe.callEval("!!" + _out.toString() + toUpperCase(".set", name) + "(" + value + ")");
 	}
 	/**
 	 * Sets the number value to the evaluated name.
@@ -70,7 +70,7 @@ public class Widget extends ClientWidget {
 	 * @param value any number.
 	 */
 	public void set(String name, int value) {
-		ZKTestCase.getCurrent().getEval("!!" +_out.toString() + toUpperCase(".set", name) + "(" + value + ")");
+		ZKClientTestCaseCafe.callEval("!!" +_out.toString() + toUpperCase(".set", name) + "(" + value + ")");
 	}
 	/**
 	 * Sets the string value to the evaluated name.
@@ -79,7 +79,7 @@ public class Widget extends ClientWidget {
 	 * @param name any allowed property of the widget.
 	 */
 	public void set(String name, String value) {
-		ZKTestCase.getCurrent().getEval("!!" +_out.toString() + toUpperCase(".set", name) + "('" + value + "')");
+		ZKClientTestCaseCafe.callEval("!!" +_out.toString() + toUpperCase(".set", name) + "('" + value + "')");
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class Widget extends ClientWidget {
 	 * @param name any allowed property of the widget.
 	 */
 	public String get(String name) {
-		return ZKTestCase.getCurrent().getEval(_out.toString() + toUpperCase(".get", name) + "()");
+		return ZKClientTestCaseCafe.callEval(_out.toString() + toUpperCase(".get", name) + "()");
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class Widget extends ClientWidget {
 	 * @param name any allowed property of the widget.
 	 */
 	public boolean is(String name) {
-		return Boolean.valueOf(ZKTestCase.getCurrent().getEval(_out.toString() + toUpperCase(".is", name) + "()"));
+		return Boolean.valueOf(ZKClientTestCaseCafe.callEval(_out.toString() + toUpperCase(".is", name) + "()"));
 	}
 	/**
 	 * Returns the child of the widget from the given name.
@@ -135,7 +135,7 @@ public class Widget extends ClientWidget {
 	 * Returns the size of the children.
 	 */
 	public int nChildren() {
-		return ZKClientTestCase.parseInt(ZKTestCase.getCurrent().getEval(_out.toString() + ".nChildren"));
+		return ZKClientTestCase.parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".nChildren"));
 	}
 	/**
 	 * Returns the last child of the widget.
@@ -193,14 +193,14 @@ public class Widget extends ClientWidget {
 	 * Detaches the widget
 	 */
 	public void detach() {
-		ZKTestCase.getCurrent().getEval(_out.toString() + ".detach()");
+		ZKClientTestCaseCafe.callEval(_out.toString() + ".detach()");
 	}
 	
 	/**
 	 * Returns whether the widget exists or not.
 	 */
 	public boolean exists() {
-		return Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!" + _out.toString() + " && !!" + _out.toString() + ".$n()"));
+		return Boolean.valueOf(ZKClientTestCaseCafe.callEval("!!" + _out.toString() + " && !!" + _out.toString() + ".$n()"));
 	}
 	
 	public By toBy() {

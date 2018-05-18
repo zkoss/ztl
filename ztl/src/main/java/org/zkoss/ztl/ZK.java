@@ -27,7 +27,7 @@ public class ZK extends ClientWidget {
 	 * The script of get jq by UUID
 	 */
 	private static String ZK = "zk('%1')";
-	public final static String VERSION = ZKTestCase.getCurrent().getEval("zk.version");
+	public final static String VERSION = ZKClientTestCaseCafe.callEval("zk.version");
 
 	public ZK(String selector) {
 		if (isEmpty(selector))
@@ -48,7 +48,7 @@ public class ZK extends ClientWidget {
 	 * Returns the revised offset array.
 	 */
 	public int[] revisedOffset() {
-		String[] s = ZKTestCase.getCurrent().getEval(_out.toString() + ".revisedOffset()").split(",");
+		String[] s = ZKClientTestCaseCafe.callEval(_out.toString() + ".revisedOffset()").split(",");
 		return new int[] {ZKClientTestCase.parseInt(s[0]), ZKClientTestCase.parseInt(s[1])};
 	}
 	/**
@@ -56,21 +56,21 @@ public class ZK extends ClientWidget {
 	 * @param size the original size.
 	 */
 	public int revisedWidth(int size) {
-		return Integer.parseInt(ZKTestCase.getCurrent().getEval(_out.toString() + ".revisedWidth("+ size +")"));
+		return Integer.parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".revisedWidth("+ size +")"));
 	}
 	/**
 	 * Returns the revised height.
 	 * @param size the original size.
 	 */
 	public int revisedHeight(int size) {
-		return Integer.parseInt(ZKTestCase.getCurrent().getEval(_out.toString() + ".revisedHeight("+ size +")"));
+		return Integer.parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".revisedHeight("+ size +")"));
 	}
 	
 	/**
 	 * focus the current element
 	 */
 	public void focus() {
-		ZKTestCase.getCurrent().getEval(_out.toString() + ".focus()");
+		ZKClientTestCaseCafe.callEval(_out.toString() + ".focus()");
 	}
 	
 	/**
@@ -87,15 +87,6 @@ public class ZK extends ClientWidget {
 		return jq().exists();
 	}
 	
-	/**
-	 * Returns the boolean value from the evaluated name.
-	 * <p>For example,
-	 * <code>ZK.is("ie");</code>
-	 * The invoking JavaScript code will be "zk.ie", and return the boolean value.
-	 */
-	public static boolean is(String name) {
-		return Boolean.valueOf(ZKTestCase.getCurrent().getEval("!!(zk." + name + ")"));
-	}
 	public Element toElement() {
 		return jq().toElement();
 	}
