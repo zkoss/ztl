@@ -1,0 +1,83 @@
+/* ${ztl.fileName}.java
+
+	Purpose:
+		
+	Description:
+		
+	History:
+		${CreateTime}
+
+Copyright (C) ${Year} Potix Corporation. All Rights Reserved.
+*/
+#if ($ztl.package != "")
+package ${ztl.package};
+#end
+import org.zkoss.zstl.ZTL4ScalaTestCase
+import org.junit.Test
+import org.zkoss.ztl.Element
+import org.zkoss.ztl.JQuery
+import org.zkoss.ztl.Tags
+import org.zkoss.ztl.Widget
+import org.zkoss.ztl.ZK
+import org.zkoss.ztl.util._
+
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.HashSet
+import java.util.Iterator
+import java.util.List
+import java.util.Set
+import java.util.Date
+
+#foreach($item in $ztl.import)
+import $item;
+#end
+
+class ${ztl.fileName} extends ZTL4ScalaTestCase {
+#foreach($case in $ztl.children)
+@Test
+	def test${case.id}() = {
+	#set($serverCnt = 0)
+	#foreach ($source in $case.children)
+		#if($source.getType()== "Server")
+			#if($serverCnt == 0)
+			#set($serverCnt = 1)
+		var zscript = """$source.content"""
+		#set($esc='$')
+		val ztl$engine = new Widget(new StringBuffer("zk.Desktop._dt"))
+		#foreach($ids in $source.idArray)
+		val $ids = ztl$engine.${esc}f("$ids")
+		#end
+			#else
+				#if($serverCnt == 1)
+					#set($serverRunZscripts = [$source.content])
+				#else
+					#set($serverRunZscripts[$serverCnt-1] = $source.content)
+				#end
+			#end
+		#else
+runZTL(zscript, () => {
+			#foreach($serverZscript in $serverRunZscripts)
+			runZscript("""$serverZscript""")
+			#end
+			#set($wait = $source.wait)
+			#if($wait != "")
+			/** set speed depended on test case setting */
+			setSpeed("$wait")
+			#end
+			#foreach($cnt in $source.contentArray)
+			$cnt
+			#end
+			#if($wait != "")
+			/** reset */
+			setSpeed("${ztl.delay}")
+			#end
+		})
+		#end
+	#end
+	}
+#end
+}
+
+
+

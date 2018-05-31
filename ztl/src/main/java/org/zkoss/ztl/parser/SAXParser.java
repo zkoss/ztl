@@ -28,11 +28,16 @@ import org.zkoss.ztl.util.Test;
  */
 public class SAXParser {
 	public static Test parser(File f) {
+		return parser(f, false);
+	}
+
+	//support java to scala conversion
+	public static Test parser(File f, boolean javaToScala) {
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		javax.xml.parsers.SAXParser sparser = null;
 		try {
 			sparser = spf.newSAXParser();
-			SAXHandler handler = new SAXHandler();
+			SAXHandler handler = new SAXHandler(javaToScala);
 			setSafeProperty(sparser,
 					"http://xml.org/sax/properties/lexical-handler",
 					"http://xml.org/sax/handlers/LexicalHandler", handler);

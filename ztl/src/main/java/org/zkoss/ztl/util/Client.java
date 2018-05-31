@@ -31,11 +31,13 @@ public class Client implements Source {
 
 	private String _content = "";
 	private Case _case;
+	private boolean _javaToScala; //support java to scala conversion
 
 	private Map<String, String> _attrs;
 
-	public Client(Map<String, String> attrs) {
+	public Client(Map<String, String> attrs, boolean javaToScala) {
 		_attrs = attrs;
+		_javaToScala = javaToScala;
 	}
 
 	public String getContent() {
@@ -48,6 +50,23 @@ public class Client implements Source {
 	}
 	@Override
 	public void setContent(String content) {
+		//support java to scala conversion
+		if (content != null && _javaToScala) {
+			content = content.replaceAll("String ", "var ")
+					.replaceAll("String\\[\\] ", "var ")
+					.replaceAll("int ", "var ")
+					.replaceAll("int\\[\\] ", "var ")
+					.replaceAll("Element ", "var ")
+					.replaceAll("Element\\[\\] ", "var ")
+					.replaceAll(".val\\(\\)", ".`val`()")
+					.replaceAll("type\\(", "typeKeys(")
+					.replaceAll(";\n", "\n");
+			// TODO: for loop
+			// TODO: xxx ? OOO : zzz (if else)
+			// TODO: parseInt
+			// TODO: array
+			// TODO: type
+		}
 		if (_content != null) {
 			_content += content;
 		} else {

@@ -38,6 +38,12 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 	private Case _case;
 	private int _deep = -1;
 	private boolean _content;
+	private boolean _javaToScala; //support java to scala conversion
+
+	public SAXHandler(boolean javaToScala) {
+		this._javaToScala = javaToScala;
+	}
+
 	public Test getRoot() {
 		return _test;
 	}
@@ -88,7 +94,7 @@ public class SAXHandler extends DefaultHandler implements LexicalHandler {
 			_deep++;
 		} else if ("client".equals(qName)) {
 			_content = true;
-			_case.add(new Client(attrsToMap(attrs)));
+			_case.add(new Client(attrsToMap(attrs), _javaToScala));
 			_deep++;
 		} else {
 			throw new SAXException("Unsupported tag [" + qName + "]");
