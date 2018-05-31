@@ -1,0 +1,13 @@
+debug
+codegen
+target
+*.local
+*.class
+javadoc
+Thumbs.db
+.project
+bin/node_modules
+*.classpath
+.settings/*
+.idea
+*.iml
