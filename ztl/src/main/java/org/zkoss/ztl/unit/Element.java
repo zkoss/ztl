@@ -14,9 +14,10 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.ztl;
+package org.zkoss.ztl.unit;
 
 import org.openqa.selenium.By;
+import org.zkoss.ztl.util.Scripts;
 
 /**
  * A simulator of DOM element object.
@@ -24,7 +25,6 @@ import org.openqa.selenium.By;
  *
  */
 public class Element extends ClientWidget {
-
 	public Element(String script) {
 		_out = new StringBuffer(script);
 	}
@@ -38,7 +38,7 @@ public class Element extends ClientWidget {
 	 * @param name any attribute of the element.
 	 */
 	public void set(String name, String value) {
-		ZKClientTestCaseCafe.callEval(_out.toString() + "." + name + " = '" + value + "'");
+		Scripts.getEval(_out.toString() + "." + name + " = '" + value + "'");
 	}
 	/**
 	 * Sets the boolean value to the evaluated name.
@@ -48,7 +48,7 @@ public class Element extends ClientWidget {
 	 * @param value true or false.
 	 */
 	public void set(String name, boolean value) {
-		ZKClientTestCaseCafe.callEval(_out.toString() + "." + name + " = " + value + "");
+		Scripts.getEval(_out.toString() + "." + name + " = " + value + "");
 	}
 	/**
 	 * Sets the number value to the evaluated name.
@@ -58,7 +58,7 @@ public class Element extends ClientWidget {
 	 * @param value any number.
 	 */
 	public void set(String name, int value) {
-		ZKClientTestCaseCafe.callEval(_out.toString() + "." + name + " = " + value + "");
+		Scripts.getEval(_out.toString() + "." + name + " = " + value + "");
 	}
 	/**
 	 * Returns the result of the evaluated name.
@@ -68,7 +68,7 @@ public class Element extends ClientWidget {
 	 * @param name any attribute of the element.
 	 */
 	public String get(String name) {
-		return ZKClientTestCaseCafe.callEval(_out.toString() + "." + name);
+		return eval(name);
 	}
 	/**
 	 * Returns the boolean value of the evaluated name.
@@ -79,7 +79,7 @@ public class Element extends ClientWidget {
 	 * @return if true, the return value is the same as "true".
 	 */
 	public boolean is(String name) {
-		return Boolean.valueOf(ZKClientTestCaseCafe.callEval(_out.toString() + "." + name));
+		return Boolean.valueOf(eval(name));
 	}
 	/**
 	 * Returns the parentNode of the element.
@@ -104,7 +104,7 @@ public class Element extends ClientWidget {
 	 * Returns whether the element exists or not.
 	 */
 	public boolean exists() {
-		return Boolean.valueOf(ZKClientTestCaseCafe.callEval(_out.toString() + " != null"));
+		return Boolean.valueOf(eval(" != null", false));
 	}
 	public Element toElement() {
 		return this;

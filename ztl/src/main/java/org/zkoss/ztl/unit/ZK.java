@@ -14,9 +14,10 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.ztl;
+package org.zkoss.ztl.unit;
 
 import org.openqa.selenium.By;
+import org.zkoss.ztl.util.Scripts;
 
 /**
  * A simulator of ZK client side object, which wraps the ZK client API.
@@ -27,7 +28,9 @@ public class ZK extends ClientWidget {
 	 * The script of get jq by UUID
 	 */
 	private static String ZK = "zk('%1')";
-	public final static String VERSION = ZKClientTestCaseCafe.callEval("zk.version");
+	public String getVersion() {
+		return Scripts.getEval("zk.version");
+	}
 
 	public ZK(String selector) {
 		if (isEmpty(selector))
@@ -37,40 +40,28 @@ public class ZK extends ClientWidget {
 	public ZK(ClientWidget el) {
 		_out = new StringBuffer(ZK.replace("'%1'", el.toString()));
 	}
-	public ZK(StringBuffer out, String script) {
-		_out = new StringBuffer(out).append(script);
-	}
 	public ZK(StringBuffer out) {
-		_out = new StringBuffer(out);
+		this(out, null);
 	}
-	
+	public ZK(StringBuffer out, String script) {
+		_out = new StringBuffer(out);
+		if (script != null)
+			_out.append(script);
+	}
+
 	/**
 	 * Returns the revised offset array.
 	 */
 	public int[] revisedOffset() {
-		String[] s = ZKClientTestCaseCafe.callEval(_out.toString() + ".revisedOffset()").split(",");
-		return new int[] {ZKClientTestCase.parseInt(s[0]), ZKClientTestCase.parseInt(s[1])};
+		String[] s = Scripts.getEval(_out.toString() + ".revisedOffset()").split(",");
+		return new int[]{parseInt(s[0]), parseInt(s[1])};
 	}
-	/**
-	 * Returns the revised width.
-	 * @param size the original size.
-	 */
-	public int revisedWidth(int size) {
-		return Integer.parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".revisedWidth("+ size +")"));
-	}
-	/**
-	 * Returns the revised height.
-	 * @param size the original size.
-	 */
-	public int revisedHeight(int size) {
-		return Integer.parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".revisedHeight("+ size +")"));
-	}
-	
+
 	/**
 	 * focus the current element
 	 */
 	public void focus() {
-		ZKClientTestCaseCafe.callEval(_out.toString() + ".focus()");
+		Scripts.getEval(_out.toString() + ".focus()");
 	}
 	
 	/**

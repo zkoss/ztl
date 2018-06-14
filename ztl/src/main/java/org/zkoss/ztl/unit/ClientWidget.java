@@ -14,18 +14,18 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
 */
-package org.zkoss.ztl;
-
-import java.util.ArrayList;
-import java.util.List;
+package org.zkoss.ztl.unit;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.internal.seleniumemulation.ZKElementFinder;
 import org.openqa.selenium.remote.RemoteWebElement;
+import org.zkoss.ztl.util.Scripts;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -74,8 +74,9 @@ public abstract class ClientWidget extends By {
 	 * @param withDot if true, the dot '.' is added before the script.
 	 */
 	public String eval(String script, boolean withDot) {
-		return ZKClientTestCaseCafe.callEval(_out.toString() + (withDot ? "." : "") + script);
+		return Scripts.getEval(_out.toString() + (withDot ? "." : "") + script);
 	}
+
 	/**
 	 * Returns the evaluation string that is JavaScript format. 
 	 */
@@ -111,5 +112,21 @@ public abstract class ClientWidget extends By {
 			list.add(ZKElementFinder.findChildElementX(element.getWrappedDriver(), element.getAttribute("id"), toLocator()));
 		}
 		return list;
+	}
+
+	protected int parseInt(String number) {
+		if (number != null) {
+			number = number.replaceAll("[^-0-9\\.]", "");
+			int decimal = number.indexOf('.');
+			if (decimal > 0)
+				number = number.substring(0, decimal);
+
+			if(!"".equals(number.trim())){
+				return Integer.parseInt(number);
+			}else{
+				return 0;
+			}
+		}
+		return 0;
 	}
 }

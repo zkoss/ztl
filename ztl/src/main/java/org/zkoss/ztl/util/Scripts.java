@@ -16,21 +16,22 @@ Copyright (C) 2011 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl.util;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
+import com.google.common.io.Resources;
 import com.thoughtworks.selenium.webdriven.JavascriptLibrary;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.zkoss.ztl.ZKTestCase;
+import org.zkoss.ztl.testcafe.CafeTestStep;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Throwables;
-import com.google.common.io.Resources;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A util class to collect the source of Javascript for Selenium 2.
@@ -109,5 +110,23 @@ public class Scripts {
 		} catch (IOException e) {
 			throw Throwables.propagate(e);
 		}
+	}
+
+	public static String getEval(String script) {
+		return getEval(script, null , false);
+	}
+
+	public static String getEval(String script, List<CafeTestStep> testSteps) {
+		return getEval(script, testSteps , false);
+	}
+
+	//internal use
+	public static String getEval(String script, List<CafeTestStep> testSteps, boolean doRecord) {
+		if (testSteps == null) {
+			script = ZKTestCase.getCurrent().getEval(script);
+		} else {
+			testSteps.add(new CafeTestStep(CafeTestStep.EVAL, "await ClientFunction(() => " + script + ")()"));
+		}
+		return script;
 	}
 }

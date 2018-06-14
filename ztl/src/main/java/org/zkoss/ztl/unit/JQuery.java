@@ -14,12 +14,13 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 {{IS_RIGHT
 }}IS_RIGHT
  */
-package org.zkoss.ztl;
+package org.zkoss.ztl.unit;
+
+import org.openqa.selenium.By;
+import org.zkoss.ztl.util.Scripts;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-
-import org.openqa.selenium.By;
 
 /**
  * A simulator of JQuery client side object, which wraps the JQuery client side
@@ -28,8 +29,7 @@ import org.openqa.selenium.By;
  * @author jumperchen
  *
  */
-public class JQuery extends ClientWidget implements Iterable<JQuery>{
-
+public class JQuery extends ClientWidget implements Iterable<JQuery> {
 	/**
 	 * The script of get jq by UUID
 	 */
@@ -45,12 +45,14 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 		_out = new StringBuffer(JQ.replace("'%1'", el.toString()));
 	}
 
-	public JQuery(StringBuffer out, String script) {
-		_out = new StringBuffer(out).append(script);
+	public JQuery(StringBuffer out) {
+		this(out, null);
 	}
 
-	public JQuery(StringBuffer out) {
+	public JQuery(StringBuffer out, String script) {
 		_out = new StringBuffer(out);
+		if (script != null)
+			_out.append(script);
 	}
 
 	/**
@@ -60,7 +62,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 *            CSS name.
 	 */
 	public String css(String name) {
-		return ZKClientTestCaseCafe.callEval(_out.toString() + ".css('" + name + "')");
+		return Scripts.getEval(_out.toString() + ".css('" + name + "')");
 	}
 
 	/**
@@ -70,7 +72,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 *            attribute name of the element.
 	 */
 	public String attr(String name) {
-		return ZKClientTestCaseCafe.callEval(_out.toString() + ".attr('" + name + "')");
+		return Scripts.getEval(_out.toString() + ".attr('" + name + "')");
 	}
 
 	/**
@@ -80,7 +82,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 *            the CSS class name.
 	 */
 	public boolean hasClass(String className) {
-		return Boolean.valueOf((ZKClientTestCaseCafe.callEval(_out.toString() + ".hasClass('" + className + "')")));
+		return Boolean.valueOf(Scripts.getEval(_out.toString() + ".hasClass('" + className + "')"));
 	}
 
 	/**
@@ -91,7 +93,8 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * @return
 	 */
 	public boolean is(String selector) {
-		return Boolean.valueOf((ZKClientTestCaseCafe.callEval(_out.toString() + ".is('" + selector + "')")));
+		return Boolean.valueOf(Scripts.getEval(_out.toString() + ".is('" + selector + "')"));
+
 	}
 
 	/**
@@ -166,7 +169,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	public JQuery parent(String selector) {
 		return new JQuery(_out, ".parent('" + selector + "')");
 	}
-	
+
 	/**
 	 * Returns the parents element in JQuery object.
 	 */
@@ -178,14 +181,14 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * Returns the text content
 	 */
 	public String text() {
-		return ZKClientTestCaseCafe.callEval(_out.toString() + ".text()");
+		return Scripts.getEval(_out.toString() + ".text()");
 	}
 
 	/**
 	 * Returns the html content(innerHTML)
 	 */
 	public String html() {
-		return ZKClientTestCaseCafe.callEval(_out.toString() + ".html()");
+		return Scripts.getEval(_out.toString() + ".html()");
 	}
 
 	/**
@@ -195,21 +198,21 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * @return
 	 */
 	public String val() {
-		return ZKClientTestCaseCafe.callEval(_out.toString() + ".val()");
+		return Scripts.getEval(_out.toString() + ".val()");
 	}
 
 	/**
 	 * Returns the current computed height for the first element.
 	 */
 	public int height() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".height()"));
+		return parseInt(Scripts.getEval(_out.toString() + ".height()"));
 	}
 
 	/**
 	 * Returns the current computed width for the first element.
 	 */
 	public int width() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".width()"));
+		return parseInt(Scripts.getEval(_out.toString() + ".width()"));
 	}
 
 	/**
@@ -217,7 +220,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * padding but not border.
 	 */
 	public int innerHeight() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".innerHeight()"));
+		return parseInt(Scripts.getEval(_out.toString() + ".innerHeight()"));
 	}
 
 	/**
@@ -225,7 +228,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * padding but not border.
 	 */
 	public int innerWidth() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".innerWidth()"));
+		return parseInt(Scripts.getEval(_out.toString() + ".innerWidth()"));
 	}
 
 	/**
@@ -233,7 +236,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * padding and border.
 	 */
 	public int outerWidth() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".outerWidth()"));
+		return parseInt(Scripts.getEval(_out.toString() + ".outerWidth()"));
 	}
 
 	/**
@@ -243,8 +246,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * @param includeMargin
 	 */
 	public int outerWidth(boolean includeMargin) {
-		return parseInt(ZKClientTestCaseCafe.callEval(
-				_out.toString() + ".outerWidth(" + includeMargin + ")"));
+		return parseInt(Scripts.getEval(_out.toString() + ".outerWidth(" + includeMargin + ")"));
 	}
 
 	/**
@@ -252,7 +254,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * padding and border.
 	 */
 	public int outerHeight() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".outerHeight()"));
+		return parseInt(Scripts.getEval(_out.toString() + ".outerHeight()"));
 	}
 
 	/**
@@ -262,15 +264,14 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * @param includeMargin
 	 */
 	public int outerHeight(boolean includeMargin) {
-		return parseInt(ZKClientTestCaseCafe.callEval(
-				_out.toString() + ".outerHeight(" + includeMargin + ")"));
+		return parseInt(Scripts.getEval(_out.toString() + ".outerHeight(" + includeMargin + ")"));
 	}
 
 	/**
 	 * Returns the length of the array from the jQuery object.
 	 */
 	public int length() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".length"));
+		return parseInt(Scripts.getEval(_out.toString() + ".length"));
 	}
 
 	/**
@@ -280,40 +281,39 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 		return new ZK(_out, ".zk");
 	}
 
-	
 	public By toBy() {
 		String id = attr("id");
 		if (!isEmpty(id))
 			return By.id(id);
 		return By.className(attr("className"));
 	}
-	
+
 	/**
 	 * Returns the scrollbar width.
 	 */
-	public static int scrollbarWidth() {
-		return Integer.parseInt(ZKClientTestCaseCafe.callEval("jq.scrollbarWidth()"));
+	public int scrollbarWidth() {
+		return parseInt(Scripts.getEval("jq.scrollbarWidth()"));
 	}
 
 	/**
 	 * Returns whether the widget exists or not.
 	 */
 	public boolean exists() {
-		return Boolean.valueOf(ZKClientTestCaseCafe.callEval("!!" + _out.toString() + "[0]"));
+		return Boolean.valueOf(Scripts.getEval("!!" + _out.toString() + "[0]"));
 	}
 
 	/**
 	 * Returns the current computed offsetLeft for the first element
 	 */
 	public int offsetLeft() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".offset().left"));
+		return parseInt(Scripts.getEval(_out.toString() + ".offset().left"));
 	}
 
 	/**
 	 * Returns the current computed offsetTop for the first element
 	 */
 	public int offsetTop() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".offset().top"));
+		return parseInt(Scripts.getEval(_out.toString() + ".offset().top"));
 	}
 
 	/**
@@ -323,7 +323,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * @return
 	 */
 	public int positionLeft() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".position().left"));
+		return parseInt(Scripts.getEval(_out.toString() + ".position().left"));
 	}
 
 	/**
@@ -333,23 +333,24 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * @return
 	 */
 	public int positionTop() {
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".position().top"));
+		return parseInt(Scripts.getEval(_out.toString() + ".position().top"));
 	}
+
 	/**
 	 * getter for scrollTop
 	 * if multiple result , will receive first value.
 	 * @return
 	 */
-	public int scrollTop(){
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".scrollTop()"));
+	public int scrollTop() {
+		return parseInt(Scripts.getEval(_out.toString() + ".scrollTop()"));
 	}
-	
+
 	/**
-	 * setter for scrollTop 
+	 * setter for scrollTop
 	 * @param value
 	 */
-	public void scrollTop(int value){
-		ZKClientTestCaseCafe.callEval(_out.toString() + ".scrollTop(" + value + ");1;");
+	public void scrollTop(int value) {
+		Scripts.getEval(_out.toString() + ".scrollTop(" + value + ");1;");
 	}
 
 	/**
@@ -357,99 +358,104 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 	 * if multiple result , will receive first value.
 	 * @return
 	 */
-	public int scrollLeft(){
-		return parseInt(ZKClientTestCaseCafe.callEval(_out.toString() + ".scrollLeft()"));
+	public int scrollLeft() {
+		return parseInt(Scripts.getEval(_out.toString() + ".scrollLeft()"));
 	}
-	
+
 	/**
-	 * setter for scrollLeft 
+	 * setter for scrollLeft
 	 * @param value
 	 */
-	public void scrollLeft(int value){
-		ZKClientTestCaseCafe.callEval(_out.toString() + ".scrollLeft(" + value + ");1;");
+	public void scrollLeft(int value) {
+		Scripts.getEval(_out.toString() + ".scrollLeft(" + value + ");1;");
 	}
-	
+
 	/**
 	 * Note:This not a jQuery base method.
 	 * just a short cut ,in javascript's world equals get(0).scrollHeight
 	 * @return
 	 */
-	public int scrollHeight(){
+	public int scrollHeight() {
 		return parseInt(get(0).get("scrollHeight"));
 	}
-	
+
 	/**
 	 * Note:This not a jQuery base method.
 	 * just a short cut ,in javascript's world equals get(0).scrollWidth
 	 * @return
 	 */
-	public int scrollWidth(){
+	public int scrollWidth() {
 		return parseInt(get(0).get("scrollWidth"));
 	}
-	
+
 	/**
 	 * proxy for jQuery get method
 	 * @param index
 	 * @return Element  the dom element
 	 */
-	public Element get(int index){
-		return new Element(_out.toString()+"[" + index + "]");
+	public Element get(int index) {
+		return new Element(_out.toString() + "[" + index + "]");
 	}
-	
+
 	public Element toElement() {
 		return get(0);
 	}
-	
+
 	/**
 	 * proxy for jQuery eq method
 	 * @param index
 	 * @return
 	 */
-	public JQuery eq(int index){
-		return new JQuery(_out,".eq(" + index + ")");
+	public JQuery eq(int index) {
+		return new JQuery(_out, ".eq(" + index + ")");
 	}
 
 	@Override
 	public Iterator<JQuery> iterator() {
 		return new JQueryIerator(this);
 	}
-	
+
 	/**
 	 * translate to widget. (a shortcut for  new Widget($obj) );
 	 * @return
 	 */
-	public Widget toWidget(){
+	public Widget toWidget() {
 		return new Widget(this);
 	}
+
 	/**
-	 * I use private class to prevent more complexly code in util.
-	 * No body should know how it works , 
-	 * just know that it return the JQuery object in order.
-	 * In fact , this is useful I think. 
+	 * i use private class to prevent more complexly code in util.
+	 * no body should know how it works ,
+	 * just know that it return the jquery object in order.
+	 * in fact , this is useful i think.
 	 * @author Tony
 	 *
 	 */
-	private class JQueryIerator implements Iterator<JQuery>{
+	private class JQueryIerator implements Iterator<JQuery> {
 		private JQuery _context;
 		private int _count;
-		private int _index = 0 ;
-		public JQueryIerator(JQuery context){
+		private int _index = 0;
+
+		public JQueryIerator(JQuery context) {
 			_context = context;
 			_count = _context.length();
 		}
+
 		@Override
 		public boolean hasNext() {
 			return _index != _count;
 		}
+
 		@Override
 		public JQuery next() {
-			if(!hasNext()){
+			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
 			JQuery result = _context.eq(_index);
-			++ _index ;
+			++_index;
 			return result;
 		}
+
 		/**
 		 * why we don't support remove in this time?
 		 * Because we don't really got a jQuery instance in this time.
@@ -458,21 +464,5 @@ public class JQuery extends ClientWidget implements Iterable<JQuery>{
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
-	}
-
-	private int parseInt(String number) {
-//		if (number != null) {
-//			number = number.replaceAll("[^-0-9\\.]", "");
-//			int decimal = number.indexOf('.');
-//			if (decimal > 0)
-//				number = number.substring(0, decimal);
-//
-//			if(!"".equals(number.trim())){
-//				return Integer.parseInt(number);
-//			}else{
-//				return 0;
-//			}
-//		}
-		return 0;
 	}
 }
