@@ -86,4 +86,14 @@ public class ZK extends ClientWidget {
 	public By toBy() {
 		throw new UnsupportedOperationException("Please use By.id(), By.className(), and By.cssSelector() instead!");
 	}
+
+	/**
+	 * Used in test cafe
+	 */
+	public String revisedOffset_cafeStr(String name) {
+		return Scripts.getEval(_out.toString() + ".revisedOffset()");
+	}
+	public String exists_cafeStr() {
+		return Scripts.getEval(_out.toString() + ".jq != null");
+	}
 }

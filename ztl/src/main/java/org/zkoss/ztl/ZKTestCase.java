@@ -215,7 +215,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	    Selenium selenium = _selenium.get();
 	    if (selenium == null)
 	        Thread.dumpStack();
-	    
+
 	    return selenium;
 	}
 
@@ -261,7 +261,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 	}
 
 	/**
-	 * Returns whether is InternatExplorer Driver
+	 * Returns whether is InternetExplorer Driver
 	 * @since 2.0.0
 	 */
 	public boolean isIE() {

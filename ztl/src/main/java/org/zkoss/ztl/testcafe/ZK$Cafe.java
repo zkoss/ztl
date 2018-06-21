@@ -1,0 +1,77 @@
+/* CafeZK.java
+	Purpose:
+
+	Description:
+
+	History:
+		Wed Jun 13 10:17:44 CST 2018, Created by jameschu
+
+Copyright (C) 2018 Potix Corporation. All Rights Reserved.
+*/
+package org.zkoss.ztl.testcafe;
+
+import org.openqa.selenium.By;
+import org.zkoss.ztl.unit.ClientWidget;
+import org.zkoss.ztl.unit.Element;
+import org.zkoss.ztl.unit.JQuery;
+import org.zkoss.ztl.util.Scripts;
+
+import java.util.List;
+
+/**
+ * @author jameschu
+ */
+public class ZK$Cafe extends org.zkoss.ztl.unit.ZK {
+	private static String ZK = "zk('%1')";
+	private List<CafeTestStep> _testSteps;
+
+	@Override
+	public String getVersion() {
+		return Scripts.getEval("zk.version");
+	}
+
+	public ZK$Cafe(String selector, List<CafeTestStep> testSteps) {
+		super(selector);
+		_testSteps = testSteps;
+	}
+
+	public ZK$Cafe(ClientWidget el, List<CafeTestStep> testSteps) {
+		super(el);
+		_testSteps = testSteps;
+	}
+
+	public ZK$Cafe(StringBuffer out, String script, List<CafeTestStep> testSteps) {
+		super(out, script);
+		_testSteps = testSteps;
+	}
+
+	@Override
+	public int[] revisedOffset() {
+		return new int[]{0, 0};
+	}
+
+	@Override
+	public void focus() {
+		Scripts.getEval(_out.toString() + ".focus()", _testSteps, true);
+	}
+
+	@Override
+	public JQuery jq() {
+		return new JQuery$Cafe(_out, ".jq", _testSteps);
+	}
+
+	@Override
+	public boolean exists() {
+		return jq().exists();
+	}
+
+	public Element toElement() {
+		return jq().toElement();
+	}
+
+	@Override
+	public By toBy() {
+		throw new UnsupportedOperationException("Please use jQuery instead!");
+	}
+
+}

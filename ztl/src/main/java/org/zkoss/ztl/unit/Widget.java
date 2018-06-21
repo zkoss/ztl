@@ -219,4 +219,16 @@ public class Widget extends ClientWidget {
 	public By toBy() {
 		return By.id(uuid());
 	}
+	/**
+	 * Used in test cafe
+	 */
+	public String is_cafeStr(String name) {
+		return Scripts.getEval(_out.toString() + toUpperCase(".is", name) + "()");
+	}
+	public String exists_cafeStr() {
+		return Scripts.getEval("!!" + _out.toString() + " && !!" + _out.toString() + ".$n()");
+	}
+	public String nChildren_cafeStr() {
+		return Scripts.getEval(_out.toString() + ".nChildren");
+	}
 }

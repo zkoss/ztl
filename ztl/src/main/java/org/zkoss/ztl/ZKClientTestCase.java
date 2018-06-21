@@ -28,6 +28,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.interactions.touch.TouchActions;
 
+import org.zkoss.ztl.unit.*;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.image.Comparator;
@@ -62,7 +63,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	protected void waitResponse(boolean includingAnimation) {
 		waitResponse(_timeout, includingAnimation);
 	}
-	
+
 	/**
 	 * Verifies the image before response has done. 
 	 */
@@ -85,11 +86,10 @@ public class ZKClientTestCase extends ZKTestCase {
 		int ms = Integer.parseInt(getSpeed());
 		if (isIE())
 			ms /= 2;
-		
-		String scripts = includingAnimation ? "!!zAu.processing() || !!jq.timers.length"
-								: "!!zAu.processing()";
+
+		String scripts = includingAnimation ? "!!zAu.processing() || !!jq.timers.length" : "!!zAu.processing()";
 		while (i < 2) { // make sure the command is triggered.
-			while(Boolean.valueOf(this.getEval(scripts))) {
+			while (Boolean.valueOf(this.getEval(scripts))) {
 				if (System.currentTimeMillis() - s > timeout) {
 					assertTrue("Test case timeout!", false);
 					break;
@@ -98,9 +98,10 @@ public class ZKClientTestCase extends ZKTestCase {
 				sleep(ms);
 			}
 			i++;
-			sleep(includingAnimation ? ms*2 : ms);
+			sleep(includingAnimation ? ms * 2 : ms);
 		}
 	}
+
 	/**
 	 * Waits for Ajax response according to the timeout attribute.(excluding animation check)
 	 * @param timeout the time. (millisecond).
@@ -121,16 +122,12 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	protected void runZscript(String zscript) {
-		getEval("zAu.send(new zk.Event(null, 'onZTLService', '"+ zscript + "', 10))");
+		getEval("zAu.send(new zk.Event(null, 'onZTLService', '" + zscript + "', 10))");
 	}
 
 	protected void runRawZscript(String zscript) {
-		runZscript(zscript.trim()
-				.replace("\\", "\\\\")
-				.replace("'", "\\'")
-				.replaceAll("\r", "")
-				.replaceAll("\n", "\\\\n")
-		);
+		runZscript(zscript.trim().replace("\\", "\\\\").replace("'", "\\'").replaceAll("\r", "").replaceAll("\n",
+				"\\\\n"));
 	}
 
 	/**
@@ -141,7 +138,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		waitResponse(true);
 		super.verifyImage();
 	}
-	
+
 	/**
 	 * Returns the Widget object of the UUID.
 	 * @param number the number of the widget ID.
@@ -186,13 +183,6 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	/**
-	 * Returns boolean to indicate if there is any js error or erro window
-	 * @return
-	 */
-	protected boolean hasError() {
-		return (jq(".z-messagebox-error").exists()) || (jq(".z-errorbox").exists()) || (jq(".z-error").exists());
-	}
-	/**
 	 * Returns the ZK object of the ZKClientObject.
 	 * @param el the ZKClientObject
 	 */
@@ -207,25 +197,6 @@ public class ZKClientTestCase extends ZKTestCase {
 	protected ZK zk(String selector) {
 		return new ZK(selector);
 	}
-	/**
-	 * Returns the int value from the given string number.
-	 * @param number the string number, if null or empty, 0 is assumed.
-	 */
-	public static int parseInt(String number) {
-		if (number != null) {
-			number = number.replaceAll("[^-0-9\\.]", "");
-			int decimal = number.indexOf('.');
-			if (decimal > 0)
-				number = number.substring(0, decimal);
-
-			if(!"".equals(number.trim())){
-				return Integer.parseInt(number);
-			}else{
-				return 0;
-			}
-		}
-		return 0;
-	}
 
 	public void check(ClientWidget locator) {
 		super.check(locator.toLocator());
@@ -236,39 +207,6 @@ public class ZKClientTestCase extends ZKTestCase {
 			super.click(locator.toLocator());
 		else
 			clickAt(locator, "2,2");
-	}
-	
-	/**
-	 * Close the errorbox for webdriver
-	 * @since 2.0.0
-	 */
-	public void closeErrorBox() {
-		// fixed bug for B50-2916148.ztl
-		JQuery jq = jq(".z-errbox-close");
-		int x = jq.width() - 3;
-		x += parseInt(jq.css("padding-right"));
-		
-		if (isSafari() || is("ff > 10"))
-			Scripts.triggerMouseEventAt(getWebDriver(), jq, "click", x + ",3");
-		else {
-			WebElement element = null;
-			if (isAndroid()) {
-				element = findElement(jq.toBy());
-				Point p = element.getLocation();
-				x += p.x;
-				new TouchActions(getWebDriver()).down(x, p.y + 3).up(x, p.y + 3).perform();
-			} else {
-				element = findElement(jq);
-				getActions().moveToElement(element, x, 3).click().perform();
-			}
-
-			// double check again (clicking without padding-right)
-			// sometimes on 64 bit OS will need to close again for IE9.
-			if (jq.exists() && !isAndroid()) {
-				x -= parseInt(jq.css("padding-right"));
-				getActions().moveToElement(element, x, 3).click().perform();
-			}
-		}
 	}
 
 	/**
@@ -297,7 +235,7 @@ public class ZKClientTestCase extends ZKTestCase {
 				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
 				Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", coordString);
 				Scripts.triggerMouseEventAt(getWebDriver(), locator, "click", coordString);
-			} catch (SeleniumException ee){
+			} catch (SeleniumException ee) {
 				throw e;
 			}
 		}
@@ -327,8 +265,8 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void dragdropTo(ClientWidget locatorOfObjectToBeDragged, String from, String to) {
-		
-		if (is("ie9_")) {
+
+		if (isIE()) {
 			String[] froms = from.split(",");
 			String[] tos = to.split(",");
 			int x0 = (int) Double.parseDouble(froms[0]);
@@ -338,11 +276,10 @@ public class ZKClientTestCase extends ZKTestCase {
 			WebElement element = findElement(locatorOfObjectToBeDragged);
 			// 0,0 means no offset, move to element center
 			if (froms[0].equals("0") && froms[1].equals("0"))
-				getActions().moveToElement(element).clickAndHold()
-				.moveByOffset(x1-x0, y1-y0).release().perform();
+				getActions().moveToElement(element).clickAndHold().moveByOffset(x1 - x0, y1 - y0).release().perform();
 			else
-				getActions().moveToElement(element, x0, y0).clickAndHold()
-				.moveByOffset(x1-x0, y1-y0).release().perform();
+				getActions().moveToElement(element, x0, y0).clickAndHold().moveByOffset(x1 - x0, y1 - y0).release()
+						.perform();
 		} else {
 			// fixed for Selenium 2.5.0 issue
 			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
@@ -352,15 +289,12 @@ public class ZKClientTestCase extends ZKTestCase {
 			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
 			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mouseup", to);
 		}
-		
+
 	}
-	
-	public void dragdropToObject(ClientWidget locatorOfObjectToBeDragged,
-			ClientWidget locatorOfDragDestinationObject, String from, String to) {
-			
+
+	public void dragdropToObject(ClientWidget locatorOfObjectToBeDragged, ClientWidget locatorOfDragDestinationObject,
+			String from, String to) {
 		// fixed for Selenium 2.5.0
-		//super.dragdropToObject(locatorOfObjectToBeDragged.toLocator(),
-		//	locatorOfDragDestinationObject.toLocator(), from, to);
 		mouseMoveAt(locatorOfObjectToBeDragged, from);
 		mouseDownAt(locatorOfObjectToBeDragged, from);
 		mouseMoveAt(locatorOfDragDestinationObject, to);
@@ -390,6 +324,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		else
 			super.focus(locator.toLocator());
 	}
+
 	/**
 	 * @param locator
 	 */
@@ -397,7 +332,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		// fixed for IE9 on Webdriver
 		// very tricky way to fire the blur event. In this case we cannot send Keys.Tab,
 		// because it may affect the scrollbar to move.
-		if (is("ie"))
+		if (isIE())
 			Scripts.triggerMouseEventAt(getWebDriver(), locator, "blur", "2,2");
 		else
 			super.fireEvent(locator.toLocator(), "blur");
@@ -467,17 +402,8 @@ public class ZKClientTestCase extends ZKTestCase {
 		return super.getSelectedValues(selectLocator.toLocator());
 	}
 
-
 	public String getTable(ClientWidget tableCellAddress) {
 		return super.getTable(tableCellAddress.toLocator());
-	}
-
-	public String getText(ClientWidget locator) {
-		return super.getText(locator.toLocator());
-	}
-
-	public String getValue(ClientWidget locator) {
-		return super.getValue(locator.toLocator());
 	}
 
 	public void highlight(ClientWidget locator) {
@@ -509,16 +435,10 @@ public class ZKClientTestCase extends ZKTestCase {
 		return super.isTextPresent(pattern);
 	}
 
-	public boolean isVisible(ClientWidget locator) {
-		if (isSafari())
-			return jq(locator).isVisible();
-		return super.isVisible(locator.toLocator());
-	}
-
 	public void keyDown(ClientWidget locator, String keySequence) {
 		super.keyDown(locator.toLocator(), keySequence);
 	}
-	
+
 	/**
 	 * 2010/10/29 TonyQ:note: when typing number in chrome , it failed 
 	 * @param locator
@@ -557,12 +477,14 @@ public class ZKClientTestCase extends ZKTestCase {
 						modified = true;
 					}
 				}
-				if (modified) keysToSend[i] = chseq;
+				if (modified)
+					keysToSend[i] = chseq;
 			}
 			typeKeys(locator, keysToSend.toString());
 		}
 		getWebDriver().findElement(locator.toBy()).sendKeys(keysToSend);
 	}
+
 	/**
 	 * <pre>
 	 * 2010/10/27 TonyQ:
@@ -582,9 +504,9 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * </pre>
 	 * Browsers: firefox,safari402,chrome,ie8,ie7,ie6 .
 	 */
-	public void keyPressEnter(ClientWidget locator){
+	public void keyPressEnter(ClientWidget locator) {
 		focus(locator);
-		keyDown(locator,"13");
+		keyDown(locator, "13");
 	}
 
 	public void keyUp(ClientWidget locator, String keySequence) {
@@ -596,7 +518,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseDownAt(ClientWidget locator, String coordString) {
-		if (is("ie9")) {
+		if (isIE()) {
 			//bug for Form.ztl 
 			//Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousedown", coordString);
 			String[] froms = coordString.split(",");
@@ -624,7 +546,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void mouseMoveAt(ClientWidget locator, String coordString) {
-		if (is("ie9")) {
+		if (isIE()) {
 			String[] froms = coordString.split(",");
 			int x0 = Integer.parseInt(froms[0]);
 			int y0 = Integer.parseInt(froms[1]);
@@ -644,7 +566,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	public void mouseOver(By locator) {
 		Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", "2,2");
 	}
-	
+
 	public void mouseUp(ClientWidget locator) {
 		Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseup", "1,1");
 	}
@@ -674,48 +596,9 @@ public class ZKClientTestCase extends ZKTestCase {
 		super.rollup(rollupName.toLocator(), kwargs);
 	}
 
-	public void select(ClientWidget selectLocator, String optionLocator) {
-		if (!isSafari()) {
-			// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
-			// of selenium 2.2+ to fix the following API.
-			// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
-			findElement(jq(selectLocator).find("option:contains(\"" + optionLocator + "\")")).click();
-			// force to fire onChange event for IE
-			if (isIE())
-				blur(selectLocator);
-		} else {
-			//use javascript to simulate
-			String id = selectLocator.toElement().get("id");
-			executeScript("jq('#" + id + "').val('" + optionLocator + "');");
-			waitResponse();
-			executeScript("jq('#" + id + "').change()");
-			waitResponse();
-		}
-	}
-	public void select(ClientWidget selectLocator, int index) {
-		if (!isSafari()) {
-			// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
-			// of selenium 2.2+ to fix the following API.
-			// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
-			findElement(jq(selectLocator).find("option").get(index)).click();
-
-			// force to fire onChange event for IE
-			if (isIE())
-				blur(selectLocator);
-		} else {
-			//use javascript to simulate
-			String id = selectLocator.toElement().get("id");
-			String selectionTargetScript = "jq('#" + id + "').children()[" + index + "].text";
-			executeScript("jq('#" + id + "').val(" + selectionTargetScript + ");");
-			waitResponse();
-			executeScript("jq('#" + id + "').change()");
-			waitResponse();
-		}
-	}
-
 	public void selectFrame(ClientWidget locator) {
 		if (locator instanceof Widget)
-			getWebDriver().switchTo().frame(((Widget)locator).uuid());
+			getWebDriver().switchTo().frame(((Widget) locator).uuid().toString());
 		else
 			getWebDriver().switchTo().frame(findElement(locator));
 	}
@@ -731,34 +614,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	public void submit(ClientWidget formLocator) {
 		super.submit(formLocator.toLocator());
 	}
-	
-	/**
-	 * @param locator
-	 * @param num
-	 */
-	public void frozenScroll(ClientWidget locator, int num) {
-		String lo = locator.toLocator();
-		
-		Widget wgt = jq(locator).toWidget();
-		wgt.eval("frozen._doScrollNow(" + num + ")");
-		waitResponse();
-	}
-	
-	/**
-	 * @param locator
-	 * @param dist
-	 */
-	public void nativeFrozenScroll(ClientWidget locator, double dist) {
-		String lo = locator.toLocator();
 
-		Widget wgt = jq(locator).find(".z-frozen").toWidget();
-		jq(wgt.$n("scrollX")).toElement().set("scrollLeft", "" + dist);
-		waitResponse();
-	}
-	public boolean hasNativeScroll(ClientWidget locator) {
-		return !Boolean.valueOf(ZKClientTestCaseCafe.callEval("!!" + locator.toLocator() + "._scrollbar"));
-	}
-	
 	/**
 	 * 
 	 * @param locator
@@ -976,36 +832,6 @@ public class ZKClientTestCase extends ZKTestCase {
 			blur(locator);
 		}
 	}
-	
-	/**
-	 * a shortcut for getting alert message.
-	 * (Take care about the dom class and model will be different 
-	 * 	when event-thread is enable/disable , so we use title .)  
-	 * @return
-	 */
-	public String getAlertMessage(){
-		return jq("@window[title=\"ZK Test\"] @label").text();
-	}
-
-	/**
-	 * a shortcut to get the value in zk.log textarea
-	 * @return
-	 */
-	public String getZKLog() {
-		return jq("#zk_log").val();
-	}
-
-	/**
-	 * a shortcut to close zk log
-	 */
-	public void closeZKLog() {
-		ZKClientTestCaseCafe.callEval("!!jq('#zk_logbox').remove();");
-		waitResponse();
-	}
-
-	public void clickAlert(){
-		click(jq("@window[title=\"ZK Test\"] @button"));
-	}
 
 	/**
 	 * Types the value to the locator.
@@ -1031,7 +857,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
-		
+
 		WebElement toTap = findElement(locator);
 		new TouchActions(driver).singleTap(toTap).perform();
 	}
@@ -1044,7 +870,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @param yOffset px toward the bottom
 	 * @since 2.0.1
 	 * Category - HasTouchScreen
-	 */	
+	 */
 	public void singleTapAt(ClientWidget locator, int xOffset, int yOffset) {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
@@ -1064,7 +890,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
-		
+
 		WebElement toTap = findElement(locator);
 		new TouchActions(driver).doubleTap(toTap).perform();
 	}
@@ -1079,13 +905,13 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
-		
+
 		WebElement toPress = findElement(locator);
 		new TouchActions(driver).longPress(toPress).perform();
 	}
-	
-	private static final int SWIPE_STEPS = 5; 
-	
+
+	private static final int SWIPE_STEPS = 5;
+
 	/**
 	 * Swipe up at the bottom edge of the element found by locator
 	 * @param locator  an element locator
@@ -1097,18 +923,18 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
-		
+
 		WebElement toSwipe = findElement(locator.toBy());
 		Point topLeft = toSwipe.getLocation();
 		Dimension size = toSwipe.getSize();
-		
-		Point origin = topLeft.moveBy(size.getWidth()/2, size.getHeight()-1);
-		Point dest   = origin.moveBy(0, -distance);
-		
+
+		Point origin = topLeft.moveBy(size.getWidth() / 2, size.getHeight() - 1);
+		Point dest = origin.moveBy(0, -distance);
+
 		double yStep = (dest.getY() - origin.getY()) / SWIPE_STEPS;
 		int x = origin.getX();
-		int y = origin.getY(); 
-		
+		int y = origin.getY();
+
 		TouchActions actions = new TouchActions(driver);
 		actions.down(x, y);
 		for (int i = 0; i < SWIPE_STEPS; i++) {
@@ -1130,18 +956,18 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
-		
+
 		WebElement toSwipe = findElement(locator.toBy());
 		Point topLeft = toSwipe.getLocation();
 		Dimension size = toSwipe.getSize();
-		
-		Point origin = topLeft.moveBy(size.getWidth()/2, 1);
-		Point dest   = origin.moveBy(0, distance);
-		
+
+		Point origin = topLeft.moveBy(size.getWidth() / 2, 1);
+		Point dest = origin.moveBy(0, distance);
+
 		double yStep = (dest.getY() - origin.getY()) / SWIPE_STEPS;
 		int x = origin.getX();
-		int y = origin.getY(); 
-		
+		int y = origin.getY();
+
 		TouchActions actions = new TouchActions(driver);
 		actions.down(x, y);
 		for (int i = 0; i < SWIPE_STEPS; i++) {
@@ -1163,18 +989,18 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
-		
+
 		WebElement toSwipe = findElement(locator.toBy());
 		Point topLeft = toSwipe.getLocation();
 		Dimension size = toSwipe.getSize();
-		
-		Point origin = topLeft.moveBy(size.getWidth()-1, size.getHeight()/2);
-		Point dest   = origin.moveBy(-distance, 0);
-		
+
+		Point origin = topLeft.moveBy(size.getWidth() - 1, size.getHeight() / 2);
+		Point dest = origin.moveBy(-distance, 0);
+
 		double xStep = (dest.getX() - origin.getX()) / SWIPE_STEPS;
 		int x = origin.getX();
-		int y = origin.getY(); 
-		
+		int y = origin.getY();
+
 		TouchActions actions = new TouchActions(driver);
 		actions.down(x, y);
 		for (int i = 0; i < SWIPE_STEPS; i++) {
@@ -1196,18 +1022,18 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof HasTouchScreen))
 			throw new UnsupportedOperationException("device not touchable");
-		
+
 		WebElement toSwipe = findElement(locator.toBy());
 		Point topLeft = toSwipe.getLocation();
 		Dimension size = toSwipe.getSize();
-		
-		Point origin = topLeft.moveBy(1, size.getHeight()/2);
-		Point dest   = origin.moveBy(distance, 0);
-		
+
+		Point origin = topLeft.moveBy(1, size.getHeight() / 2);
+		Point dest = origin.moveBy(distance, 0);
+
 		double xStep = (dest.getX() - origin.getX()) / SWIPE_STEPS;
 		int x = origin.getX();
-		int y = origin.getY(); 
-		
+		int y = origin.getY();
+
 		TouchActions actions = new TouchActions(driver);
 		actions.down(x, y);
 		for (int i = 0; i < SWIPE_STEPS; i++) {
@@ -1217,7 +1043,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		actions.up(dest.getX(), dest.getY());
 		actions.perform();
 	}
-	
+
 	/**
 	 * Returns the current device orientation
 	 * @return the current device orientation
@@ -1228,7 +1054,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof Rotatable))
 			throw new UnsupportedOperationException("device not rotatable");
-		
+
 		Rotatable device = (Rotatable) driver;
 		ScreenOrientation orient = device.getOrientation();
 		if (ScreenOrientation.PORTRAIT.equals(orient)) {
@@ -1247,7 +1073,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof Rotatable))
 			throw new UnsupportedOperationException("device not rotatable");
-		
+
 		Rotatable device = (Rotatable) driver;
 		ScreenOrientation orient = device.getOrientation();
 		if (ScreenOrientation.LANDSCAPE.equals(orient)) {
@@ -1256,7 +1082,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			device.rotate(ScreenOrientation.LANDSCAPE);
 		}
 	}
-	
+
 	/**
 	 * Ensures the device is in landscape orientation
 	 * @since 2.0.1
@@ -1266,14 +1092,14 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof Rotatable))
 			throw new UnsupportedOperationException("device not rotatable");
-		
+
 		Rotatable device = (Rotatable) driver;
 		ScreenOrientation orient = device.getOrientation();
 		if (ScreenOrientation.PORTRAIT.equals(orient)) {
 			device.rotate(ScreenOrientation.LANDSCAPE);
 		}
 	}
-	
+
 	/**
 	 * Ensures the device is in portrait orientation
 	 * @since 2.0.1
@@ -1283,14 +1109,176 @@ public class ZKClientTestCase extends ZKTestCase {
 		WebDriver driver = getWebDriver();
 		if (!(driver instanceof Rotatable))
 			throw new UnsupportedOperationException("device not rotatable");
-		
+
 		Rotatable device = (Rotatable) driver;
 		ScreenOrientation orient = device.getOrientation();
 		if (ScreenOrientation.LANDSCAPE.equals(orient)) {
 			device.rotate(ScreenOrientation.PORTRAIT);
 		}
 	}
-	
+
+	/**
+	 * Press shift and click items
+	 * @param locators
+	 */
+	public void shiftClickItems(List<ClientWidget> locators) {
+		for (ClientWidget locator : locators) {
+			shiftKeyDown();
+			click(locator);
+			waitResponse();
+		}
+		shiftKeyUp();
+		waitResponse();
+	}
+
+	/**
+	 * Returns boolean to indicate if there is any js error or erro window
+	 * @return
+	 */
+	protected boolean hasError() {
+		return Boolean.valueOf(Scripts.getEval("!!jq('.z-messagebox-error')[0] || !!jq('.z-errorbox')[0] || jq('.z-error')[0]"));
+	}
+
+	/**
+	 * Close the errorbox for webdriver
+	 * @since 2.0.0
+	 */
+	public void closeErrorBox() {
+		// fixed bug for B50-2916148.ztl
+		JQuery jq = jq(".z-errbox-close");
+		int x = jq.width() - 3;
+		x += parseInt(jq.css("padding-right"));
+
+		if (isSafari() || isFirefox())
+			Scripts.triggerMouseEventAt(getWebDriver(), jq, "click", x + ",3");
+		else {
+			WebElement element = null;
+			if (isAndroid()) {
+				element = findElement(jq.toBy());
+				Point p = element.getLocation();
+				x += p.x;
+				new TouchActions(getWebDriver()).down(x, p.y + 3).up(x, p.y + 3).perform();
+			} else {
+				element = findElement(jq);
+				getActions().moveToElement(element, x, 3).click().perform();
+			}
+
+			// double check again (clicking without padding-right)
+			// sometimes on 64 bit OS will need to close again for IE9.
+			if (jq.exists() && !isAndroid()) {
+				x -= parseInt(jq.css("padding-right"));
+				getActions().moveToElement(element, x, 3).click().perform();
+			}
+		}
+	}
+
+	public boolean isVisible(ClientWidget locator) {
+		return jq(locator).isVisible();
+	}
+
+	public String getText(ClientWidget locator) {
+		return super.getText(locator.toLocator());
+	}
+
+	public String getValue(ClientWidget locator) {
+		return super.getValue(locator.toLocator());
+	}
+
+	public void select(ClientWidget selectLocator, String optionLocator) {
+		if (!isSafari()) {
+			// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
+			// of selenium 2.2+ to fix the following API.
+			// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
+			findElement(jq(selectLocator).find("option:contains(\"" + optionLocator + "\")")).click();
+			// force to fire onChange event for IE
+			if (isIE())
+				blur(selectLocator);
+		} else {
+			//use javascript to simulate
+			String id = selectLocator.toElement().get("id").toString();
+			executeScript("jq('#" + id + "').val('" + optionLocator + "');");
+			waitResponse();
+			executeScript("jq('#" + id + "').change()");
+			waitResponse();
+		}
+	}
+	public void select(ClientWidget selectLocator, int index) {
+		if (!isSafari()) {
+			// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
+			// of selenium 2.2+ to fix the following API.
+			// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
+			findElement(jq(selectLocator).find("option").get(index)).click();
+
+			// force to fire onChange event for IE
+			if (isIE())
+				blur(selectLocator);
+		} else {
+			//use javascript to simulate
+			String id = selectLocator.toElement().get("id").toString();
+			String selectionTargetScript = "jq('#" + id + "').children()[" + index + "].text";
+			executeScript("jq('#" + id + "').val(" + selectionTargetScript + ");");
+			waitResponse();
+			executeScript("jq('#" + id + "').change()");
+			waitResponse();
+		}
+	}
+	/**
+	 * @param locator
+	 * @param num
+	 */
+	public void frozenScroll(ClientWidget locator, int num) {
+		String lo = locator.toLocator();
+
+		Widget wgt = jq(locator).toWidget();
+		wgt.eval("frozen._doScrollNow(" + num + ")");
+		waitResponse();
+	}
+	/**
+	 * @param locator
+	 * @param dist
+	 */
+	public void nativeFrozenScroll(ClientWidget locator, double dist) {
+		String lo = locator.toLocator();
+
+		Widget wgt = jq(locator).find(".z-frozen").toWidget();
+		jq(wgt.$n("scrollX")).toElement().set("scrollLeft", "" + dist);
+		waitResponse();
+	}
+
+	public boolean hasNativeScroll(ClientWidget locator) {
+		return Boolean.valueOf(Scripts.getEval("!" + locator.toLocator() + "._scrollbar"));
+	}
+
+	/**
+	 * a shortcut for getting alert message.
+	 * (Take care about the dom class and model will be different
+	 * 	when event-thread is enable/disable , so we use title .)
+	 * @return
+	 */
+	public String getAlertMessage() {
+		return jq("@window[title=\"ZK Test\"] @label").text();
+	}
+
+	/**
+	 * a shortcut to get the value in zk.log textarea
+	 * @return
+	 */
+	public String getZKLog() {
+		return jq("#zk_log").val();
+	}
+
+	/**
+	 * a shortcut to close zk log
+	 */
+	public void closeZKLog() {
+		Scripts.getEval("!!jq('#zk_logbox').remove();", null);
+		waitResponse();
+	}
+
+	public void clickAlert() {
+		click(jq("@window[title=\"ZK Test\"] @button"));
+	}
+
 	/**
 	 * Switch to the next tab by sending "CTRL + TAB" to the browser, if current
 	 * tab is the last tab, will switch to the first tab.
@@ -1304,7 +1292,6 @@ public class ZKClientTestCase extends ZKTestCase {
 		driver.switchTo().window(tabs.get(0));
 	}
 
-
 	/* migrate from ZK.java */
 	/**
 	 * Returns the boolean value from the evaluated name.
@@ -1312,7 +1299,91 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * <code>ZK.is("ie");</code>
 	 * The invoking JavaScript code will be "zk.ie", and return the boolean value.
 	 */
-	public static boolean is(String name) {
-		return Boolean.valueOf(ZKClientTestCaseCafe.callEval("!!(zk." + name + ")"));
+	public boolean is(String name) {
+		return Boolean.valueOf(Scripts.getEval("!!(zk." + name + ")"));
+	}
+
+	protected int parseInt(String number) {
+		if (number != null) {
+			number = number.replaceAll("[^-0-9\\.]", "");
+			int decimal = number.indexOf('.');
+			if (decimal > 0)
+				number = number.substring(0, decimal);
+
+			if(!"".equals(number.trim())){
+				return Integer.parseInt(number);
+			}else{
+				return 0;
+			}
+		}
+		return 0;
+	}
+
+	protected float parseFloat(String number) {
+		if (number != null) {
+			number = number.replaceAll("[^-0-9\\.]", "");
+			if(!"".equals(number.trim())){
+				return Float.parseFloat(number);
+			}else{
+				return 0.0F;
+			}
+		}
+		return 0.0F;
+	}
+
+	protected double parseDouble(String number) {
+		if (number != null) {
+			number = number.replaceAll("[^-0-9\\.]", "");
+			if(!"".equals(number.trim())){
+				return Double.parseDouble(number);
+			}else{
+				return 0.0;
+			}
+		}
+		return 0.0;
+	}
+
+	protected boolean parseBoolean(String bool) {
+		return Boolean.valueOf(bool);
+	}
+
+	/**
+	 * Returns window width
+	 * @return
+	 */
+	public int getWindowWidth() {
+		return getWebDriver().manage().window().getSize().width;
+	}
+
+	/**
+	 * Returns window height
+	 * @return
+	 */
+	public int getWindowHeight() {
+		return getWebDriver().manage().window().getSize().height;
+	}
+
+	/**
+	 * Set window size
+	 * @param width
+	 * @param height
+	 */
+	public void setWindowSize(int width, int height) {
+		getWebDriver().manage().window().setSize(new Dimension(width, height));
+	}
+
+	/**
+	 * navigate page back or forward
+	 * @param forword if true, navigate forward
+	 */
+	public void navigatePage(boolean forword) {
+		if (forword)
+			getWebDriver().navigate().back();
+		else
+			getWebDriver().navigate().forward();
+	}
+
+	public int getBrowserTabCount() {
+		return getWebDriver().getWindowHandles().size();
 	}
 }

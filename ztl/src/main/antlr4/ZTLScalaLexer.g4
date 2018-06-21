@@ -11,13 +11,58 @@ DEF:			'def';
 EXTENDS:		'extends';
 NEW:			'new';
 RETURN:			'return';
+THIS:			'this';
 
 //special method
 EQUALS:			'equals';
 CONTAINS:		'contains';
 TOINT:			'toInt';
+PARSEINT:		'parseInt';
 TODOUBLE:		'toDouble';
+PARSEDOUBLE:	'parseDouble';
 TOFLOAT:		'toFloat';
+PARSEFLOAT:		'parseFloat';
+PARSEBOOLEAN:	'parseBoolean';
+HEIGHT:			'height';
+WIDTH:			'width';
+INNERHEIGHT:	'innerHeight';
+INNERWIDTH:		'innerWidth';
+OUTERWIDTH:		'outerWidth';
+OUTERHEIGHT:	'outerHeight';
+LENGTH:			'length';
+SCROLLBARWIDTH:	'scrollbarWidth';
+OFFSETLEFT:		'offsetLeft';
+OFFSETTOP:		'offsetTop';
+POSITIONLEFT:	'positionLeft';
+POSITIONTOP:	'positionTop';
+SCROLLTOP:		'scrollTop';
+SCROLLLEFT:		'scrollLeft';
+SCROLLHEIGHT:	'scrollHeight';
+SCROLLWIDTH:	'scrollWidth';
+NCHILDREN:		'nChildren';
+//verify
+VERIFYEQUALS:	'verifyEquals';
+VERIFYNOTEQUALS:'verifyNotEquals';
+VERIFYCONTAINS:	'verifyContains';
+VERIFYNOTCONTAINS:'verifyNotContains';
+VERIFYTRUE:		'verifyTrue';
+VERIFYFALSE:	'verifyFalse';
+VERIFYTOLERANT:	'verifyTolerant';
+//ZTLTest method
+GETALERTMESSAGE:'getAlertMessage';
+HASERROR:		'hasError';
+GETTEXT:		'getText';
+ISVISIBLE:		'isVisible';
+HASNATIVESCROLL:'hasNativeScroll';
+HASHSCROLLBAR:	'hasHScrollbar';
+HASVSCROLLBAR:	'hasVScrollbar';
+GETSCROLLTOP:	'getScrollTop';
+GETSCROLLLEFT:	'getScrollLeft';
+GETZKLOG:		'getZKLog';
+IS:				'is';
+GETWINDOWHEIGHT:'getWindowHeight';
+GETWINDOWWIDTH:	'getWindowWidth';
+GETBROWSERTABCOUNT:'getBrowserTabCount';
 
 // Literals
 DECIMAL_LITERAL:('0' | [1-9] (Digits? | '_'+ Digits)) [lL]?;

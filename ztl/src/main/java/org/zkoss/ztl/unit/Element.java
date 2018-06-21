@@ -117,4 +117,14 @@ public class Element extends ClientWidget {
 		else
 			throw new UnsupportedOperationException("Please use By.id(), By.className(), and By.cssSelector() instead!");
 	}
+
+	/**
+	 * Used in test cafe
+	 */
+	public String is_cafeStr(String name) {
+		return Scripts.getEval(_out.toString() + "." + name);
+	}
+	public String exists_cafeStr() {
+		return Scripts.getEval(_out.toString() + " != null");
+	}
 }

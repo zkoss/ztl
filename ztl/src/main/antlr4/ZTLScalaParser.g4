@@ -28,15 +28,28 @@ floatLiteral
 
 primary //propertyAccess
   : literal
-  | methodDeclarator
-  | '(' expression ')'
-  | (Identifier | methodDeclarator | methodDeclarator) ((NEWLINE* '.' Identifier) | (NEWLINE* '.' methodDeclarator))*
+  | anonymousFunction
+  | functionCall
+  ;
+
+functionCall
+  : (variable | methodDeclarator | newObject) ((WS | NEWLINE)* '.' (variable | methodDeclarator))*
+  ;
+
+variable
+  : Identifier
   ;
 
 methodDeclarator
   : Identifier '(' formalParameters? ')' type?
-  | '(' formalParameters? ')' (WS | NEWLINE)* '=>' (WS | NEWLINE)* '{' (WS | NEWLINE)* statement+ (WS | NEWLINE)* '}'
-  | 'new' WS Identifier WS* ('[' WS* Identifier WS* ']' WS*)? '(' formalParameters? ')'
+  ;
+
+newObject
+  : 'new' WS Identifier WS* ('[' WS* Identifier WS* ']' WS*)? '(' formalParameters? ')'
+  ;
+
+anonymousFunction
+  : '(' formalParameters? ')' (WS | NEWLINE)* '=>' (WS | NEWLINE)* '{' (WS | NEWLINE)* statement+ (WS | NEWLINE)* '}'
   ;
 
 type
@@ -55,34 +68,6 @@ expression
   : unaryExpression
   | conditionalExpression
   | ifElseExpression
-  ;
-
-specialMethod
-  : equalsMethod
-  | containsMethod
-  | toIntMethod
-  | toDoubleMethod
-  | toFloatMethod
-  ;
-
-toIntMethod
-  : primary '.' 'toInt'
-  ;
-
-toDoubleMethod
-  : primary '.' 'toDouble'
-  ;
-
-toFloatMethod
-  : primary '.' 'toFloat'
-  ;
-
-equalsMethod
-  : primary '.' EQUALS '(' expression ')'
-  ;
-
-containsMethod
-  : primary '.' CONTAINS '(' expression ')'
   ;
 
 conditionalExpression
@@ -131,6 +116,90 @@ unaryExpression
   | '!' WS* unaryExpression
   | specialMethod
   | primary
+  | '(' expression ')'
+  ;
+
+specialMethod
+  : wrapMethod
+  | parseMethod
+  | ztlUnitMethod
+  | ztlTestMethod
+  ;
+
+wrapMethod
+  : equalsMethod
+  | containsMethod
+  ;
+
+equalsMethod
+  : primary '.' EQUALS '(' expression ')'
+  ;
+
+containsMethod
+  : primary '.' CONTAINS '(' expression ')'
+  ;
+
+parseMethod
+  : toIntMethod
+  | toDoubleMethod
+  | toFloatMethod
+  | toBooleanMethod
+  ;
+
+toIntMethod
+  : primary '.' 'toInt'
+  | 'parseInt' '(' expression ')'
+  ;
+
+toDoubleMethod
+  : primary '.' 'toDouble'
+  | 'parseDouble' '(' expression ')'
+  ;
+
+toFloatMethod
+  : primary '.' 'toFloat'
+  | 'parseFloat' '(' expression ')'
+  ;
+
+toBooleanMethod
+  : 'parseBoolean' '(' expression ')'
+  ;
+
+ztlUnitMethod
+  : primary '.' 'height' ('(' ')')?
+  | primary '.' 'width' ('(' ')')?
+  | primary '.' 'innerHeight' ('(' ')')?
+  | primary '.' 'innerWidth' ('(' ')')?
+  | primary '.' 'outerWidth' ('(' BOOL_LITERAL? ')')?
+  | primary '.' 'outerHeight' ('(' BOOL_LITERAL? ')')?
+  | primary '.' 'length' ('(' ')')?
+  | primary '.' 'scrollbarWidth' ('(' ')')?
+  | primary '.' 'offsetLeft' ('(' ')')?
+  | primary '.' 'offsetTop' ('(' ')')?
+  | primary '.' 'positionLeft' ('(' ')')?
+  | primary '.' 'positionTop' ('(' ')')?
+  | primary '.' 'scrollTop' ('(' ')')?
+  | primary '.' 'scrollLeft' ('(' ')')?
+  | primary '.' 'scrollHeight' ('(' ')')?
+  | primary '.' 'scrollWidth' ('(' ')')?
+  | primary '.' 'nChildren' ('(' ')')?
+  ;
+
+ztlTestMethod
+  : ('this' '.')? 'getAlertMessage' ('(' ')')?
+  | ('this' '.')? 'hasError' ('(' ')')?
+  | ('this' '.')? 'getText' '(' primary ')'
+  | ('this' '.')? 'isVisible' '(' primary ')'
+  | ('this' '.')? 'hasNativeScroll' '(' primary ')'
+  | ('this' '.')? 'hasHScrollbar' '(' primary ')'
+  | ('this' '.')? 'hasVScrollbar' '(' primary ')'
+  | ('this' '.')? 'getScrollTop' '(' primary ')'
+  | ('this' '.')? 'getScrollLeft' '(' primary ')'
+  | ('this' '.')? 'getZKLog' '(' primary ')'
+  | ('this' '.')? 'is' '(' primary ')'
+  | ('this' '.')? 'getWindowWidth' ('(' ')')?
+  | ('this' '.')? 'getWindowHeight' ('(' ')')?
+  | ('this' '.')? 'getBrowserTabCount' ('(' ')')?
   ;
 
 ifElseExpression
@@ -192,12 +261,28 @@ defInfo
   ;
 
 assignmentStatement
-  : WS* ('val' | 'var') WS Identifier type? WS* '=' (WS | NEWLINE)* expression
+  : WS* anyType WS Identifier type? WS* '=' (WS | NEWLINE)* expression
   | WS* primary WS* '=' (WS | NEWLINE)* expression WS*
   ;
-  
+
+anyType
+  : 'val'
+  | 'var'
+  ;
+
 functionCallStatement
-  : WS* primary WS*
+  : WS* verifyMethod WS*
+  | WS* functionCall WS*
+  ;
+
+verifyMethod
+  : 'verifyContains' '(' formalParameters ')'
+  | 'verifyNotContains' '(' formalParameters ')'
+  | 'verifyEquals' '(' formalParameters ')'
+  | 'verifyNotEquals' '(' formalParameters ')'
+  | 'verifyTrue' '(' formalParameters ')'
+  | 'verifyFalse' '(' formalParameters ')'
+  | 'verifyTolerant' '(' formalParameters ')'
   ;
 
 returnStatement
@@ -218,5 +303,5 @@ singleStatement
   ;
 
 statements
-  : statement+ NEWLINE? EOF?
+  : statement+ NEWLINE? EOF
   ;
