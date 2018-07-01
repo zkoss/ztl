@@ -49,7 +49,7 @@ newObject
   ;
 
 anonymousFunction
-  : '(' formalParameters? ')' (WS | NEWLINE)* '=>' (WS | NEWLINE)* '{' (WS | NEWLINE)* statement+ (WS | NEWLINE)* '}'
+  : '(' formalParameters? ')' (WS | NEWLINE)* '=>' (WS | NEWLINE)* block
   ;
 
 type
@@ -120,23 +120,9 @@ unaryExpression
   ;
 
 specialMethod
-  : wrapMethod
-  | parseMethod
+  : parseMethod
   | ztlUnitMethod
   | ztlTestMethod
-  ;
-
-wrapMethod
-  : equalsMethod
-  | containsMethod
-  ;
-
-equalsMethod
-  : primary '.' EQUALS '(' expression ')'
-  ;
-
-containsMethod
-  : primary '.' CONTAINS '(' expression ')'
   ;
 
 parseMethod
@@ -223,11 +209,11 @@ elseStatement
   ;
 
 elseIfStatement
-  : (WS | NEWLINE)* 'else' WS 'if' (WS | NEWLINE)* conditionBodyStatements
+  : (WS | NEWLINE)* 'else' WS 'if' WS* '(' WS* expression WS* ')' (WS | NEWLINE)* conditionBodyStatements
   ;
 
 ifThenElseStatement
-  : ifThenStatement ifThenElseStatement* elseStatement*
+  : ifThenStatement elseIfStatement* elseStatement*
   ;
 
 forStatement
@@ -243,8 +229,12 @@ whileStatement
   ;
 
 conditionBodyStatements
-  : (WS | NEWLINE)* '{' (WS | NEWLINE)* (statement)+ (WS | NEWLINE)* '}' (WS | NEWLINE)*
+  : (WS | NEWLINE)* block (WS | NEWLINE)*
   | (WS | NEWLINE)* statement (WS | NEWLINE)* //one-line
+  ;
+
+block
+  : '{' (WS | NEWLINE)* (statement)+ (WS | NEWLINE)* '}'
   ;
 
 classStatement
@@ -262,7 +252,11 @@ defInfo
 
 assignmentStatement
   : WS* anyType WS Identifier type? WS* '=' (WS | NEWLINE)* expression
-  | WS* primary WS* '=' (WS | NEWLINE)* expression WS*
+  | WS* primary WS* (otherAssignmentSymbol | '=') (WS | NEWLINE)* expression WS*
+  ;
+
+otherAssignmentSymbol
+  : ('+' | '-' | '*' | '/') '='
   ;
 
 anyType

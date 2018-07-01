@@ -519,6 +519,18 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterBlock(ZTLScalaParser.BlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBlock(ZTLScalaParser.BlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterClassStatement(ZTLScalaParser.ClassStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -562,6 +574,18 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

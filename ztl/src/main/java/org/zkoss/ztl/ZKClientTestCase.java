@@ -1185,10 +1185,10 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void select(ClientWidget selectLocator, String optionLocator) {
-		if (!isSafari()) {
-			// In IE, it will fail on B30-1819318.ztl, we may wait for the latest version
-			// of selenium 2.2+ to fix the following API.
-			// new Select(findElement(selectLocator)).selectByVisibleText(optionLocator);
+		if (isIE()) {
+			mouseDownAt(selectLocator, "1,1");
+			mouseUpAt(selectLocator, "1,1");
+		} else if (!isSafari()) {
 			findElement(jq(selectLocator).find("option:contains(\"" + optionLocator + "\")")).click();
 			// force to fire onChange event for IE
 			if (isIE())

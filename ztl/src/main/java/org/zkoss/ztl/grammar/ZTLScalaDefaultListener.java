@@ -9,7 +9,6 @@ import java.util.*;
  */
 public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	private static boolean _isDebug = true;
-
 	private static void log(Object... os) {
 		if (!_isDebug)
 			return;
@@ -18,22 +17,31 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		}
 		System.out.println();
 	}
-
 	public Map<String, String> getCodeReplacements() {
 		return _codeReplacements;
 	}
 
+	private Scope _scope;
+	private Scope _currentScope;
 	private Map<String, String> _codeReplacements;
 	private Map<String, String> _variableNameReplacements;
 
 	public ZTLScalaDefaultListener() {
 		super();
+		_scope = new Scope("root", null);
+		_currentScope = _scope;
 		_codeReplacements = new HashMap<>();
 		_variableNameReplacements = new HashMap<>();
 		// use in scope
 		_ZTLFunctionReplacements = new HashSet<>();
+		_originTextReplacements = new HashSet<>();
 		_variableInStatement = new HashSet<>();
+	}
 
+	private int _scopeCnt = 0;
+	@Override
+	public void enterClassStatement(ZTLScalaParser.ClassStatementContext ctx) {
+		_currentScope = new Scope("class" + _scopeCnt++, _currentScope);
 	}
 
 	@Override
@@ -41,26 +49,62 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		//classStatement
 		String className = ctx.Identifier().get(0).getText();
 		_codeReplacements.put(className, className + "$cafe");
+		_currentScope = _currentScope.getParent();
+	}
+
+	@Override
+	public void enterDefStatement(ZTLScalaParser.DefStatementContext ctx) {
+		_currentScope = new Scope("def" + _scopeCnt++, _currentScope);
+	}
+
+	@Override
+	public void exitDefStatement(ZTLScalaParser.DefStatementContext ctx) {
+		_currentScope = _currentScope.getParent();
+	}
+
+	@Override
+	public void enterBlock(ZTLScalaParser.BlockContext ctx) {
+		if (_inAssignment) {
+			_currentScope = new Scope("assignment" + _scopeCnt++, _currentScope);
+		} //else -> in conditionStatement
+	}
+
+	@Override
+	public void exitBlock(ZTLScalaParser.BlockContext ctx) {
+		_currentScope = _currentScope.getParent();
+	}
+
+	@Override
+	public void enterConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx) {
+		_currentScope = new Scope("condition" + _scopeCnt++, _currentScope);
+	}
+
+	@Override
+	public void exitConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx) {
+		_currentScope = _currentScope.getParent();
 	}
 
 	private boolean _inAssignment = false;
 	private boolean _inVerification = false;
 	private Set<TextReplacement> _ZTLFunctionReplacements;
+	private Set<TextReplacement> _originTextReplacements;
 	private Set<String> _variableInStatement;
-
 	@Override
 	public void enterAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx) {
 		_inAssignment = true;
 	}
+
+	private void recordId(String name, String type) {
+		_currentScope.getIds().add(new ID(name, type, _currentScope));
+	}
+
 	@Override
 	public void exitAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx) {
 		String text = ctx.getText().trim();
 		if (!text.contains("\"\"\"")) {
 			if (_codeReplacements.containsKey(text))
 				log("More than one assignments with same text: " + text);
-			StringBuilder replacement = new StringBuilder();
 			String assignName = "";
-
 			boolean isDeclaration = false;
 			String startToken = ctx.anyType() != null ? ctx.anyType().getText() : ctx.primary().getText();
 			if ("val".equals(startToken) || "var".equals(startToken)) {
@@ -71,6 +115,8 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			}
 			if (assignName.isEmpty())
 				throw new UnsupportedOperationException("Error assignment : " + text);
+
+			StringBuilder replacement = new StringBuilder();
 			String newAssignName = assignName + "_cafe";
 
 			String exprText = ctx.expression().getText();
@@ -85,54 +131,54 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 				int paramCnt = 0;
 				for (TextReplacement tr : textReplacements) {
 					String replaceText = tr.getReplacement();
-					if (_inConditionalExpr) {
+					if (_isConditionalExprExist) {
 						String name = newAssignName + "_" + paramCnt;
 						replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
 						replaceText = name;
+						recordId(name, "cafe"); //record id
 					}
-					newExprText = newExprText.replace(tr.getText(), replaceText); // Same key risk? replace xxx.width() is ok
+					String targetText = tr.getText();
+					while (newExprText.indexOf(targetText) != -1) {
+						newExprText = newExprText.replace(tr.getText(), replaceText); // Same key risk? replace xxx.width() is ok
+					}
 					paramCnt++;
 				}
 			}
 
 			if (!exprText.equals(newExprText)) {
 				replacement.append("assignment_cafe(\"").append(newAssignName).append("\", ");
+				if (ctx.otherAssignmentSymbol() != null) {
+					replacement.append(newAssignName).append(" ")
+							.append(ctx.otherAssignmentSymbol().getChild(0).getText()).append(" ");
+				}
 				replacement.append(newExprText).append(", ").append(isDeclaration ? "true" : "false").append(")\n");
-				_codeReplacements.put(text, text + "\n" + replacement.toString());
+				recordId(newAssignName, "cafe"); //record id
+				String newText = text;
+				for (TextReplacement tr : _originTextReplacements) {
+					while (newText.indexOf(tr.getText()) != -1) {
+						newText = newText.replace(tr.getText(), tr.getReplacement());
+					}
+				}
+				_codeReplacements.put(text, newText + "\n" + replacement.toString());
 				_variableNameReplacements.put(assignName, newAssignName);
+			} else {
+
 			}
 			String logText = "";
-			log(logText + "exitAssignmentStatment (cond:" + _inConditionalExpr + ") >>> " + text);
+			log(logText + "exitAssignmentStatment (cond:" + _isConditionalExprExist + ") >>> " + text);
 		}
 		_inAssignment = false;
-		_inConditionalExpr = false;
+		_isConditionalExprExist = false;
 		_ZTLFunctionReplacements.clear();
+		_originTextReplacements.clear();
 		_variableInStatement.clear();
 	}
 
-	@Override
-	public void exitUnaryExpression(ZTLScalaParser.UnaryExpressionContext ctx) {
-		//		log(logText);
-	}
-
-	private boolean _inConditionalExpr = false;
+	private boolean _isConditionalExprExist = false;
 
 	@Override
 	public void enterConditionalExpression(ZTLScalaParser.ConditionalExpressionContext ctx) {
-		if (_inAssignment || _inVerification) _inConditionalExpr = true;
-	}
-
-	@Override
-	public void exitPrimary(ZTLScalaParser.PrimaryContext ctx) {
-		String text = ctx.getText();
-		//skip
-		if (text.contains("\"\"\"") || text.trim().contains("() =>") || text.trim().startsWith("\"")
-				|| text.matches("[0-9]*"))
-			return;
-		//
-		String logText = "exitPrimary" + " >>> " + text;
-//		log(logText);
-//		_primaryInAssignment.add(text);
+		if (_inAssignment || _inVerification) _isConditionalExprExist = true;
 	}
 
 	@Override
@@ -145,11 +191,21 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	public void exitParseMethod(ZTLScalaParser.ParseMethodContext ctx) {
 		if (_inAssignment || _inVerification) {
 			String text = ctx.getText();
-			String replacement;
+			String replacement = "";
+			String originTextReplacement;
 			if (text.startsWith("parse")) {
-				replacement = ctx.getChild(0).getChild(2).getText(); // ex. 'parseDouble' '(' expression ')'
+				String firstText = ctx.getChild(0).getChild(0).getText(); // ex. 'parseDouble' '(' expression ')'
+				String expr = ctx.getChild(0).getChild(2).getText();
+				if ("parseInt".equals(firstText) || "parseDouble".equals(firstText) || "parseFloat".equals(firstText)) {
+					replacement = firstText + "Str(" + expr + ")";
+				} else {
+					replacement = expr;
+				}
 			} else {
-				replacement = ctx.getChild(0).getChild(0).getText(); // ex. primary '.' 'toInt'
+				String expr = ctx.getChild(0).getChild(0).getText(); // ex. primary '.' 'toInt'
+				replacement = expr;
+				originTextReplacement = "parse" + ctx.getChild(0).getChild(2).getText().replace("to", "") + "(" + expr + ")";
+				_originTextReplacements.add(new TextReplacement(text, originTextReplacement));
 			}
 			_ZTLFunctionReplacements.add(new TextReplacement(text, replacement));
 		}
@@ -161,15 +217,15 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			log("exitSpecialMethod" + " >>> " + ctx.getText());
 		}
 		// inside function call or assignment
-		//contains -> compareContains
-		//equals -> compareEquals
+		//contains -> strContains
+		//equals -> strEquals
+		//
 		//Math.xxx(ooo) -> "Math.xxx(ooo)"
 	}
 
 	@Override
 	public void enterFunctionCallStatement(ZTLScalaParser.FunctionCallStatementContext ctx) {
 	}
-	private int _callFunctionCnt = 0;
 	@Override
 	public void exitFunctionCallStatement(ZTLScalaParser.FunctionCallStatementContext ctx) {
 		String text = ctx.getText();
@@ -177,18 +233,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			return;
 		}
 		StringBuilder replacement = new StringBuilder();
-//		String code = checkNewAssignments(text, "functionCall_cafe" + _callFunctionCnt, replacement);
-//		if (!code.equals(text)) {
-//			_functionCallReplacements.put(text, code);
-//			_callFunctionCnt++;
-//		}
 		log("exitFunctionCallStatement" + " >>> " + text);
-	}
-
-	@Override
-	public void exitIfThenStatement(ZTLScalaParser.IfThenStatementContext ctx) {
-		log("exitIfThenStatement");
-		log(" >>> " + ctx.getText());
 	}
 
 	@Override
@@ -200,17 +245,6 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	public void exitForStatement(ZTLScalaParser.ForStatementContext ctx) {
 		log("exitForStatement");
 	}
-
-//	private static List<String> verifyFunctionCheckList = new ArrayList<>();
-//	static {
-//		verifyFunctionCheckList.add("verifyContains");
-//		verifyFunctionCheckList.add("verifyNotContains");
-//		verifyFunctionCheckList.add("verifyEquals");
-//		verifyFunctionCheckList.add("verifyNotEquals");
-//		verifyFunctionCheckList.add("verifyTrue");
-//		verifyFunctionCheckList.add("verifyFalse");
-//		verifyFunctionCheckList.add("verifyTolerant");
-//	}
 
 	@Override
 	public void enterVerifyMethod(ZTLScalaParser.VerifyMethodContext ctx) {
@@ -249,21 +283,24 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 				int paramCnt = 0;
 				for (TextReplacement tr : textReplacements) {
 					String replaceText = tr.getReplacement();
-					if (_inConditionalExpr) {
+					if (_isConditionalExprExist) {
 						String name = "verifyVariable_cafe" + "_" + newVerifyAssignCnt + "_" + paramCnt;
 						replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
 						replaceText = name;
 						wrapString = true;
 						newVerifyAssignCnt++;
 					}
-					newExprText = newExprText.replace(tr.getText(), replaceText); // Same key risk? replace xxx.width() is ok
+					String targetText = tr.getText();
+					while (newExprText.indexOf(targetText) != -1) {
+						newExprText = newExprText.replace(tr.getText(), replaceText);
+					}
 					paramCnt++;
 				}
 			}
 			if (!exprText.equals(newExprText)) {
 				paramChanged = true;
 				if (wrapString)
-					newExprText = "\" " + ZKClientTestCaseCafe.CAFEEVAL + newExprText + "\"";
+					newExprText = "\"" + ZKClientTestCaseCafe.CAFEEVAL + newExprText + "\"";
 			}
 			exprReplacement.append(newExprText);
 		}
@@ -273,50 +310,27 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			_codeReplacements.put(text, replacement.toString());
 		}
 		_inVerification = false;
-		_inConditionalExpr = false;
+		_isConditionalExprExist = false;
 		_ZTLFunctionReplacements.clear();
 		_variableInStatement.clear();
 	}
 
+	private int conditionStatementCnt = 0;
 	@Override
-	public void enterIfElseExpression(ZTLScalaParser.IfElseExpressionContext ctx) {
-		super.enterIfElseExpression(ctx);
-	}
+	public void exitIfThenStatement(ZTLScalaParser.IfThenStatementContext ctx) {
 
-	@Override
-	public void exitIfElseExpression(ZTLScalaParser.IfElseExpressionContext ctx) {
-		super.exitIfElseExpression(ctx);
-	}
-
-	@Override
-	public void enterIfThenStatement(ZTLScalaParser.IfThenStatementContext ctx) {
-		super.enterIfThenStatement(ctx);
-	}
-
-	@Override
-	public void enterElseStatement(ZTLScalaParser.ElseStatementContext ctx) {
-		super.enterElseStatement(ctx);
 	}
 
 	@Override
 	public void exitElseStatement(ZTLScalaParser.ElseStatementContext ctx) {
-		super.exitElseStatement(ctx);
-	}
 
-	@Override
-	public void enterElseIfStatement(ZTLScalaParser.ElseIfStatementContext ctx) {
-		super.enterElseIfStatement(ctx);
 	}
 
 	@Override
 	public void exitElseIfStatement(ZTLScalaParser.ElseIfStatementContext ctx) {
-		super.exitElseIfStatement(ctx);
+
 	}
 
-	@Override
-	public void enterIfThenElseStatement(ZTLScalaParser.IfThenElseStatementContext ctx) {
-		super.enterIfThenElseStatement(ctx);
-	}
 
 	@Override
 	public void enterForStatement(ZTLScalaParser.ForStatementContext ctx) {
@@ -344,13 +358,8 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	}
 
 	@Override
-	public void enterConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx) {
-		super.enterConditionBodyStatements(ctx);
-	}
-
-	@Override
-	public void exitConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx) {
-		super.exitConditionBodyStatements(ctx);
+	public void enterStatement(ZTLScalaParser.StatementContext ctx) {
+		super.enterStatement(ctx);
 	}
 
 	@Override
@@ -453,6 +462,78 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		}
 		public String getReplacement() {
 			return _replacement;
+		}
+	}
+
+	class ID {
+		private String _identifier;
+		private String _type;
+		private Scope _scope;
+
+		ID(String identifier, String type, Scope scope) {
+			_identifier = identifier;
+			_type = type;
+			_scope = scope;
+		}
+
+		public String getIdentifier() {
+			return _identifier;
+		}
+
+		public void setIdentifier(String identifier) {
+			this._identifier = identifier;
+		}
+
+		public String getType() {
+			return _type;
+		}
+
+		public void setType(String type) {
+			this._type = type;
+		}
+
+		public Scope getScope() {
+			return _scope;
+		}
+
+		public void setScope(Scope scope) {
+			this._scope = scope;
+		}
+	}
+
+	class Scope {
+		private String _scopeID;
+		private List<ID> _ids;
+		private Scope _parent;
+
+		Scope(String scopeID, Scope parent) {
+			_scopeID = scopeID;
+			_ids = new LinkedList<>();
+			_parent = parent;
+		}
+
+		public String getScopeID() {
+			return _scopeID;
+		}
+
+		public void setScopeID(String scopeID) {
+			this._scopeID = scopeID;
+		}
+
+		public List<ID> getIds() {
+			return _ids;
+		}
+
+		public void setIds(List<ID> ids) {
+			this._ids = ids;
+		}
+
+		public Scope getParent() {
+			return _parent;
+		}
+
+		public void setParent(Scope parent) {
+			this._parent = parent;
 		}
 	}
 }

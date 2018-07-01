@@ -14,27 +14,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
  */
 package org.zkoss.ztl.util;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.AbstractSequentialList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-
+import com.thoughtworks.selenium.Selenium;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -46,7 +26,9 @@ import org.zkoss.ztl.ConnectionManager;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
-import com.thoughtworks.selenium.Selenium;
+import java.io.*;
+import java.net.URL;
+import java.util.*;
 
 /**
  * ZTL configuration helper.
@@ -64,6 +46,9 @@ public class ConfigHelper {
 	private static List<String> _allBrowsers = new LinkedList<String>();
 
 	private String _testingEnvironment = "selenium"; // use selenium or testcafe
+
+	private String _cafeTestDir; // testcafe test directory
+
 	private String _client;
 
 	private String _server;
@@ -150,6 +135,11 @@ public class ConfigHelper {
 	public String getTestingEnvironment() {
 		return _testingEnvironment;
 	}
+
+	public String getCafeTestDir() {
+		return _cafeTestDir;
+	}
+
 	public String getClient() {
 		return _client;
 	}
@@ -550,7 +540,8 @@ public class ConfigHelper {
 			String[] urls = tokens[0].split(",");
 			List<String> urlList = new ArrayList<String>();
 			for (String url : urls) {
-				System.out.println("URL of " + browserName + ":" + url);
+				if (_testingEnvironment.equals("selenium"))
+					System.out.println("URL of " + browserName + ":" + url);
 				urlList.add(url);
 			}
 			_browserRemote.put(browserName, urlList);
@@ -585,15 +576,18 @@ public class ConfigHelper {
 
 				_prop = new Properties();
 				_prop.load(in);
+				_testingEnvironment = _prop.getProperty("testingEnvironment");
+				_cafeTestDir = _prop.getProperty("cafeTestDir");
 				_openonce = System.getProperty("openonce");
 				if(_openonce == null)
 					_openonce = _prop.getProperty("openonce");
 				if (isValidOpenOnce(_openonce)) {
 					_cacheMap = new HashMap<String, ZKSelenium>(15);
-					System.out.println("openonce="+_openonce);
+					if (_testingEnvironment.equals("selenium"))
+						System.out.println("openonce="+_openonce);
 				}
 				_lastModified = f.lastModified();
-				_testingEnvironment = _prop.getProperty("testingEnvironment");
+
 				// _client = _prop.getProperty("client");
 				_debuggable = Boolean.parseBoolean(_prop
 						.getProperty("debuggable"));
@@ -616,8 +610,7 @@ public class ConfigHelper {
 					final Map.Entry setting = (Map.Entry) iter.next();
 					String strKey = (String) setting.getKey();
 					if (isBrowserSetting(strKey)) {
-						addBrowserNameSetting(strKey,
-								(String) setting.getValue());
+						addBrowserNameSetting(strKey, (String) setting.getValue());
 						continue;
 					}
 				}

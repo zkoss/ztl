@@ -16,30 +16,19 @@ Copyright (C) 2010 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.ztl.util;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.zkoss.ztl.Tags;
+import org.zkoss.ztl.annotation.Tags;
 import org.zkoss.ztl.parser.SAXParser;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * The ZTL generator that generates the Java class from ZTL file to Selenium test case.

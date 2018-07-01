@@ -262,6 +262,12 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#block}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlock(ZTLScalaParser.BlockContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#classStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -285,6 +291,12 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#otherAssignmentSymbol}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#anyType}.
 	 * @param ctx the parse tree

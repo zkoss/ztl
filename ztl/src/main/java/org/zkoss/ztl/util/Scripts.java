@@ -125,7 +125,8 @@ public class Scripts {
 		if (testSteps == null) {
 			script = ZKTestCase.getCurrent().getEval(script);
 		} else {
-			testSteps.add(new CafeTestStep(CafeTestStep.EVAL, "await ClientFunction(() => " + script + ")()"));
+			if (doRecord)
+				testSteps.add(new CafeTestStep(CafeTestStep.EVAL, "await ClientFunction(() => " + script + ")()"));
 		}
 		return script;
 	}

@@ -427,6 +427,16 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 */
 	void exitConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ZTLScalaParser#block}.
+	 * @param ctx the parse tree
+	 */
+	void enterBlock(ZTLScalaParser.BlockContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZTLScalaParser#block}.
+	 * @param ctx the parse tree
+	 */
+	void exitBlock(ZTLScalaParser.BlockContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#classStatement}.
 	 * @param ctx the parse tree
 	 */
@@ -466,6 +476,16 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZTLScalaParser#otherAssignmentSymbol}.
+	 * @param ctx the parse tree
+	 */
+	void enterOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZTLScalaParser#otherAssignmentSymbol}.
+	 * @param ctx the parse tree
+	 */
+	void exitOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#anyType}.
 	 * @param ctx the parse tree

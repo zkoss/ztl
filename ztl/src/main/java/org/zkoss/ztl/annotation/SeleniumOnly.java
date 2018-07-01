@@ -16,6 +16,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface IgnoreBrowsers {
+public @interface SeleniumOnly {
 	public String value();
 }
