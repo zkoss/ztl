@@ -510,6 +510,10 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 
 	@Override
 	public void sendKeys(ClientWidget locator, CharSequence... keysToSend) {
+		if (!_isTestCafe) {
+			super.sendKeys(locator, keysToSend);
+			return;
+		}
 		StringBuilder codeStr = new StringBuilder();
 		codeStr.append("pressKey('");
 		int cnt = 0;
