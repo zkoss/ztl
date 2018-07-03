@@ -105,7 +105,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	protected void waitResponse(int timeout, boolean includingAnimation) {
 		if (!_isTestCafe) {
-			super.waitResponse(includingAnimation);
+			super.waitResponse(_timeout, includingAnimation);
 			return;
 		}
 		_testCodeList.add(new CafeTestStep(CafeTestStep.EVAL,"await ztl.waitResponse(t)"));
