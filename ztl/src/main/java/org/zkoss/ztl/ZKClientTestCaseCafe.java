@@ -124,7 +124,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void focus(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.focus(locator.toLocator());
+			super.focus(locator);
 			return;
 		}
 		getEval(locator.toLocator() + ".focus()");
@@ -139,7 +139,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void check(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.check(locator.toLocator());
+			super.check(locator);
 			return;
 		}
 		click(locator);
@@ -148,7 +148,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void click(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.click(locator.toLocator());
+			super.click(locator);
 			return;
 		}
 		cafeClick("click", locator.toLocator());
@@ -157,7 +157,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void clickAt(ClientWidget locator, String coordString) {
 		if (!_isTestCafe) {
-			super.clickAt(locator.toLocator(), coordString);
+			super.clickAt(locator, coordString);
 			return;
 		}
 		cafeClick("click", locator.toLocator(), coordString);
@@ -166,7 +166,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void contextMenu(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.contextMenu(locator.toLocator());
+			super.contextMenu(locator);
 			return;
 		}
 		cafeClick("rightClick", locator.toLocator());
@@ -175,7 +175,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void contextMenuAt(ClientWidget locator, String coordString) {
 		if (!_isTestCafe) {
-			super.contextMenuAt(locator.toLocator(), coordString);
+			super.contextMenuAt(locator, coordString);
 			return;
 		}
 		cafeClick("rightClick", locator.toLocator(), coordString);
@@ -184,7 +184,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void doubleClick(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.doubleClick(locator.toLocator());
+			super.doubleClick(locator);
 			return;
 		}
 		cafeClick("doubleClick", locator.toLocator());
@@ -193,7 +193,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void doubleClickAt(ClientWidget locator, String coordString) {
 		if (!_isTestCafe) {
-			super.doubleClickAt(locator.toLocator(), coordString);
+			super.doubleClickAt(locator, coordString);
 			return;
 		}
 		cafeClick("doubleClick", locator.toLocator(), coordString);
@@ -238,7 +238,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseDown(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.mouseDown(locator.toLocator());
+			super.mouseDown(locator);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -247,7 +247,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseDownAt(ClientWidget locator, String coordString) {
 		if (!_isTestCafe) {
-			super.mouseDownAt(locator.toLocator(), coordString);
+			super.mouseDownAt(locator, coordString);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -256,7 +256,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseDownRight(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.mouseDownRight(locator.toLocator());
+			super.mouseDownRight(locator);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -265,7 +265,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseDownRightAt(ClientWidget locator, String coordString) {
 		if (!_isTestCafe) {
-			super.mouseDownRightAt(locator.toLocator(), coordString);
+			super.mouseDownRightAt(locator, coordString);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -274,7 +274,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseMove(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.mouseMove(locator.toLocator());
+			super.mouseMove(locator);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -283,7 +283,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseMoveAt(ClientWidget locator, String coordString) {
 		if (!_isTestCafe) {
-			super.mouseMoveAt(locator.toLocator(), coordString);
+			super.mouseMoveAt(locator, coordString);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -292,7 +292,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseOut(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.mouseOut(locator.toLocator());
+			super.mouseOut(locator);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -301,7 +301,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseUp(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.mouseUp(locator.toLocator());
+			super.mouseUp(locator);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -310,7 +310,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseUpAt(ClientWidget locator, String coordString) {
 		if (!_isTestCafe) {
-			super.mouseUpAt(locator.toLocator(), coordString);
+			super.mouseUpAt(locator, coordString);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -319,7 +319,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseUpRight(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.mouseUpRight(locator.toLocator());
+			super.mouseUpRight(locator);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -328,7 +328,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void mouseUpRightAt(ClientWidget locator, String coordString) {
 		if (!_isTestCafe) {
-			super.mouseUpRightAt(locator.toLocator(), coordString);
+			super.mouseUpRightAt(locator, coordString);
 			return;
 		} else {
 
@@ -343,7 +343,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void dragAndDrop(ClientWidget locator, String movementsString) {
 		if (!_isTestCafe) {
-			super.dragAndDrop(locator.toLocator(), movementsString);
+			super.dragAndDrop(locator, movementsString);
 			return;
 		}
 		cafeDrag("drag", locator.toLocator(), movementsString);
@@ -352,7 +352,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void dragdrop(ClientWidget locator, String movementsString) {
 		if (!_isTestCafe) {
-			super.dragdrop(locator.toLocator(), movementsString);
+			super.dragdrop(locator, movementsString);
 			return;
 		}
 		cafeDrag(locator.toLocator(), movementsString);
@@ -361,7 +361,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void dragdropTo(ClientWidget locatorOfObjectToBeDragged, String from, String to) {
 		if (!_isTestCafe) {
-			super.dragdropTo(locatorOfObjectToBeDragged.toLocator(), from, to);
+			super.dragdropTo(locatorOfObjectToBeDragged, from, to);
 			return;
 		}
 		cafeDrag(locatorOfObjectToBeDragged.toLocator(), to, from);
@@ -371,7 +371,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	public void dragdropToObject(ClientWidget locatorOfObjectToBeDragged, ClientWidget locatorOfDragDestinationObject,
 								 String from, String to) {
 		if (!_isTestCafe) {
-			super.dragdropToObject(locatorOfObjectToBeDragged.toLocator(), locatorOfDragDestinationObject.toLocator(), from, to);
+			super.dragdropToObject(locatorOfObjectToBeDragged, locatorOfDragDestinationObject, from, to);
 			return;
 		}
 		cafeDragToElement(locatorOfObjectToBeDragged.toLocator(), locatorOfDragDestinationObject.toLocator(), from, to);
@@ -381,7 +381,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	public void dragAndDropToObject(ClientWidget locatorOfObjectToBeDragged,
 									ClientWidget locatorOfDragDestinationObject) {
 		if (!_isTestCafe) {
-			super.dragAndDropToObject(locatorOfObjectToBeDragged.toLocator(), locatorOfDragDestinationObject.toLocator());
+			super.dragAndDropToObject(locatorOfObjectToBeDragged, locatorOfDragDestinationObject);
 			return;
 		}
 		cafeDragToElement(locatorOfObjectToBeDragged.toLocator(), locatorOfDragDestinationObject.toLocator());
@@ -482,7 +482,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void keyDown(ClientWidget locator, String keySequence) {
 		if (!_isTestCafe) {
-			super.keyDown(locator.toLocator(), keySequence);
+			super.keyDown(locator, keySequence);
 			return;
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
@@ -491,7 +491,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void keyPress(ClientWidget locator, String keySequence) {
 		if (!_isTestCafe) {
-			super.keyPress(locator.toLocator(), keySequence);
+			super.keyPress(locator, keySequence);
 			return;
 		}
 		//TODO
@@ -1162,7 +1162,6 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.frozenScroll(locator, num);
 		} else {
-			String lo = locator.toLocator();
 			Widget wgt = jq(locator).toWidget();
 			wgt.eval("frozen._doScrollNow(" + num + ")");
 			waitResponse();
@@ -1534,175 +1533,175 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	 */
 	public void fireEvent(ClientWidget locator, String eventName) {
 		if (!_isTestCafe) {
-			super.fireEvent(locator.toLocator(), eventName);
+			super.fireEvent(locator, eventName);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String getAttribute(ClientWidget attributeLocator) {
 		if (!_isTestCafe) {
-			return super.getAttribute(attributeLocator.toLocator());
+			return super.getAttribute(attributeLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public Number getCursorPosition(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.getCursorPosition(locator.toLocator());
+			return super.getCursorPosition(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public Number getElementHeight(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.getElementHeight(locator.toLocator());
+			return super.getElementHeight(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public Number getElementIndex(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.getElementIndex(locator.toLocator());
+			return super.getElementIndex(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public Number getElementPositionLeft(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.getElementPositionLeft(locator.toLocator());
+			return super.getElementPositionLeft(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public Number getElementPositionTop(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.getElementPositionTop(locator.toLocator());
+			return super.getElementPositionTop(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public Number getElementWidth(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.getElementWidth(locator.toLocator());
+			return super.getElementWidth(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String[] getSelectOptions(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return super.getSelectOptions(selectLocator.toLocator());
+			return super.getSelectOptions(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String getSelectedId(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return super.getSelectedId(selectLocator.toLocator());
+			return super.getSelectedId(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String[] getSelectedIds(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return super.getSelectedIds(selectLocator.toLocator());
+			return super.getSelectedIds(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String getSelectedIndex(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return getCurrent().getSelectedIndex(selectLocator.toLocator());
+			return super.getSelectedIndex(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String[] getSelectedIndexes(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return super.getSelectedIndexes(selectLocator.toLocator());
+			return super.getSelectedIndexes(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String getSelectedLabel(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return super.getSelectedLabel(selectLocator.toLocator());
+			return super.getSelectedLabel(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String[] getSelectedLabels(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return super.getSelectedLabels(selectLocator.toLocator());
+			return super.getSelectedLabels(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String getSelectedValue(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return super.getSelectedValue(selectLocator.toLocator());
+			return super.getSelectedValue(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String[] getSelectedValues(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return super.getSelectedValues(selectLocator.toLocator());
+			return super.getSelectedValues(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String getTable(ClientWidget tableCellAddress) {
 		if (!_isTestCafe) {
-			return super.getTable(tableCellAddress.toLocator());
+			return super.getTable(tableCellAddress);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public String getValue(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.getValue(locator.toLocator());
+			return super.getValue(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public void highlight(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.highlight(locator.toLocator());
+			super.highlight(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public boolean isChecked(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.isChecked(locator.toLocator());
+			return super.isChecked(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public boolean isEditable(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.isEditable(locator.toLocator());
+			return super.isEditable(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public boolean isElementPresent(ClientWidget locator) {
 		if (!_isTestCafe) {
-			return super.isElementPresent(locator.toLocator());
+			return super.isElementPresent(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public boolean isOrdered(ClientWidget locator1, ClientWidget locator2) {
 		if (!_isTestCafe) {
-			return super.isOrdered(locator1.toLocator(), locator2.toLocator());
+			return super.isOrdered(locator1, locator2);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public boolean isSomethingSelected(ClientWidget selectLocator) {
 		if (!_isTestCafe) {
-			return super.isSomethingSelected(selectLocator.toLocator());
+			return super.isSomethingSelected(selectLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
@@ -1717,21 +1716,21 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 
 	public void removeAllSelections(ClientWidget locator) {
 		if (!_isTestCafe) {
-			super.removeAllSelections(locator.toLocator());
+			super.removeAllSelections(locator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public void removeSelection(ClientWidget locator, String optionLocator) {
 		if (!_isTestCafe) {
-			super.removeSelection(locator.toLocator(), optionLocator);
+			super.removeSelection(locator, optionLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public void rollup(ClientWidget rollupName, String kwargs) {
 		if (!_isTestCafe) {
-			super.rollup(rollupName.toLocator(), kwargs);
+			super.rollup(rollupName, kwargs);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
@@ -1748,21 +1747,21 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 
 	public void setContext(ClientWidget context) {
 		if (!_isTestCafe) {
-			super.setContext(context.toLocator());
+			super.setContext(context);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public void setCursorPosition(ClientWidget locator, String position) {
 		if (!_isTestCafe) {
-			super.setCursorPosition(locator.toLocator(), position);
+			super.setCursorPosition(locator, position);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
 	public void submit(ClientWidget formLocator) {
 		if (!_isTestCafe) {
-			super.submit(formLocator.toLocator());
+			super.submit(formLocator);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
