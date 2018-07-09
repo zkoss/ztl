@@ -1264,7 +1264,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @return
 	 */
 	public String getZKLog() {
-		return jq("#zk_log").val();
+		return jq("#zk_log").val().trim();
 	}
 
 	/**
