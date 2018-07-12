@@ -1377,9 +1377,9 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public void navigatePage(boolean forword) {
 		if (forword)
-			getWebDriver().navigate().back();
-		else
 			getWebDriver().navigate().forward();
+		else
+			getWebDriver().navigate().back();
 	}
 
 	public int getBrowserTabCount() {
