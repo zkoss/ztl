@@ -1186,8 +1186,7 @@ public class ZKClientTestCase extends ZKTestCase {
 
 	public void select(ClientWidget selectLocator, String optionLocator) {
 		if (isIE()) {
-			mouseDownAt(selectLocator, "1,1");
-			mouseUpAt(selectLocator, "1,1");
+			click(jq(selectLocator).find("option:contains(\"" + optionLocator + "\")"));
 		} else if (!isSafari()) {
 			findElement(jq(selectLocator).find("option:contains(\"" + optionLocator + "\")")).click();
 			// force to fire onChange event for IE
