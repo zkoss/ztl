@@ -63,11 +63,11 @@ public class Element extends ClientWidget {
 	/**
 	 * Returns the result of the evaluated name.
 	 * <p>For example,
-	 * <p><code>ele.get("name");</code> if the ele.name is "myname",
+	 * <p><code>ele.attr("name");</code> if the ele.name is "myname",
 	 * the result is "myname" being returned.
 	 * @param name any attribute of the element.
 	 */
-	public String get(String name) {
+	public String attr(String name) {
 		return eval(name);
 	}
 	/**
@@ -111,7 +111,7 @@ public class Element extends ClientWidget {
 	}
 	
 	public By toBy() {
-		String id = get("id");
+		String id = attr("id");
 		if (!isEmpty(id))
 			return By.id(id);
 		else

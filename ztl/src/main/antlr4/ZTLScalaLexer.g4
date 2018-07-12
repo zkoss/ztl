@@ -14,8 +14,6 @@ RETURN:			'return';
 THIS:			'this';
 
 //special method
-EQUALS:			'equals';
-CONTAINS:		'contains';
 TOINT:			'toInt';
 PARSEINT:		'parseInt';
 TODOUBLE:		'toDouble';
@@ -23,6 +21,14 @@ PARSEDOUBLE:	'parseDouble';
 TOFLOAT:		'toFloat';
 PARSEFLOAT:		'parseFloat';
 PARSEBOOLEAN:	'parseBoolean';
+CSS:			'css';
+ATTR:			'attr';
+TEXT:			'text';
+HTML:			'html';
+JQVAL:			'`val`';
+UUID:			'uuid';
+ID:				'id';
+GET:			'get';
 HEIGHT:			'height';
 WIDTH:			'width';
 INNERHEIGHT:	'innerHeight';
@@ -31,6 +37,7 @@ OUTERWIDTH:		'outerWidth';
 OUTERHEIGHT:	'outerHeight';
 LENGTH:			'length';
 SCROLLBARWIDTH:	'scrollbarWidth';
+EXIST:			'exist';
 OFFSETLEFT:		'offsetLeft';
 OFFSETTOP:		'offsetTop';
 POSITIONLEFT:	'positionLeft';
@@ -63,6 +70,17 @@ IS:				'is';
 GETWINDOWHEIGHT:'getWindowHeight';
 GETWINDOWWIDTH:	'getWindowWidth';
 GETBROWSERTABCOUNT:'getBrowserTabCount';
+//Handle param
+CLICKAT:		'clickAt';
+CONTEXTMENUAT:	'contextMenuAt';
+DOUBLECLICKAT:	'doubleClickAt';
+DRAGANDDROP:	'dragAndDrop';
+DRAGDROPTO:		'dragdropTo';
+DRAGDROPTOOBJECT:'dragdropToObject';
+DRAGANDDROPTOOBJECT:'dragAndDropToObject';
+DRAGDROP:		'dragdrop';
+MOUSEDOWNAT:	'mouseDownAt';
+
 
 // Literals
 DECIMAL_LITERAL:('0' | [1-9] (Digits? | '_'+ Digits)) [lL]?;
@@ -109,6 +127,7 @@ LAMBDA_ARROW:	'<-';
 TO:				'to';
 UNTIL:			'until';
 FUN_LAMBDA:		'=>';
+ACUTE:			'`';
 
 ADD_ASSIGN:		'+=';
 SUB_ASSIGN:		'-=';
@@ -125,7 +144,9 @@ STRING:			'"' ~["\r\n]* '"';
 PRE_STRING:		'"""' (LetterOrDigit | [ \t\r\n])* '"""';
 COMMENT:		'/*' .*? '*/' -> channel(HIDDEN);
 LINE_COMMENT:	'//' ~[\r\n]* -> channel(HIDDEN);
-Identifier:		ScalaLetter ScalaLetterOrDigit*;
+Identifier
+	: ScalaLetter ScalaLetterOrDigit*
+	| '`' ScalaLetter ScalaLetterOrDigit* '`';
 //WORD:			Letter LetterOrDigit*;
 
 // Fragment rules

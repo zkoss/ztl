@@ -42,7 +42,7 @@ public class Element$Cafe extends Element {
 		Scripts.getEval(_out.toString() + "." + name + " = " + value + "", _testSteps, true);
 	}
 	@Override
-	public String get(String name) {
+	public String attr(String name) {
 		return Scripts.getEval(_out.toString() + "." + name, _testSteps, false);
 	}
 	@Override
@@ -73,7 +73,7 @@ public class Element$Cafe extends Element {
 	}
 	@Override
 	public By toBy() {
-		String id = get("id");
+		String id = attr("id");
 		if (!isEmpty(id))
 			return this;
 		else

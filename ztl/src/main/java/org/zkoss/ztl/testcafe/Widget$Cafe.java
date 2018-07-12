@@ -73,7 +73,7 @@ public class Widget$Cafe extends Widget {
 	}
 
 	@Override
-	public String get(String name) {
+	public String attr(String name) {
 		return Scripts.getEval(_out.toString() + toUpperCase(".get", name) + "()", _testSteps);
 	}
 

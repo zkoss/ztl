@@ -260,8 +260,17 @@ public class ZKClientTestCase extends ZKTestCase {
 		Scripts.triggerMouseEventAt(getWebDriver(), locator, "dblclick", coordString);
 	}
 
+	public void dragdrop(ClientWidget locator, String movementsString) {
+		super.dragdrop(locator.toLocator(), movementsString);
+	}
+
 	public void dragAndDrop(ClientWidget locator, String movementsString) {
 		super.dragAndDrop(locator.toLocator(), movementsString);
+	}
+
+	public void dragAndDropToObject(ClientWidget locatorOfObjectToBeDragged,
+									ClientWidget locatorOfDragDestinationObject) {
+		super.dragAndDropToObject(locatorOfObjectToBeDragged.toLocator(), locatorOfDragDestinationObject.toLocator());
 	}
 
 	public void dragdropTo(ClientWidget locatorOfObjectToBeDragged, String from, String to) {
@@ -299,15 +308,6 @@ public class ZKClientTestCase extends ZKTestCase {
 		mouseDownAt(locatorOfObjectToBeDragged, from);
 		mouseMoveAt(locatorOfDragDestinationObject, to);
 		mouseUpAt(locatorOfDragDestinationObject, to);
-	}
-
-	public void dragAndDropToObject(ClientWidget locatorOfObjectToBeDragged,
-			ClientWidget locatorOfDragDestinationObject) {
-		super.dragAndDropToObject(locatorOfObjectToBeDragged.toLocator(), locatorOfDragDestinationObject.toLocator());
-	}
-
-	public void dragdrop(ClientWidget locator, String movementsString) {
-		super.dragdrop(locator.toLocator(), movementsString);
 	}
 
 	public void fireEvent(ClientWidget locator, String eventName) {
@@ -630,7 +630,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			   cave = jq(wgt.$n("cave"));
 		if (bpad.exists() && tpad.exists()) {
 			// ROD Scroll
-			totalHight = Integer.parseInt(bpad.get("offsetHeight")) + Integer.parseInt(tpad.get("offsetHeight"));
+			totalHight = Integer.parseInt(bpad.attr("offsetHeight")) + Integer.parseInt(tpad.attr("offsetHeight"));
 		} else {
 			totalHight = jq(cave).height() - jq(body).height();
 		}
@@ -800,7 +800,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	
 	public int getScrollTop(Widget widget) {
 		if (!hasNativeScroll(widget)) {
-			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.top").trim();
+			String str =  jq(widget).find(".z-scrollbar").toElement().attr("style.top").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
 			return jq(widget.$n("body")).scrollTop();
@@ -809,7 +809,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	
 	public int getScrollLeft(Widget widget) {
 		if (!hasNativeScroll(widget)) {
-			String str =  jq(widget).find(".z-scrollbar").toElement().get("style.left").trim();
+			String str =  jq(widget).find(".z-scrollbar").toElement().attr("style.left").trim();
 			return Integer.parseInt(str.substring(0, str.lastIndexOf("px")));
 		} else {
 			return jq(widget.$n("body")).scrollLeft();
@@ -1194,7 +1194,7 @@ public class ZKClientTestCase extends ZKTestCase {
 				blur(selectLocator);
 		} else {
 			//use javascript to simulate
-			String id = selectLocator.toElement().get("id").toString();
+			String id = selectLocator.toElement().attr("id").toString();
 			executeScript("jq('#" + id + "').val('" + optionLocator + "');");
 			waitResponse();
 			executeScript("jq('#" + id + "').change()");
@@ -1213,7 +1213,7 @@ public class ZKClientTestCase extends ZKTestCase {
 				blur(selectLocator);
 		} else {
 			//use javascript to simulate
-			String id = selectLocator.toElement().get("id").toString();
+			String id = selectLocator.toElement().attr("id").toString();
 			String selectionTargetScript = "jq('#" + id + "').children()[" + index + "].text";
 			executeScript("jq('#" + id + "').val(" + selectionTargetScript + ");");
 			waitResponse();
@@ -1226,8 +1226,6 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @param num
 	 */
 	public void frozenScroll(ClientWidget locator, int num) {
-		String lo = locator.toLocator();
-
 		Widget wgt = jq(locator).toWidget();
 		wgt.eval("frozen._doScrollNow(" + num + ")");
 		waitResponse();

@@ -54,22 +54,19 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			if (CafeTestStep.ACTION.equals(type)) {
 				if (!CafeTestStep.ACTION.equals(lastStepType))
 					testContent.append("await t");
-				testContent.append(".");
-				testContent.append(step.getContent());
+				testContent.append(".").append(step.getContent());
 			} else if (CafeTestStep.EVAL.equals(type)) {
-				testContent.append(step.getContent());
-				testContent.append(";\n");
+				testContent.append(step.getContent()).append(";\n");
 			} else if (CafeTestStep.ASSERTION.equals(type)) {
-				testContent.append("await t.");
-				testContent.append(step.getContent());
-				testContent.append(";\n");
+				testContent.append("await t.").append(step.getContent()).append(";\n");
+			} else if (CafeTestStep.PRE.equals(type)) {
+				testContent.append(step.getContent()).append("\n");
 			} else {
 				throw new IllegalArgumentException("Not support step type : " + type);
 			}
 			lastStepType = type;
 		}
 		testContent.append("});");
-
 		//write file
 		try {
 			final String destdir = "/Users/jameschu/zkworks/ztl-test/testcafe/ztl/";
@@ -225,7 +222,16 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		codeStr.append("(");
 		codeStr.append(toCafeSelector(selectorStr));
 		if (coordString != null) {
+			boolean doSplit = false;
 			String[] coords = coordString.split(",");
+			if (coords.length == 1) {
+				doSplit = true;
+			}
+			String[] coordStr = {coords[0], doSplit ? "" : coords[1]};
+			if (doSplit) {
+				coordStr[0] = "parseInt(" + coordString + ".split(',')[0])";
+				coordStr[1] = "parseInt(" + coordString + ".split(',')[1])";
+			}
 			codeStr.append(", {offsetX: " + coords[0] + ", offsetY: " + coords[1] + "}");
 		}
 		codeStr.append(")");
@@ -399,16 +405,29 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (from == null) {
 			codeStr.append(movementsString);
 		} else {
+			boolean doFromSplit = false;
+			boolean doToSplit = false;
 			String[] fromCoords = from.replaceAll(" ", "").split(",");
 			String[] toCoords = movementsString.replaceAll(" ", "").split(",");
-			try {
-				movementsString = (Integer.parseInt(toCoords[0]) - Integer.parseInt(fromCoords[0])) + ","
-						+ (Integer.parseInt(toCoords[1]) - Integer.parseInt(fromCoords[1]));
-			} catch (NumberFormatException e) {
-				movementsString = "from: " + from + "," + "to: " + movementsString;
+			if (fromCoords.length == 1) {
+				doFromSplit = true;
 			}
+			if (toCoords.length == 1) {
+				doToSplit = true;
+			}
+			String[] formStr = {fromCoords[0], doFromSplit ? "" : fromCoords[1]};
+			String[] toStr = {toCoords[0], doToSplit ? "" : toCoords[1]};
+			if (doFromSplit) {
+				formStr[0] = "parseInt(" + from + ".split(',')[0])";
+				formStr[1] = "parseInt(" + from + ".split(',')[1])";
+			}
+			if (doToSplit) {
+				toStr[0] = "parseInt(" + movementsString + ".split(',')[0])";
+				toStr[1] = "parseInt(" + movementsString + ".split(',')[1])";
+			}
+			movementsString = toStr[0] + "-" + formStr[0] + "," + toStr[1] + "-" + formStr[1];
 			codeStr.append(movementsString);
-			codeStr.append(", {offsetX: " + fromCoords[0] + ", offsetY: " + fromCoords[1] + "}");
+			codeStr.append(", {offsetX: " + formStr[0] + ", offsetY: " + formStr[1] + "}");
 		}
 		codeStr.append(")");
 		_testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
@@ -425,10 +444,28 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		codeStr.append(",");
 		codeStr.append(toCafeSelector(toSelectorStr));
 		if (from != null && to != null) {
+			boolean doFromSplit = false;
+			boolean doToSplit = false;
 			String[] fromCoords = from.split(",");
 			String[] toCoords = to.split(",");
-			codeStr.append(", {offsetX: " + fromCoords[0] + ", offsetY: " + fromCoords[1]);
-			codeStr.append(", destinationOffsetX: " + toCoords[0] + ", destinationOffsetY: " + toCoords[1] + "}");
+			if (fromCoords.length == 1) {
+				doFromSplit = true;
+			}
+			if (toCoords.length == 1) {
+				doToSplit = true;
+			}
+			String[] formStr = {fromCoords[0], doFromSplit ? "" : fromCoords[1]};
+			String[] toStr = {toCoords[0], doToSplit ? "" : toCoords[1]};
+			if (doFromSplit) {
+				formStr[0] = "parseInt(" + from + ".split(',')[0])";
+				formStr[1] = "parseInt(" + from + ".split(',')[1])";
+			}
+			if (doToSplit) {
+				toStr[0] = "parseInt(" + to + ".split(',')[0])";
+				toStr[1] = "parseInt(" + to + ".split(',')[1])";
+			}
+			codeStr.append(", {offsetX: " + formStr[0] + ", offsetY: " + formStr[1] + "}");
+			codeStr.append(", destinationOffsetX: " + toStr[0] + ", destinationOffsetY: " + toStr[1] + "}");
 		}
 		codeStr.append(")");
 		_testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
@@ -1517,15 +1554,45 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		return expr;
 	}
 
-	public void assignment_cafe(String indentifier, String expr, boolean isNew){
+	public void assignment_cafe(String indentifier, Object expr, boolean isNew){
 		StringBuilder codeStr = new StringBuilder();
 		if (isNew)
 			codeStr.append("let ");
 		codeStr.append(indentifier);
 		codeStr.append(" = ");
-		codeStr.append(cafeEval(expr, false));
-		codeStr.append(";");
+		String exprStr = String.valueOf(expr);
+		if (exprStr.startsWith(CAFEEVAL)) {
+			codeStr.append(exprStr.replace(CAFEEVAL, ""));
+		} else {
+			codeStr.append(cafeEval(String.valueOf(expr), false));
+		}
 		_testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, codeStr.toString()));
+	}
+
+	public void conditionStatement_cafe(String cond, String condtionContent) {
+		StringBuilder codeStr = new StringBuilder();
+		codeStr.append(cond).append(" (").append(condtionContent).append(")");
+		_testCodeList.add(new CafeTestStep(CafeTestStep.PRE, codeStr.toString()));
+	}
+
+	public void forStatement_cafe(String param, String start, String type, String restriction) {
+		StringBuilder codeStr = new StringBuilder();
+		codeStr.append("for (var ").append(param).append(" = ").append(start).append(";");
+		if ("to".equals(type))
+			codeStr.append(param).append(" > ").append(restriction).append("? <= : >=").append(restriction);
+		else
+			codeStr.append(param).append(" > ").append(restriction).append("? < : >").append(restriction);
+		codeStr.append(";").append(param).append(" > ").append(restriction).append("?").append(param).append("-- : ++").append(param).append(")");
+		_testCodeList.add(new CafeTestStep(CafeTestStep.PRE, codeStr.toString()));
+	}
+
+	public void conditionBlock_cafe(boolean isStart) {
+		StringBuilder codeStr = new StringBuilder();
+		if (isStart)
+			codeStr.append(" {\n");
+		else
+			codeStr.append(" \n}");
+		_testCodeList.add(new CafeTestStep(CafeTestStep.PRE, codeStr.toString()));
 	}
 
 	/**

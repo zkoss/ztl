@@ -142,24 +142,6 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSpecialMethod(ZTLScalaParser.SpecialMethodContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ZTLScalaParser#wrapMethod}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitWrapMethod(ZTLScalaParser.WrapMethodContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ZTLScalaParser#equalsMethod}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEqualsMethod(ZTLScalaParser.EqualsMethodContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ZTLScalaParser#containsMethod}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitContainsMethod(ZTLScalaParser.ContainsMethodContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#parseMethod}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -202,17 +184,17 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitZtlTestMethod(ZTLScalaParser.ZtlTestMethodContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ZTLScalaParser#ifElseExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIfElseExpression(ZTLScalaParser.IfElseExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitStatement(ZTLScalaParser.StatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#conditionStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitConditionStatement(ZTLScalaParser.ConditionStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#ifThenStatement}.
 	 * @param ctx the parse tree
@@ -232,17 +214,35 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitElseIfStatement(ZTLScalaParser.ElseIfStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ZTLScalaParser#ifThenElseStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIfThenElseStatement(ZTLScalaParser.IfThenElseStatementContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#forStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitForStatement(ZTLScalaParser.ForStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#whileStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhileStatement(ZTLScalaParser.WhileStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#ifExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfExpression(ZTLScalaParser.IfExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#elseIfExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseIfExpression(ZTLScalaParser.ElseIfExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#forExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForExpression(ZTLScalaParser.ForExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#forCondition}.
 	 * @param ctx the parse tree
@@ -250,11 +250,11 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitForCondition(ZTLScalaParser.ForConditionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ZTLScalaParser#whileStatement}.
+	 * Visit a parse tree produced by {@link ZTLScalaParser#whileExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitWhileStatement(ZTLScalaParser.WhileStatementContext ctx);
+	T visitWhileExpression(ZTLScalaParser.WhileExpressionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#conditionBodyStatements}.
 	 * @param ctx the parse tree
@@ -267,6 +267,18 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBlock(ZTLScalaParser.BlockContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#block_pre}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlock_pre(ZTLScalaParser.Block_preContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#block_suf}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBlock_suf(ZTLScalaParser.Block_sufContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#classStatement}.
 	 * @param ctx the parse tree
@@ -316,11 +328,23 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVerifyMethod(ZTLScalaParser.VerifyMethodContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#ztlActionMethod}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitZtlActionMethod(ZTLScalaParser.ZtlActionMethodContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#returnStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitReturnStatement(ZTLScalaParser.ReturnStatementContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#annotionStatement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAnnotionStatement(ZTLScalaParser.AnnotionStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#otherStatement}.
 	 * @param ctx the parse tree

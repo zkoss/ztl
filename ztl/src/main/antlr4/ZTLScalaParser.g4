@@ -67,7 +67,6 @@ formalParameters
 expression
   : unaryExpression
   | conditionalExpression
-  | ifElseExpression
   ;
 
 conditionalExpression
@@ -134,16 +133,19 @@ parseMethod
 
 toIntMethod
   : primary '.' 'toInt'
+  | ztlUnitMethod '.' 'toInt'
   | 'parseInt' '(' expression ')'
   ;
 
 toDoubleMethod
   : primary '.' 'toDouble'
+  | ztlUnitMethod '.' 'toDouble'
   | 'parseDouble' '(' expression ')'
   ;
 
 toFloatMethod
   : primary '.' 'toFloat'
+  | ztlUnitMethod '.' 'toFloat'
   | 'parseFloat' '(' expression ')'
   ;
 
@@ -152,7 +154,15 @@ toBooleanMethod
   ;
 
 ztlUnitMethod
-  : primary '.' 'height' ('(' ')')?
+  : primary '.' 'css' '(' primary ')'
+  | primary '.' 'attr' '(' primary ')'
+  | primary '.' 'text' ('(' ')')?
+  | primary '.' 'html' ('(' ')')?
+  | primary '.' '`val`' ('(' ')')?
+  | primary '.' 'uuid' ('(' ')')?
+  | primary '.' 'id' ('(' ')')?
+  | primary '.' 'is' '(' primary ')'
+  | primary '.' 'height' ('(' ')')?
   | primary '.' 'width' ('(' ')')?
   | primary '.' 'innerHeight' ('(' ')')?
   | primary '.' 'innerWidth' ('(' ')')?
@@ -169,6 +179,8 @@ ztlUnitMethod
   | primary '.' 'scrollHeight' ('(' ')')?
   | primary '.' 'scrollWidth' ('(' ')')?
   | primary '.' 'nChildren' ('(' ')')?
+  | primary '.' 'isVisible' ('(' ')')?
+  | primary '.' 'exist' ('(' ')')?
   ;
 
 ztlTestMethod
@@ -185,23 +197,23 @@ ztlTestMethod
   | ('this' '.')? 'is' '(' primary ')'
   | ('this' '.')? 'getWindowWidth' ('(' ')')?
   | ('this' '.')? 'getWindowHeight' ('(' ')')?
-  | ('this' '.')? 'getBrowserTabCount' ('(' ')')?
-  ;
-
-ifElseExpression
-  : 'if' WS conditionalExpression WS 'else' WS conditionalExpression
   ;
 
 statement
-  : ifThenStatement
-  | ifThenElseStatement
-  | forStatement
-  | whileStatement
+  : conditionStatement
   | otherStatement
   ;
 
+conditionStatement
+  : ifThenStatement
+  | elseIfStatement
+  | elseStatement
+  | forStatement
+  | whileStatement
+  ;
+
 ifThenStatement
-  : WS* 'if' WS* '(' WS* expression WS* ')' (WS | NEWLINE)* conditionBodyStatements
+  : WS* ifExpression (WS | NEWLINE)* conditionBodyStatements
   ;
 
 elseStatement
@@ -209,23 +221,35 @@ elseStatement
   ;
 
 elseIfStatement
-  : (WS | NEWLINE)* 'else' WS 'if' WS* '(' WS* expression WS* ')' (WS | NEWLINE)* conditionBodyStatements
-  ;
-
-ifThenElseStatement
-  : ifThenStatement elseIfStatement* elseStatement*
+  : (WS | NEWLINE)* elseIfExpression (WS | NEWLINE)* conditionBodyStatements
   ;
 
 forStatement
-  : WS* 'for' WS* '(' forCondition (';' forCondition)* (WS | NEWLINE)* ')' (WS | NEWLINE)* conditionBodyStatements
+  : WS* forExpression (WS | NEWLINE)* conditionBodyStatements
+  ;
+
+whileStatement
+  : WS* whileExpression (WS | NEWLINE)* conditionBodyStatements
+  ;
+
+ifExpression
+  : 'if' WS* '(' WS* expression WS* ')'
+  ;
+
+elseIfExpression
+  : 'else' WS 'if' WS* '(' WS* expression WS* ')'
+  ;
+
+forExpression
+  : 'for' WS* '(' forCondition (';' forCondition)* (WS | NEWLINE)* ')'
   ;
 
 forCondition
   : WS* primary WS* '<-' WS* expression WS* ('until' | 'to') WS* expression (WS | NEWLINE)*
   ;
 
-whileStatement
-  : WS* 'while' WS* '(' WS* expression WS* ')' (WS | NEWLINE)* conditionBodyStatements
+whileExpression
+  : 'while' WS* '(' WS* expression WS* ')'
   ;
 
 conditionBodyStatements
@@ -234,7 +258,15 @@ conditionBodyStatements
   ;
 
 block
-  : '{' (WS | NEWLINE)* (statement)+ (WS | NEWLINE)* '}'
+  : block_pre (statement)+ block_suf
+  ;
+
+block_pre
+  : '{' (WS | NEWLINE)*
+  ;
+
+block_suf
+  : (WS | NEWLINE)* '}'
   ;
 
 classStatement
@@ -265,7 +297,8 @@ anyType
   ;
 
 functionCallStatement
-  : WS* verifyMethod WS*
+  : WS* ('this' '.')? verifyMethod WS*
+  | WS* ('this' '.')? ztlActionMethod WS*
   | WS* functionCall WS*
   ;
 
@@ -279,14 +312,32 @@ verifyMethod
   | 'verifyTolerant' '(' formalParameters ')'
   ;
 
+//handle action param
+ztlActionMethod
+  : 'clickAt' ('(' formalParameters ')')
+  | 'contextMenuAt' ('(' formalParameters ')')
+  | 'doubleClickAt' ('(' formalParameters ')')
+  | 'dragAndDrop' ('(' formalParameters ')')
+  | 'dragdropTo' ('(' formalParameters ')')
+  | 'dragdropToObject' ('(' formalParameters ')')
+  | 'dragAndDropToObject' ('(' formalParameters ')')
+  | 'dragdrop' ('(' formalParameters ')')
+  | 'mouseDownAt' ('(' formalParameters ')')
+  ;
+
 returnStatement
   : WS* 'return' WS expression WS*
+  ;
+
+annotionStatement
+  : WS* '@' Identifier WS*
   ;
 
 otherStatement
   :	classStatement WS* NEWLINE?
   |	defStatement WS* ';'? NEWLINE
   | singleStatement WS* ';'? NEWLINE
+  | annotionStatement WS* NEWLINE
   |	(WS | ';' )* NEWLINE //block or empty
   ;
 

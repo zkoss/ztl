@@ -376,7 +376,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery> {
 	 * @return
 	 */
 	public int scrollHeight() {
-		return parseInt(get(0).get("scrollHeight"));
+		return parseInt(get(0).attr("scrollHeight"));
 	}
 
 	/**
@@ -385,7 +385,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery> {
 	 * @return
 	 */
 	public int scrollWidth() {
-		return parseInt(get(0).get("scrollWidth"));
+		return parseInt(get(0).attr("scrollWidth"));
 	}
 
 	/**
@@ -527,10 +527,10 @@ public class JQuery extends ClientWidget implements Iterable<JQuery> {
 		return _out.toString() + ".scrollLeft()";
 	}
 	public String scrollHeight_cafeStr() {
-		return get(0).get("scrollHeight");
+		return get(0).attr("scrollHeight");
 	}
 	public String scrollWidth_cafeStr() {
-		return get(0).get("scrollWidth");
+		return get(0).attr("scrollWidth");
 	}
 
 }

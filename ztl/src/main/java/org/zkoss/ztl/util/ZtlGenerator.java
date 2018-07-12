@@ -23,6 +23,7 @@ import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.zkoss.ztl.annotation.Tags;
 import org.zkoss.ztl.parser.SAXParser;
+import org.zkoss.ztl.testcafe.ZTLTestModifier;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -177,6 +178,7 @@ public class ZtlGenerator {
 	public static void main(String[] args) {
 		String src = null, dist = null, tags = null, bin = "",excludetags = null;
 		boolean run = false;
+		boolean isTestCafe = false;
 		int i = 0;
 		for (String s : args) {
 			if ("-src".equalsIgnoreCase(s)) {
@@ -199,6 +201,8 @@ public class ZtlGenerator {
 					log("bin=" + bin, "case=" + tags);
 				else
 					log("bin=" + bin, "tags=" + tags);
+			} else if ("-testcafe".equalsIgnoreCase(s)) {
+				isTestCafe = true;
 			}
 			i++;
 		}
@@ -212,70 +216,83 @@ public class ZtlGenerator {
 			log("	java org.zkoss.ztl.util.ZtlGenerator -run [srcdir] [grid,listbox,button...]");
 			log("\n3.Or run with case\n");
 			log("	java org.zkoss.ztl.util.ZtlGenerator -run [srcdir] [B123456.ztl,...]");
+			log("\n4.Or generate test cafe case\n");
+			log("	java org.zkoss.ztl.util.ZtlGenerator -testcafe -src ./test -dist ./codegen");
 			log("\n");
 			System.exit(-1);
 		}
 		if (!run) {
-			ZtlGenerator t = new ZtlGenerator();
-			File dir = new File(src);
-			
-			String[] includetag = tags == null || tags.trim().equals("") ? null : tags.split(",");
-			String[] excludetag = excludetags == null || excludetags.trim().equals("") ? null : excludetags.split(",");
-//			List<String> testSuite = new ArrayList<String>();
-			StringBuffer testcases= new StringBuffer();
-			boolean init = false ;
-			int count = 0;
-		
-			for (File f : getFiles(dir, new ArrayList<File>(30), ".ztl")){
-				
-				// ignore test case
-				if (ConfigHelper.getInstance().isAllIgnoreCase(f.getName())) {
-					System.out.println("ignore: " + f.getName());
-					continue;
+			if (isTestCafe) {
+				File dir = new File(src);
+				for (File f : getFiles(dir, new ArrayList<File>(30), ".scala")){
+					ZTLTestModifier.generate(f, dir.getPath(), dist);
 				}
-				
-				Test test = t.load(f, dir.getPath());
-				
-				boolean included = true;
-				
-				if(tags != null && includetag !=null)
-					included = test.containsTag(includetag);
-				
-				if(excludetag != null) //if it's not included , we need not to count it anyway.
-					included = included && !test.containsTag(excludetag);
-				
-				if(included){
-					//testSuite.add(test.getPackage()+"."+test.getFileName()+".class");
-					if(init){
-						testcases.append("," + test.getPackage()+"."+test.getFileName()+".class\n");
-					}else{
-						init = true;
-						testcases.append(test.getPackage()+"."+test.getFileName()+".class\n");
+//				try {
+//					Process process = Runtime.getRuntime().exec("mvn surefire:test -Dreport.dir=\"$1\" -Dtest.dir=\"$2\" -Dbrowser=\"$3\" -Dopenonce=$4");
+//					process.waitFor();
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//				File destDir = new File(dist);
+//				for (File f : getFiles(dir, new ArrayList<File>(30), "$cafe.scala")){
+//					//compile
+//					JUnitCore junit = new JUnitCore();
+//					Result result = junit.run();
+//				}
+
+			} else {
+				ZtlGenerator t = new ZtlGenerator();
+				File dir = new File(src);
+				String[] includetag = tags == null || tags.trim().equals("") ? null : tags.split(",");
+				String[] excludetag = excludetags == null || excludetags.trim().equals("") ? null : excludetags.split(",");
+				StringBuffer testcases= new StringBuffer();
+				boolean init = false ;
+				int count = 0;
+				for (File f : getFiles(dir, new ArrayList<File>(30), ".ztl")){
+					// ignore test case
+					if (ConfigHelper.getInstance().isAllIgnoreCase(f.getName())) {
+						System.out.println("ignore: " + f.getName());
+						continue;
 					}
-					count ++;
-					
-				}
+					Test test = t.load(f, dir.getPath());
+					boolean included = true;
+					if(tags != null && includetag !=null)
+						included = test.containsTag(includetag);
+
+					if(excludetag != null) //if it's not included , we need not to count it anyway.
+						included = included && !test.containsTag(excludetag);
+
+					if(included){
+						//testSuite.add(test.getPackage()+"."+test.getFileName()+".class");
+						if(init){
+							testcases.append("," + test.getPackage()+"."+test.getFileName()+".class\n");
+						}else{
+							init = true;
+							testcases.append(test.getPackage()+"."+test.getFileName()+".class\n");
+						}
+						count ++;
+					}
 					//tags
-				t.run(test, dist);
-			}
-			
-			if(includetag!= null || excludetag != null ){
-				String testSuiteName = "TagSuite";
-				
-				VelocityContext context = new VelocityContext();
-				context.put("suitename", testSuiteName);
-				context.put("cases", testcases);
-				try {
-					File folder = new File(dist+File.separator+"test"+File.separator);
-					if(!folder.exists()) folder.mkdirs();
-					ZulGenerator.fillTemplate(dist+File.separator+"test"+File.separator+testSuiteName+".java", context, "testsuite.vm");
-					System.out.println(dist+"/test/"+testSuiteName+".java , test case amount:" + count);
-				} catch (Exception e) {
-					e.printStackTrace();
+					t.run(test, dist);
+				}
+				if(includetag!= null || excludetag != null ){
+					String testSuiteName = "TagSuite";
+
+					VelocityContext context = new VelocityContext();
+					context.put("suitename", testSuiteName);
+					context.put("cases", testcases);
+					try {
+						File folder = new File(dist+File.separator+"test"+File.separator);
+						if(!folder.exists()) folder.mkdirs();
+						ZulGenerator.fillTemplate(dist+File.separator+"test"+File.separator+testSuiteName+".java", context, "testsuite.vm");
+						System.out.println(dist+"/test/"+testSuiteName+".java , test case amount:" + count);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
-			
-			
 		} else {
 			try {
 				tags = tags == null ? "" : tags.toLowerCase();

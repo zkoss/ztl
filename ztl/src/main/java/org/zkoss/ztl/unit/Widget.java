@@ -104,12 +104,12 @@ public class Widget extends ClientWidget {
 	/**
 	 * Returns the value of the evaluated name.
 	 * <p>For example,
-	 * <br><code>grid.get("width");</code>
+	 * <br><code>grid.attr("width");</code>
 	 * <br>in JavaScript
 	 * <br><code>grid.getWidth();</code>
 	 * @param name any allowed property of the widget.
 	 */
-	public String get(String name) {
+	public String attr(String name) {
 		return Scripts.getEval(_out.toString() + toUpperCase(".get", name) + "()");
 	}
 

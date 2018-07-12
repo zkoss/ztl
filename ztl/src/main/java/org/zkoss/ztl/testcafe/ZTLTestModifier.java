@@ -73,6 +73,40 @@ public class ZTLTestModifier {
 		}
 	}
 
+	public static void generate(File f, String src, String targetDir) {
+		String content = "";
+		try {
+			content = new String(Files.readFile(f));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Modifying: " + f.getPath());
+		content = modifyTestCode(content);
+
+		try {
+			String pkg = f.getParent();
+			int index = pkg.indexOf(src);
+			if (index == 0)
+				pkg = pkg.substring(src.length());
+			if (pkg.length() > 0)
+				pkg = pkg.replace(File.separator, ".").substring(1);
+			//write file
+			String path = targetDir + File.separator
+					+ pkg.replace(".", File.separator) + File.separator + f.getName().replace(".scala", "$cafe.scala");
+			File destDir = new File(path);
+			destDir.getParentFile().mkdirs();
+			if (!destDir.isFile()) {
+				destDir.createNewFile();
+			}
+			FileWriter writer = new FileWriter(destDir);
+			writer.write(content);
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private static String modifyTestCode(String code) {
 		StringBuilder codeStrBuilder = new StringBuilder();
 		String clzStartString = "\nclass ";
@@ -96,16 +130,15 @@ public class ZTLTestModifier {
 			//Parsing
 			ZTLScalaParser.StatementsContext statementContext = parser.statements();
 			int count = statementContext.getChildCount();
-			//log
-			log("statement count: " + count);
-			for (int k = 0; k < count; k++) {
-				//				log(k + " >>> " + statementContext.getChild(k).getText());
+			Map<String, String> preReplaceMap = listener.getPreCodeReplacements();
+			for (Map.Entry<String, String> entry : preReplaceMap.entrySet()) {
+				code = code.replace(entry.getKey(), entry.getValue());
 			}
 			Map<String, String> replaceMap = listener.getCodeReplacements();
 			for (Map.Entry<String, String> entry : replaceMap.entrySet()) {
 				code = code.replace(entry.getKey(), entry.getValue());
 			}
-
+			System.out.println("Done.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

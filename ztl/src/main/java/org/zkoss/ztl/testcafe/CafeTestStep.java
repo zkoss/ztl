@@ -17,6 +17,7 @@ public class CafeTestStep {
 	public static String ACTION = "action";
 	public static String ASSERTION = "assertion";
 	public static String EVAL = "eval";
+	public static String PRE = "pre";
 
 	private String _type;
 	private String _content;

@@ -130,4 +130,8 @@ public class Scripts {
 		}
 		return script;
 	}
+
+	public static String getCafeEval(String script) {
+		return "await ClientFunction(() => " + script + ")()";
+	}
 }

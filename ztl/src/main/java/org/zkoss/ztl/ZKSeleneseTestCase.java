@@ -18,12 +18,11 @@ package org.zkoss.ztl;
 
 import java.util.Date;
 
-import org.zkoss.ztl.util.ConfigHelper;
-
-import junit.framework.TestCase;
-
 import com.thoughtworks.selenium.SeleneseTestBase;
 import com.thoughtworks.selenium.Selenium;
+import junit.framework.TestCase;
+
+import org.zkoss.ztl.util.ColorVerifingHelper;
 
 /**
  * This is a copy of SeleneseTestCase.java and improve the log mechanism.
@@ -203,12 +202,30 @@ public class ZKSeleneseTestCase extends TestCase {
 	 */
 	public void verifyTolerant(int number1,int number2,int tolerant){
 		if(number1 == number2) return;
-
 		if(Math.abs(number1 -  number2) > tolerant){
 			verifyEquals(number1,number2);
 		}
+	}
 
+	/**
+	 * compare two colors
+	 * @param color1
+	 * @param color2
+	 */
+	public void verifyEqualColor(String color1, String color2) {
+		verifyEqualColor("Colors should be the same: " + color1 + ", " + color2, color1, color2);
+	}
 
+	public void verifyEqualColor(String msg, String color1, String color2) {
+		verifyTrue(msg, ColorVerifingHelper.isEqualColor(color1, color2));
+	}
+
+	public void verifyNotEqualColor(String color1, String color2) {
+		verifyNotEqualColor("Colors should not be the same: " + color1 + ", " + color2, color1, color2);
+	}
+
+	public void verifyNotEqualColor(String msg, String color1, String color2) {
+		verifyFalse(msg, ColorVerifingHelper.isEqualColor(color1, color2));
 	}
 
     /** Like JUnit's Assert.assertEquals, but knows how to compare string arrays */
