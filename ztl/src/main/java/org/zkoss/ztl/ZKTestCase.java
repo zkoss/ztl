@@ -705,8 +705,7 @@ public class ZKTestCase extends ZKSeleneseTestCase implements Selenium {
 
 	@Override
 	public String getEval(String script) {
-		//return getCurrent().(script);
-		WebDriver driver = ((WrapsDriver) getCurrent()).getWrappedDriver(); 
+		WebDriver driver = ((WrapsDriver) getCurrent()).getWrappedDriver();
 		return String.valueOf(((JavascriptExecutor) driver).executeScript("return ("+ script+");"));
 	}
 

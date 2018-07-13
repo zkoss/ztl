@@ -16,15 +16,11 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.ztl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.thoughtworks.selenium.SeleniumException;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.Rotatable;
-import org.openqa.selenium.ScreenOrientation;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.HasTouchScreen;
 import org.openqa.selenium.interactions.touch.TouchActions;
 
@@ -32,9 +28,6 @@ import org.zkoss.ztl.unit.*;
 import org.zkoss.ztl.util.ConfigHelper;
 import org.zkoss.ztl.util.Scripts;
 import org.zkoss.ztl.util.image.Comparator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A skeleton of ZK client widget.
@@ -242,11 +235,14 @@ public class ZKClientTestCase extends ZKTestCase {
 	}
 
 	public void contextMenu(ClientWidget locator) {
-		Scripts.triggerMouseEventAt(getWebDriver(), locator, "contextmenu", "5,5");
+		getActions().moveToElement(findElement(locator)).contextClick().perform();
+//		Scripts.triggerMouseEventAt(getWebDriver(), locator, "contextmenu", "5,5");
 	}
 
 	public void contextMenuAt(ClientWidget locator, String coordString) {
-		Scripts.triggerMouseEventAt(getWebDriver(), locator, "contextmenu", coordString);
+		String[] coord = coordString.split(",");
+		getActions().moveToElement(findElement(locator), Integer.parseInt(coord[0]), Integer.parseInt(coord[1])).contextClick().perform();
+//		Scripts.triggerMouseEventAt(getWebDriver(), locator, "contextmenu", coordString);
 	}
 
 	public void doubleClick(ClientWidget locator) {
@@ -305,9 +301,13 @@ public class ZKClientTestCase extends ZKTestCase {
 			String from, String to) {
 		// fixed for Selenium 2.5.0
 		mouseMoveAt(locatorOfObjectToBeDragged, from);
+		waitResponse();
 		mouseDownAt(locatorOfObjectToBeDragged, from);
+		waitResponse();
 		mouseMoveAt(locatorOfDragDestinationObject, to);
+		waitResponse();
 		mouseUpAt(locatorOfDragDestinationObject, to);
+		waitResponse();
 	}
 
 	public void fireEvent(ClientWidget locator, String eventName) {
@@ -481,8 +481,13 @@ public class ZKClientTestCase extends ZKTestCase {
 					keysToSend[i] = chseq;
 			}
 			typeKeys(locator, keysToSend.toString());
+			return;
 		}
-		getWebDriver().findElement(locator.toBy()).sendKeys(keysToSend);
+		try {
+			getWebDriver().findElement(locator.toBy()).sendKeys(keysToSend);
+		} catch (InvalidSelectorException e) {
+			getActions().sendKeys(keysToSend).perform();
+		}
 	}
 
 	/**
@@ -554,8 +559,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			getActions().moveToElement(element, x0, y0).perform();
 		} else {
 			// fixed for Selenium 2.5.0
-			// super.mouseMoveAt(locator.toLocator(), coordString);
-			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mousemove", coordString);
+			Scripts.triggerMouseEventAt(getWebDriver(), locator, "mouseover", coordString);
 		}
 	}
 
@@ -635,7 +639,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			totalHight = jq(cave).height() - jq(body).height();
 		}
 		
-		int dist = (int) Math.round(totalHight * percent);
+		int dist = (int) Math.round(totalHight * percent / 100);
 
 		verScrollAbs(locator, dist);
 	}
@@ -668,7 +672,7 @@ public class ZKClientTestCase extends ZKTestCase {
 		JQuery body = jq(wgt.$n("body"));
 		JQuery cave = jq(wgt.$n("cave"));
 		int totalWidth = cave.width() - body.width();		
-		int dist = (int) Math.round(totalWidth * percent);
+		int dist = (int) Math.round(totalWidth * percent / 100);
 
 		horScrollAbs(locator,  dist);
 	}

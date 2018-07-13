@@ -283,16 +283,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.mouseMove(locator);
 			return;
 		}
-		throw new UnsupportedOperationException("Not support in test cafe");
-	}
-
-	@Override
-	public void mouseMoveAt(ClientWidget locator, String coordString) {
-		if (!_isTestCafe) {
-			super.mouseMoveAt(locator, coordString);
-			return;
-		}
-		throw new UnsupportedOperationException("Not support in test cafe");
+		mouseOver(locator);
 	}
 
 	@Override
@@ -480,19 +471,36 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.mouseOver(locator);
 			return;
 		}
-		cafeHover(locator.toString());
+		cafeHover(locator.toString(), null);
 	}
 
-	public void mouseOverAt(By locator, String coordString) {
+	public void mouseMoveAt(ClientWidget locator, String coordString) {
 		if (!_isTestCafe) {
-			super.mouseMoveAt(locator.toString(), coordString);
+			super.mouseMoveAt(locator, coordString);
 			return;
 		}
-		cafeHover(locator.toString());
+		cafeHover(locator.toString(), coordString);
 	}
 
-	private void cafeHover(String selectorStr) {
-		_testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, "hover(" + toCafeSelector(selectorStr) + ")"));
+	private void cafeHover(String selectorStr, String coordString) {
+		StringBuilder codeStr = new StringBuilder();
+		codeStr.append("hover(");
+		codeStr.append(toCafeSelector(selectorStr));
+		if (coordString != null) {
+			boolean doSplit = false;
+			String[] coords = coordString.split(",");
+			if (coords.length == 1) {
+				doSplit = true;
+			}
+			String[] coordStr = {coords[0], doSplit ? "" : coords[1]};
+			if (doSplit) {
+				coordStr[0] = "parseInt(" + coordString + ".split(',')[0])";
+				coordStr[1] = "parseInt(" + coordString + ".split(',')[1])";
+			}
+			codeStr.append(", {offsetX: " + coords[0] + ", offsetY: " + coords[1] + "}");
+		}
+		codeStr.append(")");
+		_testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
 	}
 
 	/**
@@ -1247,7 +1255,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void horScrollAbs(ClientWidget locator, int dist) {
 		if (!_isTestCafe) {
-			super.verScrollAbs(locator, dist);
+			super.horScrollAbs(locator, dist);
 		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll(t, {locator:").append(locator.toString())
@@ -1273,7 +1281,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	@Override
 	public void verScrollNoBody(ClientWidget locator, double percent) {
 		if (!_isTestCafe) {
-			super.horScrollNoBody(locator, percent);
+			super.verScrollNoBody(locator, percent);
 		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll(t, {locator:").append(locator.toString())
