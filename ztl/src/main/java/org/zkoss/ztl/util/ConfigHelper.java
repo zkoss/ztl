@@ -28,6 +28,9 @@ import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 /**
@@ -577,7 +580,10 @@ public class ConfigHelper {
 				_prop = new Properties();
 				_prop.load(in);
 				_testingEnvironment = _prop.getProperty("testingEnvironment");
-				_cafeTestDir = _prop.getProperty("cafeTestDir");
+				if ("testcafe".equals(_testingEnvironment)) {
+					_cafeTestDir = _prop.getProperty("cafeTestDir");
+					prepareTestCafeTestEnv();
+				}
 				_openonce = System.getProperty("openonce");
 				if(_openonce == null)
 					_openonce = _prop.getProperty("openonce");
@@ -768,5 +774,32 @@ public class ConfigHelper {
 
 	public void setMaxTimeoutCount(int maxTimeoutCount) {
 		this._maxTimeoutCount = maxTimeoutCount;
+	}
+
+	private void prepareTestCafeTestEnv() {
+		if (_cafeTestDir != null) {
+			try {
+				String path = _cafeTestDir;
+				if (!path.endsWith(File.separator))
+					path += File.separator;
+				if (path.startsWith("/")) {
+					path = System.getProperty("user.dir") + path;
+					_cafeTestDir = path;
+					System.out.println("prepare test cafe folder : " + path);
+				}
+				File dir = new File(path);
+				if (!dir.exists()) {
+					dir.mkdirs();
+				}
+				File module = new File(path + "module" + File.separator);
+				if (!module.exists()) {
+					module.mkdirs();
+				}
+				//copy module js
+				Files.copy(this.getClass().getResourceAsStream("/ztl.js"), Paths.get(module.getPath() + File.separator + "ztl.js"), StandardCopyOption.REPLACE_EXISTING);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

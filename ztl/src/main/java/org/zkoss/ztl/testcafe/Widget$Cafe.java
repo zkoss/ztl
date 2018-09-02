@@ -37,6 +37,10 @@ public class Widget$Cafe extends Widget {
 		_testSteps = testSteps;
 	}
 
+	public Widget$Cafe(StringBuffer out, List<CafeTestStep> testSteps) {
+		this(out, null, testSteps);
+	}
+
 	public Widget$Cafe(StringBuffer out, String script, List<CafeTestStep> testSteps) {
 		super(out, script);
 		_out = new StringBuffer(out);
@@ -74,7 +78,7 @@ public class Widget$Cafe extends Widget {
 
 	@Override
 	public String attr(String name) {
-		return Scripts.getEval(_out.toString() + toUpperCase(".get", name) + "()", _testSteps);
+		return Scripts.getCafeEval(_out.toString() + toUpperCase(".get", name) + "()");
 	}
 
 	@Override
@@ -152,11 +156,11 @@ public class Widget$Cafe extends Widget {
 
 	@Override
 	public String eval(String script) {
-		return eval(script);
+		return eval(script, true);
 	}
 
 	@Override
 	public String eval(String script, boolean withDot) {
-		return Scripts.getEval(_out.toString() + (withDot ? "." : "") + script, _testSteps);
+		return Scripts.getCafeEval(_out.toString() + (withDot ? "." : "") + script);
 	}
 }

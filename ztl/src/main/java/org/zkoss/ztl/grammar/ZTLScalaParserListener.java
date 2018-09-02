@@ -17,6 +17,16 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 */
 	void exitLiteral(ZTLScalaParser.LiteralContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ZTLScalaParser#stringLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void enterStringLiteral(ZTLScalaParser.StringLiteralContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZTLScalaParser#stringLiteral}.
+	 * @param ctx the parse tree
+	 */
+	void exitStringLiteral(ZTLScalaParser.StringLiteralContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#numericLiteral}.
 	 * @param ctx the parse tree
 	 */
@@ -56,6 +66,16 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPrimary(ZTLScalaParser.PrimaryContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZTLScalaParser#returnOrSpace}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturnOrSpace(ZTLScalaParser.ReturnOrSpaceContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZTLScalaParser#returnOrSpace}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturnOrSpace(ZTLScalaParser.ReturnOrSpaceContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#functionCall}.
 	 * @param ctx the parse tree
@@ -116,6 +136,16 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitType(ZTLScalaParser.TypeContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZTLScalaParser#typeDetail}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeDetail(ZTLScalaParser.TypeDetailContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZTLScalaParser#typeDetail}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeDetail(ZTLScalaParser.TypeDetailContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#formalParameters}.
 	 * @param ctx the parse tree
@@ -377,6 +407,16 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 */
 	void exitIfExpression(ZTLScalaParser.IfExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ZTLScalaParser#elseExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterElseExpression(ZTLScalaParser.ElseExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZTLScalaParser#elseExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitElseExpression(ZTLScalaParser.ElseExpressionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#elseIfExpression}.
 	 * @param ctx the parse tree
 	 */
@@ -497,15 +537,15 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 */
 	void exitAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link ZTLScalaParser#otherAssignmentSymbol}.
+	 * Enter a parse tree produced by {@link ZTLScalaParser#assignmentOperator}.
 	 * @param ctx the parse tree
 	 */
-	void enterOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx);
+	void enterAssignmentOperator(ZTLScalaParser.AssignmentOperatorContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ZTLScalaParser#otherAssignmentSymbol}.
+	 * Exit a parse tree produced by {@link ZTLScalaParser#assignmentOperator}.
 	 * @param ctx the parse tree
 	 */
-	void exitOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx);
+	void exitAssignmentOperator(ZTLScalaParser.AssignmentOperatorContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#anyType}.
 	 * @param ctx the parse tree
@@ -576,16 +616,6 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOtherStatement(ZTLScalaParser.OtherStatementContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link ZTLScalaParser#singleStatement}.
-	 * @param ctx the parse tree
-	 */
-	void enterSingleStatement(ZTLScalaParser.SingleStatementContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ZTLScalaParser#singleStatement}.
-	 * @param ctx the parse tree
-	 */
-	void exitSingleStatement(ZTLScalaParser.SingleStatementContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#statements}.
 	 * @param ctx the parse tree

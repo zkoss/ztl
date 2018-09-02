@@ -3,9 +3,13 @@ options { tokenVocab=ZTLScalaLexer; }
 
 literal
   : BOOL_LITERAL
-  | PRE_STRING
+  | stringLiteral
+  | '-'? numericLiteral
+  ;
+
+stringLiteral
+  : PRE_STRING
   | STRING
-  | numericLiteral
   ;
 
 numericLiteral
@@ -29,11 +33,18 @@ floatLiteral
 primary //propertyAccess
   : literal
   | anonymousFunction
+  | newObject
   | functionCall
   ;
 
+returnOrSpace
+  : (WS | NEWLINE)
+  ;
+  
 functionCall
-  : (variable | methodDeclarator | newObject) ((WS | NEWLINE)* '.' (variable | methodDeclarator))*
+  : methodDeclarator
+  | ('this' | variable | methodDeclarator | newObject | stringLiteral) (returnOrSpace* '.' (variable | methodDeclarator))*
+  | '(' WS* ('this' | variable | methodDeclarator | newObject | stringLiteral) WS*  ')' (returnOrSpace* '.' (variable | methodDeclarator))*
   ;
 
 variable
@@ -41,23 +52,28 @@ variable
   ;
 
 methodDeclarator
-  : Identifier '(' formalParameters? ')' type?
+  : Identifier typeDetail? WS* '(' formalParameters? ')' type?
   ;
 
 newObject
-  : 'new' WS Identifier WS* ('[' WS* Identifier WS* ']' WS*)? '(' formalParameters? ')'
+  : 'new' WS Identifier ('.' Identifier)* WS* typeDetail? ('(' formalParameters? ')')?
   ;
 
 anonymousFunction
-  : '(' formalParameters? ')' (WS | NEWLINE)* '=>' (WS | NEWLINE)* block
+  : '(' formalParameters? ')' returnOrSpace* '=>' returnOrSpace* block
   ;
 
 type
-  : WS* ':' WS* Identifier WS* ('[' WS* Identifier WS* ']' WS*)?
+  : WS* ':' WS* Identifier ('.' Identifier)* WS* typeDetail?
+  | WS* ':' WS* '(' formalParameters? ')' WS* '=>' WS* Identifier WS*
+  ;
+
+typeDetail
+  : ('[' WS* Identifier WS* (',' WS* Identifier WS*)*']' WS*)
   ;
 
 formalParameters
-  : (WS | NEWLINE)* expression type? (WS | NEWLINE)* (',' (WS | NEWLINE)* expression type?)* (WS | NEWLINE)*
+  : returnOrSpace* expression type? (returnOrSpace* ',' returnOrSpace* expression type?)* returnOrSpace*
   ;
 
 /*
@@ -75,39 +91,39 @@ conditionalExpression
 
 conditionalOrExpression
   : conditionalAndExpression
-  | conditionalOrExpression (WS | NEWLINE)* '||' (WS | NEWLINE)* conditionalAndExpression
+  | conditionalOrExpression returnOrSpace* '||' returnOrSpace* conditionalAndExpression
   ;
 
 conditionalAndExpression
   : equalityExpression
-  | conditionalAndExpression (WS | NEWLINE)* '&&' (WS | NEWLINE)* equalityExpression
+  | conditionalAndExpression returnOrSpace* '&&' returnOrSpace* equalityExpression
   ;
 
 equalityExpression
   : relationalExpression
-  | equalityExpression (WS | NEWLINE)* '==' (WS | NEWLINE)* relationalExpression
-  | equalityExpression (WS | NEWLINE)* '!=' (WS | NEWLINE)* relationalExpression
+  | equalityExpression returnOrSpace* '==' returnOrSpace* relationalExpression
+  | equalityExpression returnOrSpace* '!=' returnOrSpace* relationalExpression
   ;
 
 relationalExpression
   : additiveExpression
-  | relationalExpression (WS | NEWLINE)* '<' (WS | NEWLINE)* additiveExpression
-  | relationalExpression (WS | NEWLINE)* '>' (WS | NEWLINE)* additiveExpression
-  | relationalExpression (WS | NEWLINE)* '<=' (WS | NEWLINE)* additiveExpression
-  | relationalExpression (WS | NEWLINE)* '>=' (WS | NEWLINE)* additiveExpression
+  | relationalExpression returnOrSpace* '<' returnOrSpace* additiveExpression
+  | relationalExpression returnOrSpace* '>' returnOrSpace* additiveExpression
+  | relationalExpression returnOrSpace* '<=' returnOrSpace* additiveExpression
+  | relationalExpression returnOrSpace* '>=' returnOrSpace* additiveExpression
   ;
 
 additiveExpression
   : multiplicativeExpression
-  | additiveExpression (WS | NEWLINE)* '+' (WS | NEWLINE)* multiplicativeExpression
-  | additiveExpression (WS | NEWLINE)* '-' (WS | NEWLINE)* multiplicativeExpression
+  | additiveExpression returnOrSpace* '+' returnOrSpace* multiplicativeExpression
+  | additiveExpression returnOrSpace* '-' returnOrSpace* multiplicativeExpression
   ;
 
 multiplicativeExpression
   : unaryExpression
-  | multiplicativeExpression (WS | NEWLINE)* '*' (WS | NEWLINE)* unaryExpression
-  | multiplicativeExpression (WS | NEWLINE)* '/' (WS | NEWLINE)* unaryExpression
-  | multiplicativeExpression (WS | NEWLINE)* '%' (WS | NEWLINE)* unaryExpression
+  | multiplicativeExpression returnOrSpace* '*' returnOrSpace* unaryExpression
+  | multiplicativeExpression returnOrSpace* '/' returnOrSpace* unaryExpression
+  | multiplicativeExpression returnOrSpace* '%' returnOrSpace* unaryExpression
   ;
 
 unaryExpression
@@ -154,49 +170,50 @@ toBooleanMethod
   ;
 
 ztlUnitMethod
-  : primary '.' 'css' '(' primary ')'
-  | primary '.' 'attr' '(' primary ')'
-  | primary '.' 'text' ('(' ')')?
-  | primary '.' 'html' ('(' ')')?
-  | primary '.' '`val`' ('(' ')')?
-  | primary '.' 'uuid' ('(' ')')?
-  | primary '.' 'id' ('(' ')')?
-  | primary '.' 'is' '(' primary ')'
-  | primary '.' 'height' ('(' ')')?
-  | primary '.' 'width' ('(' ')')?
-  | primary '.' 'innerHeight' ('(' ')')?
-  | primary '.' 'innerWidth' ('(' ')')?
-  | primary '.' 'outerWidth' ('(' BOOL_LITERAL? ')')?
-  | primary '.' 'outerHeight' ('(' BOOL_LITERAL? ')')?
-  | primary '.' 'length' ('(' ')')?
-  | primary '.' 'scrollbarWidth' ('(' ')')?
-  | primary '.' 'offsetLeft' ('(' ')')?
-  | primary '.' 'offsetTop' ('(' ')')?
-  | primary '.' 'positionLeft' ('(' ')')?
-  | primary '.' 'positionTop' ('(' ')')?
-  | primary '.' 'scrollTop' ('(' ')')?
-  | primary '.' 'scrollLeft' ('(' ')')?
-  | primary '.' 'scrollHeight' ('(' ')')?
-  | primary '.' 'scrollWidth' ('(' ')')?
-  | primary '.' 'nChildren' ('(' ')')?
-  | primary '.' 'isVisible' ('(' ')')?
-  | primary '.' 'exist' ('(' ')')?
+  : primary returnOrSpace* '.css' '(' expression ')'
+  | primary returnOrSpace* '.attr' '(' expression ')'
+  | primary returnOrSpace* '.hasClass' '(' expression ')'
+  | primary returnOrSpace* '.text' ('(' ')')?
+  | primary returnOrSpace* '.html' ('(' ')')?
+  | primary returnOrSpace* '.`val`' ('(' ')')?
+  | primary returnOrSpace* '.uuid' ('(' ')')?
+  | primary returnOrSpace* '.id' ('(' ')')?
+  | primary returnOrSpace* '.is' '(' expression ')'
+  | primary returnOrSpace* '.height' ('(' ')')?
+  | primary returnOrSpace* '.width' ('(' ')')?
+  | primary returnOrSpace* '.innerHeight' ('(' ')')?
+  | primary returnOrSpace* '.innerWidth' ('(' ')')?
+  | primary returnOrSpace* '.outerWidth' ('(' expression? ')')?
+  | primary returnOrSpace* '.outerHeight' ('(' expression? ')')?
+  | primary returnOrSpace* '.length' ('(' ')')?
+  | primary returnOrSpace* '.scrollbarWidth' ('(' ')')?
+  | primary returnOrSpace* '.offsetLeft' ('(' ')')?
+  | primary returnOrSpace* '.offsetTop' ('(' ')')?
+  | primary returnOrSpace* '.positionLeft' ('(' ')')?
+  | primary returnOrSpace* '.positionTop' ('(' ')')?
+  | primary returnOrSpace* '.scrollTop' ('(' ')')?
+  | primary returnOrSpace* '.scrollLeft' ('(' ')')?
+  | primary returnOrSpace* '.scrollHeight' ('(' ')')?
+  | primary returnOrSpace* '.scrollWidth' ('(' ')')?
+  | primary returnOrSpace* '.nChildren' ('(' ')')?
+  | primary returnOrSpace* '.isVisible' ('(' ')')?
+  | primary returnOrSpace* '.exists' ('(' ')')?
   ;
 
 ztlTestMethod
-  : ('this' '.')? 'getAlertMessage' ('(' ')')?
-  | ('this' '.')? 'hasError' ('(' ')')?
-  | ('this' '.')? 'getText' '(' primary ')'
-  | ('this' '.')? 'isVisible' '(' primary ')'
-  | ('this' '.')? 'hasNativeScroll' '(' primary ')'
-  | ('this' '.')? 'hasHScrollbar' '(' primary ')'
-  | ('this' '.')? 'hasVScrollbar' '(' primary ')'
-  | ('this' '.')? 'getScrollTop' '(' primary ')'
-  | ('this' '.')? 'getScrollLeft' '(' primary ')'
-  | ('this' '.')? 'getZKLog' '(' primary ')'
-  | ('this' '.')? 'is' '(' primary ')'
-  | ('this' '.')? 'getWindowWidth' ('(' ')')?
-  | ('this' '.')? 'getWindowHeight' ('(' ')')?
+  : ('this' returnOrSpace* '.')? 'getAlertMessage' ('(' ')')?
+  | ('this' returnOrSpace* '.')? 'hasError' ('(' ')')?
+  | ('this' returnOrSpace* '.')? 'getText' '(' expression ')'
+  | ('this' returnOrSpace* '.')? 'isVisible' '(' expression ')'
+  | ('this' returnOrSpace* '.')? 'hasNativeScroll' '(' expression ')'
+  | ('this' returnOrSpace* '.')? 'hasHScrollbar' '(' expression ')'
+  | ('this' returnOrSpace* '.')? 'hasVScrollbar' '(' expression ')'
+  | ('this' returnOrSpace* '.')? 'getScrollTop' '(' expression ')'
+  | ('this' returnOrSpace* '.')? 'getScrollLeft' '(' expression ')'
+  | ('this' returnOrSpace* '.')? 'getZKLog' ('(' ')')?
+  | ('this' returnOrSpace* '.')? 'is' '(' expression ')'
+  | ('this' returnOrSpace* '.')? 'getWindowWidth' ('(' ')')?
+  | ('this' returnOrSpace* '.')? 'getWindowHeight' ('(' ')')?
   ;
 
 statement
@@ -213,27 +230,31 @@ conditionStatement
   ;
 
 ifThenStatement
-  : WS* ifExpression (WS | NEWLINE)* conditionBodyStatements
+  : WS* ifExpression returnOrSpace* conditionBodyStatements
   ;
 
 elseStatement
-  : (WS | NEWLINE)* 'else' (WS | NEWLINE)* conditionBodyStatements
+  : returnOrSpace* elseExpression conditionBodyStatements
   ;
 
 elseIfStatement
-  : (WS | NEWLINE)* elseIfExpression (WS | NEWLINE)* conditionBodyStatements
+  : returnOrSpace* elseIfExpression returnOrSpace* conditionBodyStatements
   ;
 
 forStatement
-  : WS* forExpression (WS | NEWLINE)* conditionBodyStatements
+  : WS* forExpression returnOrSpace* conditionBodyStatements
   ;
 
 whileStatement
-  : WS* whileExpression (WS | NEWLINE)* conditionBodyStatements
+  : WS* whileExpression returnOrSpace* conditionBodyStatements
   ;
 
 ifExpression
   : 'if' WS* '(' WS* expression WS* ')'
+  ;
+
+elseExpression
+  : 'else' returnOrSpace*
   ;
 
 elseIfExpression
@@ -241,11 +262,12 @@ elseIfExpression
   ;
 
 forExpression
-  : 'for' WS* '(' forCondition (';' forCondition)* (WS | NEWLINE)* ')'
+  : 'for' WS* '(' forCondition (';' forCondition)* returnOrSpace* ')'
   ;
 
 forCondition
-  : WS* primary WS* '<-' WS* expression WS* ('until' | 'to') WS* expression (WS | NEWLINE)*
+  : WS* primary type? WS* '<-' WS* expression WS* ('until' | 'to') WS* expression returnOrSpace*
+  | WS* variable type? WS* '<-' WS* expression returnOrSpace*
   ;
 
 whileExpression
@@ -253,8 +275,8 @@ whileExpression
   ;
 
 conditionBodyStatements
-  : (WS | NEWLINE)* block (WS | NEWLINE)*
-  | (WS | NEWLINE)* statement (WS | NEWLINE)* //one-line
+  : returnOrSpace* block returnOrSpace*
+  | returnOrSpace* statement returnOrSpace* //one-line
   ;
 
 block
@@ -262,33 +284,40 @@ block
   ;
 
 block_pre
-  : '{' (WS | NEWLINE)*
+  : '{' returnOrSpace*
   ;
 
 block_suf
-  : (WS | NEWLINE)* '}'
+  : returnOrSpace* '}'
   ;
 
 classStatement
-  :	WS* 'class' WS Identifier (WS? '(' formalParameters? ')' WS?)? (WS 'extends' WS Identifier)? (WS | NEWLINE)* '{' (WS | NEWLINE)* statement+ (WS | NEWLINE)* '}'
+  :	returnOrSpace* 'class' WS Identifier (WS? '(' formalParameters? ')' WS?)? (WS 'extends' WS Identifier)? returnOrSpace* '{' returnOrSpace* statement+ returnOrSpace* '}'
   ;
 
 defStatement
-  :	defInfo '='? (WS | NEWLINE)* '{' (WS | NEWLINE)* statement+ (WS | NEWLINE)* '}'
-  |	defInfo '='? (WS | NEWLINE)* expression //one-line
+  :	defInfo '='? returnOrSpace* '{' returnOrSpace* statement+ returnOrSpace* '}'
+  |	defInfo '='? returnOrSpace* expression //one-line
+  | defInfo '=' WS* anonymousFunction
   ;
 
 defInfo
   : WS* 'def' WS methodDeclarator WS*
+  | WS* 'def' WS Identifier type? WS*
   ;
 
 assignmentStatement
-  : WS* anyType WS Identifier type? WS* '=' (WS | NEWLINE)* expression
-  | WS* primary WS* (otherAssignmentSymbol | '=') (WS | NEWLINE)* expression WS*
+  : WS* anyType WS Identifier type? (WS* ',' WS* Identifier)* WS* '=' returnOrSpace* expression
+  | WS* Identifier WS* assignmentOperator returnOrSpace* expression WS*
   ;
 
-otherAssignmentSymbol
-  : ('+' | '-' | '*' | '/') '='
+assignmentOperator
+  : '='
+  | '*='
+  | '/='
+  | '%='
+  | '+='
+  | '-='
   ;
 
 anyType
@@ -335,16 +364,12 @@ annotionStatement
 
 otherStatement
   :	classStatement WS* NEWLINE?
-  |	defStatement WS* ';'? NEWLINE
-  | singleStatement WS* ';'? NEWLINE
+  |	defStatement WS* (';' WS*)? NEWLINE
+  | assignmentStatement WS* (';' WS*)? NEWLINE
+  | functionCallStatement WS* (';' WS*)? NEWLINE
+  | returnStatement WS* (';' WS*)? NEWLINE
   | annotionStatement WS* NEWLINE
-  |	(WS | ';' )* NEWLINE //block or empty
-  ;
-
-singleStatement
-  : assignmentStatement
-  | functionCallStatement
-  | returnStatement
+  |	(WS | ';' WS*)* NEWLINE //block or empty
   ;
 
 statements

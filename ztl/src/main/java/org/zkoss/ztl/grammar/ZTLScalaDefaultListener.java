@@ -43,7 +43,6 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		_inCafeConditionStatements = new LinkedList<>();
 	}
 
-	private int _scopeCnt = 0;
 	@Override
 	public void enterClassStatement(ZTLScalaParser.ClassStatementContext ctx) {
 	}
@@ -52,31 +51,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	public void exitClassStatement(ZTLScalaParser.ClassStatementContext ctx) {
 		//classStatement
 		String className = ctx.Identifier().get(0).getText();
-		_codeReplacements.put(className, className + "$cafe");
-	}
-
-	@Override
-	public void exitBlock(ZTLScalaParser.BlockContext ctx) {
-		List<ZTLScalaParser.StatementContext> statement = ctx.statement();
-		int size = statement.size();
-		int cafeConditionSize = _inCafeConditionStatements.size();
-		if (size > 0 && cafeConditionSize > 0 && _inCafeConditionStatements.get(cafeConditionSize - 1)) {
-			String firstStatement = statement.get(0).getText();
-			_preCodeReplacements.put(ctx.block_pre().getText() + firstStatement, "conditionBlock_cafe(true);\n" + firstStatement);
-			String lastStatement = statement.get(size - 1).getText();
-			_preCodeReplacements.put(lastStatement + ctx.block_suf().getText(), lastStatement + "conditionBlock_cafe(false);\n");
-		}
-	}
-
-	boolean _inConditionBodyStatements = false;
-	@Override
-	public void enterConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx) {
-		_inConditionBodyStatements = true;
-	}
-
-	@Override
-	public void exitConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx) {
-		_inConditionBodyStatements = false;
+		_codeReplacements.put(className, className + "Cafe");
 	}
 
 	private boolean _inAssignment = false;
@@ -84,6 +59,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	private Set<TextReplacement> _ZTLFunctionReplacements;
 	private Set<TextReplacement> _originTextReplacements;
 	private Set<String> _variableInStatement;
+	private int jsVarIndex = 0;
 	@Override
 	public void enterAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx) {
 		_inAssignment = true;
@@ -93,78 +69,97 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	public void exitAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx) {
 		String text = ctx.getText().trim();
 		if (!text.contains("\"\"\"")) {
-			if (_codeReplacements.containsKey(text))
-				log("More than one assignments with same text: " + text);
+//			if (_codeReplacements.containsKey(text))
+//				log("More than one assignments with same text: " + text);
 			String assignName = "";
 			boolean isDeclaration = false;
-			String startToken = ctx.anyType() != null ? ctx.anyType().getText() : ctx.primary().getText();
+			String startToken = ctx.anyType() != null ? ctx.anyType().getText() : ctx.Identifier().get(0).getText();
 			if ("val".equals(startToken) || "var".equals(startToken)) {
 				isDeclaration = true;
-				assignName = ctx.Identifier().getText();
+				assignName = ctx.Identifier().get(0).getText();
 			} else {
 				assignName = startToken;
 			}
 			if (assignName.isEmpty())
 				throw new UnsupportedOperationException("Error assignment : " + text);
 
-			StringBuilder replacement = new StringBuilder();
 			String newAssignName = assignName + "_cafe";
+			if (isDeclaration || _variableNameReplacements.containsKey(assignName)) {
+				StringBuilder replacement = new StringBuilder();
+				String exprText = ctx.expression().getText();
+				String newExprText = exprText;
+				boolean wrapString = false;
+				boolean changed = false;
+				for (String variable : _variableInStatement) { // ex. t -> t_cafe
+					if (_variableNameReplacements.containsKey(variable)) {
+						newExprText = replaceCodeText(newExprText, variable, _variableNameReplacements.get(variable));
+						wrapString = true;
+					}
+				}
+				List<TextReplacement> innerReplacements = new LinkedList<>();
+				if (_ZTLFunctionReplacements.size() > 0) { // do replace: .width() -> .widthStr()
+					changed = true; // something need replace
+					Set<TextReplacement> textReplacements = _ZTLFunctionReplacements;
+					for (TextReplacement tr : textReplacements) {
+						String replaceText = tr.getReplacement();
+						if (_isConditionalExprExist) {
+							wrapString = true;
+							if (!tr.getText().equals(replaceText)) {
+								String name = newAssignName + "_" + jsVarIndex;
+								jsVarIndex++;
+								replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
+								replaceText = name;
+								innerReplacements.add(new TextReplacement(replaceText, name));
+							}
+						}
+						String targetText = tr.getText();
+						if (newExprText.indexOf(targetText) != -1 && !targetText.equals(replaceText) && !newExprText.equals(replaceText)) {
+							newExprText = newExprText.replace(tr.getText(), replaceText);
+						}
+					}
+				}
 
-			String exprText = ctx.expression().getText();
-			String newExprText = exprText;
-			boolean wrapString = false;
-			boolean changed = false;
-			for (String variable: _variableInStatement) { // ex. t -> t_cafe
-				if (_variableNameReplacements.containsKey(variable)) {
-					newExprText = replaceCodeText(newExprText, variable, _variableNameReplacements.get(variable));
-					wrapString = true;
-				}
-			}
-			if (_ZTLFunctionReplacements.size() > 0) { // do replace: .width() -> .widthStr()
-				changed = true; // something need replace
-				Set<TextReplacement> textReplacements = _ZTLFunctionReplacements;
-				int paramCnt = 0;
-				for (TextReplacement tr : textReplacements) {
-					String replaceText = tr.getReplacement();
-					if (_isConditionalExprExist) {
-						String name = newAssignName + "_" + paramCnt;
-						replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
-						replaceText = name;
+				ZTLScalaParser.AssignmentOperatorContext assignmentOperatorContext = ctx.assignmentOperator();
+				boolean isOp = assignmentOperatorContext != null;
+				if (isOp) {
+					String opExpr = ctx.expression().getText();
+					if (!"=".equals(assignmentOperatorContext.getText()) && (opExpr.startsWith("\"") || opExpr.matches("[0-9.]+"))) {
+						isOp = true;
+					} else {
+						isOp = false;
 					}
-					String targetText = tr.getText();
-					while (newExprText.indexOf(targetText) != -1 && !targetText.equals(newExprText)) {
-						newExprText = newExprText.replace(tr.getText(), replaceText); // Same key risk? replace xxx.width() is ok
-					}
-					paramCnt++;
 				}
-			}
 
-			if (changed) {
-				replacement.append("assignment_cafe(\"").append(newAssignName).append("\", ");
-				if (wrapString) {
-					replacement.append("\"" + ZKClientTestCaseCafe.CAFEEVAL);
-				}
-				if (ctx.otherAssignmentSymbol() != null) {
-					replacement.append(newAssignName).append(" ")
-							.append(ctx.otherAssignmentSymbol().getChild(0).getText()).append(" ");
-				}
-				if (wrapString) {
-					replacement.append(newExprText.replaceAll("\"", "\\\\\"")).append("\"");
-				} else {
-					replacement.append(newExprText);
-				}
-				replacement.append(", ").append(isDeclaration ? "true" : "false").append(")\n");
-				String newText = text;
-				for (TextReplacement tr : _originTextReplacements) {
-					while (newText.indexOf(tr.getText()) != -1) {
-						newText = newText.replace(tr.getText(), tr.getReplacement());
+				if (changed || isOp) {
+					for (TextReplacement tr : innerReplacements) { // replace inner assignment
+						newExprText = replaceCodeText(newExprText, tr.getText(), tr.getReplacement());
 					}
+					replacement.append("assignment_cafe(\"").append(newAssignName).append("\", ");
+					if (wrapString) {
+						replacement.append("\"" + ZKClientTestCaseCafe.CAFEEVAL);
+					}
+					if (isOp && assignmentOperatorContext.getText().length() > 1) {
+						replacement.append("\"").append(newAssignName).append(" ")
+								.append(assignmentOperatorContext.getText().charAt(0)).append(" \" + ");
+					}
+					if (wrapString) {
+						replacement.append(escapeString(newExprText, true)).append("\"");
+					} else {
+						replacement.append(newExprText);
+					}
+					replacement.append(", ").append(isDeclaration ? "true" : "false").append(")\n");
+					String newText = text;
+					for (TextReplacement tr : _originTextReplacements) {
+						while (newText.indexOf(tr.getText()) != -1) {
+							newText = newText.replace(tr.getText(), tr.getReplacement());
+						}
+					}
+					_codeReplacements.put(text, newText + "\n" + replacement.toString());
+					_variableNameReplacements.put(assignName, newAssignName);
 				}
-				_codeReplacements.put(text, newText + "\n" + replacement.toString());
-				_variableNameReplacements.put(assignName, newAssignName);
-			}
-			String logText = "";
+				String logText = "";
 //			log(logText + "exitAssignmentStatment (cond:" + _isConditionalExprExist + ") >>> " + text);
+			}
 		}
 		_inAssignment = false;
 		_isConditionalExprExist = false;
@@ -224,6 +219,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			if (!handled)
 				_ZTLFunctionReplacements.add(new TextReplacement(text, replacement));
 			_inParseMethod = false;
+			_unitFunctionInParseMethod.clear();
 		}
 
 	}
@@ -279,27 +275,26 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			}
 			if (_ZTLFunctionReplacements.size() > 0) { // do replace: .width() -> .widthStr()
 				Set<TextReplacement> textReplacements = _ZTLFunctionReplacements;
-				int paramCnt = 0;
 				for (TextReplacement tr : textReplacements) {
 					String replaceText = tr.getReplacement();
-					if (_isConditionalExprExist) {
-						String name = "actionVariable_cafe" + "_" + newActionAssignCnt + "_" + paramCnt;
+					if (_isConditionalExprExist && !tr.getText().equals(replaceText)) {
+						String name = "actionVariable_cafe" + "_" + newActionAssignCnt + "_" + jsVarIndex;
+						newActionAssignCnt++;
+						jsVarIndex++;
 						replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
 						replaceText = name;
 						wrapString = true;
-						newActionAssignCnt++;
 					}
 					String targetText = tr.getText();
-					while (newExprText.indexOf(targetText) != -1 && !targetText.equals(newExprText)) {
-						newExprText = newExprText.replace(tr.getText(), replaceText);
+					if (newExprText.indexOf(targetText) != -1 && !targetText.equals(replaceText) && !newExprText.equals(replaceText)) {
+						newExprText =  newExprText.replace(tr.getText(), replaceText);
 					}
-					paramCnt++;
 				}
 			}
 			if (!exprText.equals(newExprText)) {
 				paramChanged = true;
 				if (wrapString)
-					newExprText = "\"" + newExprText + "\"";
+					newExprText = "\"" + escapeString(newExprText, true) + "\"";
 			}
 			exprReplacement.append(newExprText);
 		}
@@ -335,7 +330,8 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			exprCnt++;
 			String exprText = expr.getText();
 			String newExprText = exprText;
-			if (exprText.trim().startsWith("\"") || exprText.trim().matches("[0-9.]*")) {
+
+			if ((exprText.trim().startsWith("\"") &&  exprText.trim().endsWith("\"")) || exprText.trim().matches("[0-9.]*")) {
 				exprReplacement.append(exprText);
 				continue; //skip String & number
 			}
@@ -348,27 +344,29 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			}
 			if (_ZTLFunctionReplacements.size() > 0) { // do replace: .width() -> .widthStr()
 				Set<TextReplacement> textReplacements = _ZTLFunctionReplacements;
-				int paramCnt = 0;
 				for (TextReplacement tr : textReplacements) {
 					String replaceText = tr.getReplacement();
 					if (_isConditionalExprExist) {
-						String name = "verifyVariable_cafe" + "_" + newVerifyAssignCnt + "_" + paramCnt;
-						replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
-						replaceText = name;
 						wrapString = true;
-						newVerifyAssignCnt++;
+						if (!tr.getText().equals(replaceText)) {
+							String name = "verifyVariable_cafe" + "_" + newVerifyAssignCnt + "_" + jsVarIndex;
+							newVerifyAssignCnt++;
+							jsVarIndex++;
+							replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
+							replaceText = name;
+						}
+
 					}
 					String targetText = tr.getText();
-					while (newExprText.indexOf(targetText) != -1 && !targetText.equals(newExprText)) {
-						newExprText = newExprText.replace(tr.getText(), replaceText);
+					if (newExprText.indexOf(targetText) != -1 && !targetText.equals(replaceText) && !newExprText.equals(replaceText)) {
+						newExprText =  newExprText.replace(tr.getText(), replaceText);
 					}
-					paramCnt++;
 				}
 			}
 			if (!exprText.equals(newExprText)) {
 				paramChanged = true;
 				if (wrapString)
-					newExprText = "\"" + ZKClientTestCaseCafe.CAFEEVAL + newExprText + "\"";
+					newExprText = "\"" + ZKClientTestCaseCafe.CAFEEVAL + escapeString(newExprText, true) + "\"";
 			}
 			exprReplacement.append(newExprText);
 		}
@@ -386,14 +384,80 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	private int conditionStatementCnt = 0;
 	private List<Boolean> _inCafeConditionStatements; //used to add block or not
 	private boolean _inConditionStatementExpression;
+	private boolean _ifExprRemoved = true;
+	private boolean _inElseStatment = false;
 
 	@Override
-	public void enterConditionStatement(ZTLScalaParser.ConditionStatementContext ctx) {
+	public void exitBlock(ZTLScalaParser.BlockContext ctx) {
+		List<ZTLScalaParser.StatementContext> statement = ctx.statement();
+		int size = statement.size();
+		int cafeConditionSize = _inCafeConditionStatements.size();
+		if (size > 0 && cafeConditionSize > 0 && _inCafeConditionStatements.get(cafeConditionSize - 1)) {
+			String firstStatement = statement.get(0).getText();
+			String preText = ctx.block_pre().getText() + firstStatement;
+			if (_inElseStatment && _ifExprRemoved) {
+				preText = _elseText + preText;
+			}
+			_preCodeReplacements.put(preText, "conditionBlock_cafe(true);\n" + firstStatement);
+			String lastStatement = statement.get(size - 1).getText();
+			_preCodeReplacements.put(lastStatement + ctx.block_suf().getText(), lastStatement + "conditionBlock_cafe(false);\n");
+		}
+	}
+
+	boolean _inConditionBodyStatements = false;
+	@Override
+	public void enterConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx) {
+		_inConditionBodyStatements = true;
+	}
+
+	@Override
+	public void exitConditionBodyStatements(ZTLScalaParser.ConditionBodyStatementsContext ctx) {
+		_inConditionBodyStatements = false;
+	}
+
+	@Override
+	public void enterIfThenStatement(ZTLScalaParser.IfThenStatementContext ctx) {
+		_inCafeConditionStatements.add(Boolean.TRUE);
+		_ifExprRemoved = false;
+	}
+
+	@Override
+	public void exitIfThenStatement(ZTLScalaParser.IfThenStatementContext ctx) {
+		_inCafeConditionStatements.remove(_inCafeConditionStatements.size() - 1);
+	}
+
+	@Override
+	public void enterElseStatement(ZTLScalaParser.ElseStatementContext ctx) {
+		if (_ifExprRemoved) {
+			_inCafeConditionStatements.add(Boolean.TRUE);
+			_inElseStatment = true;
+		}
+	}
+
+	private String _elseText = null;
+	@Override
+	public void exitElseExpression(ZTLScalaParser.ElseExpressionContext ctx) {
+		if (_ifExprRemoved) {
+			_elseText = ctx.getText();
+		}
+	}
+
+	@Override
+	public void exitElseStatement(ZTLScalaParser.ElseStatementContext ctx) {
+		if (_ifExprRemoved) {
+			_inCafeConditionStatements.remove(_inCafeConditionStatements.size() - 1);
+			_inElseStatment = false;
+			_ifExprRemoved = false;
+		}
+	}
+
+	@Override
+	public void enterElseIfStatement(ZTLScalaParser.ElseIfStatementContext ctx) {
 		_inCafeConditionStatements.add(Boolean.TRUE);
 	}
 
 	@Override
-	public void exitConditionStatement(ZTLScalaParser.ConditionStatementContext ctx) {
+	public void exitElseIfStatement(ZTLScalaParser.ElseIfStatementContext ctx) {
 		_inCafeConditionStatements.remove(_inCafeConditionStatements.size() - 1);
 	}
 
@@ -412,9 +476,14 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		_inConditionStatementExpression = true;
 	}
 
+	@Override
+	public void exitElseIfExpression(ZTLScalaParser.ElseIfExpressionContext ctx) {
+		handleIfExpression(ctx.getChild(0).getText(), ctx.getText(), ctx.expression());
+	}
+
 	private void handleIfExpression(String cond, String text, ZTLScalaParser.ExpressionContext expression) {
 		StringBuilder replacement = new StringBuilder();
-		String exprText = text;
+		String exprText = expression.getText();
 		String newExprText = exprText;
 		for (String variable: _variableInStatement) { // ex. t -> t_cafe
 			if (_variableNameReplacements.containsKey(variable)) {
@@ -424,31 +493,31 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		if (_ZTLFunctionReplacements.size() > 0) { // do replace: .width() -> .widthStr()
 			Set<TextReplacement> textReplacements = _ZTLFunctionReplacements;
 			String newAssignName = "conditionStatementExpr_cafe" + conditionStatementCnt++;
-			int paramCnt = 0;
 			for (TextReplacement tr : textReplacements) {
 				String replaceText = tr.getReplacement();
-				if (_isConditionalExprExist) {
-					String name = newAssignName + "_" + paramCnt;
+				if (_isConditionalExprExist && !tr.getText().equals(replaceText)) {
+					String name = newAssignName + "_" + jsVarIndex;
+					jsVarIndex++;
 					replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
 					replaceText = name;
 				}
 				String targetText = tr.getText();
-				while (newExprText.indexOf(targetText) != -1 && !targetText.equals(newExprText)) {
+				if (newExprText.indexOf(targetText) != -1 && !targetText.equals(newExprText)) {
 					newExprText = newExprText.replace(tr.getText(), replaceText); // Same key risk? replace xxx.width() is ok
 				}
-				paramCnt++;
 			}
 		}
 		if (!exprText.equals(newExprText)) {
 			replacement.append("conditionStatement_cafe(\"").append(cond).append("\", \"");
-			replacement.append(newExprText).append("\")\n");
+			replacement.append(escapeString(newExprText, true)).append("\")\n");
 			_codeReplacements.put(text, replacement.toString());
+			_ifExprRemoved = true;
 		} else {
 			_inCafeConditionStatements.add(_inCafeConditionStatements.size() - 1, Boolean.FALSE);
 			_inCafeConditionStatements.remove(_inCafeConditionStatements.size() - 1);
 		}
 		String logText = "";
-		log(logText + "handleIfExpression >>> " + text);
+//		log(logText + "handleIfExpression >>> " + text);
 		_inConditionStatementExpression = false;
 		_isConditionalExprExist = false;
 		_ZTLFunctionReplacements.clear();
@@ -456,21 +525,14 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	}
 
 	@Override
-	public void exitElseIfExpression(ZTLScalaParser.ElseIfExpressionContext ctx) {
-		handleIfExpression(ctx.getChild(0).getText(), ctx.getText(), ctx.expression());
-	}
-
-	@Override
 	public void exitZtlTestMethod(ZTLScalaParser.ZtlTestMethodContext ctx) {
 		String text = ctx.getText().trim();
 		String replacement = text.replace("this.", "");
 		for (String checkFunction : ZTLTestFunctionCheckList) {
-			String checkToken = "." + checkFunction;
+			String checkToken = checkFunction;
 			int index = text.indexOf(checkToken);
 			if (index != -1) {
-				if (!text.equals("getZKLog") && !text.equals("getText") && !text.equals("getAlertMessage")) {
-					replacement = replacement.replace(checkToken, checkToken + "_cafeStr");
-				}
+				replacement = replacement.replace(checkToken, checkToken + "_cafeStr");
 				break;
 			}
 		}
@@ -482,16 +544,13 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 
 	private static List<String> ZTLTestFunctionCheckList = new ArrayList<>();
 	static {
-		ZTLTestFunctionCheckList.add("getAlertMessage");
 		ZTLTestFunctionCheckList.add("hasError");
-		ZTLTestFunctionCheckList.add("getText");
 		ZTLTestFunctionCheckList.add("isVisible");
 		ZTLTestFunctionCheckList.add("hasNativeScroll");
 		ZTLTestFunctionCheckList.add("hasHScrollbar");
 		ZTLTestFunctionCheckList.add("hasVScrollbar");
 		ZTLTestFunctionCheckList.add("getScrollTop");
 		ZTLTestFunctionCheckList.add("getScrollLeft");
-		ZTLTestFunctionCheckList.add("getZKLog");
 		ZTLTestFunctionCheckList.add("is");
 		ZTLTestFunctionCheckList.add("getWindowWidth");
 		ZTLTestFunctionCheckList.add("getWindowHeight");
@@ -500,30 +559,32 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 
 	@Override
 	public void exitZtlUnitMethod(ZTLScalaParser.ZtlUnitMethodContext ctx) {
-		String text = ctx.getText().trim();
-		String replacement = text;
-		String methodName = ctx.getChild(2).getText();
-		if (!unitJSStringFunctionList.contains(methodName)) {
-			replacement = text.replace("." + methodName, "." + methodName + "_cafeStr");
+		if (_inAssignment || _inVerification || _inAction || _inConditionStatementExpression) {
+			String text = ctx.getText().trim();
+			String replacement = text;
+			String methodName = ctx.getChild(1).getText();
+			if (!unitJSStringFunctionList.contains(methodName)) {
+				replacement = text.replace(methodName, methodName + "_cafeStr");
+			}
+			TextReplacement t = new TextReplacement(text, replacement);
+			if (_inParseMethod) {
+				_unitFunctionInParseMethod.put(text, t);
+			} else
+				_ZTLFunctionReplacements.add(t);
 		}
-		TextReplacement t = new TextReplacement(text, replacement);
-		if (_inParseMethod) {
-			_unitFunctionInParseMethod.put(text, t);
-		} else
-			_ZTLFunctionReplacements.add(t);
 	}
 
 	private static List<String> unitJSStringFunctionList = new ArrayList<>();
 	static {
-		unitJSStringFunctionList.add("css");
-		unitJSStringFunctionList.add("attr");
-		unitJSStringFunctionList.add("text");
-		unitJSStringFunctionList.add("html");
-		unitJSStringFunctionList.add("`val`");
-		unitJSStringFunctionList.add("uuid");
-		unitJSStringFunctionList.add("id");
-		unitJSStringFunctionList.add("get");
-		unitJSStringFunctionList.add("is");
+		unitJSStringFunctionList.add(".css");
+		unitJSStringFunctionList.add(".attr");
+		unitJSStringFunctionList.add(".text");
+		unitJSStringFunctionList.add(".html");
+		unitJSStringFunctionList.add(".`val`");
+		unitJSStringFunctionList.add(".uuid");
+		unitJSStringFunctionList.add(".id");
+		unitJSStringFunctionList.add(".get");
+		unitJSStringFunctionList.add(".is");
 	}
 
 	private String replaceCodeText(String text, String target, String replacement) {
@@ -538,14 +599,23 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			text = text + " ";
 			suf = true;
 		}
+		target = target.replaceAll("\\(", "\\\\\\\\(");
 		// before and after the target, those characters should not be 1-9a-zA-Z
-		String result = text.replaceAll("([^a-zA-Z0-9\\-_\\$])" + target + "([^a-zA-Z0-9\\-_\\$])", replacement);
+		String result = text.replaceAll("([^a-zA-Z0-9\\-_\\$])" + escapeString(target, false) + "([^a-zA-Z0-9\\-_\\$])", replacement);
 		if (pre)
 			result = result.substring(1);
 		if (suf)
 			result = result.substring(0, result.length() - 1);
 		return result;
 	}
+
+	private String escapeString(String text, boolean replaceReturn) {
+		if (replaceReturn)
+			text = text.replaceAll("\n", "");
+		return text.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"");
+	}
+
+
 	class TextReplacement {
 		private String _text;
 		private String _replacement;

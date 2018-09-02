@@ -21,32 +21,35 @@ PARSEDOUBLE:	'parseDouble';
 TOFLOAT:		'toFloat';
 PARSEFLOAT:		'parseFloat';
 PARSEBOOLEAN:	'parseBoolean';
-CSS:			'css';
-ATTR:			'attr';
-TEXT:			'text';
-HTML:			'html';
-JQVAL:			'`val`';
-UUID:			'uuid';
-ID:				'id';
-GET:			'get';
-HEIGHT:			'height';
-WIDTH:			'width';
-INNERHEIGHT:	'innerHeight';
-INNERWIDTH:		'innerWidth';
-OUTERWIDTH:		'outerWidth';
-OUTERHEIGHT:	'outerHeight';
-LENGTH:			'length';
-SCROLLBARWIDTH:	'scrollbarWidth';
-EXIST:			'exist';
-OFFSETLEFT:		'offsetLeft';
-OFFSETTOP:		'offsetTop';
-POSITIONLEFT:	'positionLeft';
-POSITIONTOP:	'positionTop';
-SCROLLTOP:		'scrollTop';
-SCROLLLEFT:		'scrollLeft';
-SCROLLHEIGHT:	'scrollHeight';
-SCROLLWIDTH:	'scrollWidth';
-NCHILDREN:		'nChildren';
+//JQ,ZK,Element
+CSS:			'.css';
+ATTR:			'.attr';
+HASCLASS:		'.hasClass';
+TEXT:			'.text';
+HTML:			'.html';
+JQVAL:			'.`val`';
+UUID:			'.uuid';
+ID:				'.id';
+HEIGHT:			'.height';
+WIDTH:			'.width';
+INNERHEIGHT:	'.innerHeight';
+INNERWIDTH:		'.innerWidth';
+OUTERWIDTH:		'.outerWidth';
+OUTERHEIGHT:	'.outerHeight';
+LENGTH:			'.length';
+SCROLLBARWIDTH:	'.scrollbarWidth';
+EXISTS:			'.exists';
+OFFSETLEFT:		'.offsetLeft';
+OFFSETTOP:		'.offsetTop';
+POSITIONLEFT:	'.positionLeft';
+POSITIONTOP:	'.positionTop';
+SCROLLTOP:		'.scrollTop';
+SCROLLLEFT:		'.scrollLeft';
+SCROLLHEIGHT:	'.scrollHeight';
+SCROLLWIDTH:	'.scrollWidth';
+NCHILDREN:		'.nChildren';
+DOTIS:			'.is';
+DOTISVISIBLE:	'.isVisible';
 //verify
 VERIFYEQUALS:	'verifyEquals';
 VERIFYNOTEQUALS:'verifyNotEquals';
@@ -140,7 +143,7 @@ ELLIPSIS:		'...';
 
 NEWLINE:		[\r\n]+;
 WS:				[ \t]+;
-STRING:			'"' ~["\r\n]* '"';
+STRING:			'"' StringCharacter* '"';
 PRE_STRING:		'"""' (LetterOrDigit | [ \t\r\n])* '"""';
 COMMENT:		'/*' .*? '*/' -> channel(HIDDEN);
 LINE_COMMENT:	'//' ~[\r\n]* -> channel(HIDDEN);
@@ -152,6 +155,11 @@ Identifier
 // Fragment rules
 fragment ExponentPart
 	: [eE] [+-]? Digits
+	;
+
+fragment StringCharacter
+	:	~["\\\r\n]
+	|	EscapeSequence
 	;
 
 fragment EscapeSequence

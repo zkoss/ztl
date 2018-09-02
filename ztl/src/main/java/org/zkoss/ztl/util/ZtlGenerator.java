@@ -227,20 +227,6 @@ public class ZtlGenerator {
 				for (File f : getFiles(dir, new ArrayList<File>(30), ".scala")){
 					ZTLTestModifier.generate(f, dir.getPath(), dist);
 				}
-//				try {
-//					Process process = Runtime.getRuntime().exec("mvn surefire:test -Dreport.dir=\"$1\" -Dtest.dir=\"$2\" -Dbrowser=\"$3\" -Dopenonce=$4");
-//					process.waitFor();
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//				File destDir = new File(dist);
-//				for (File f : getFiles(dir, new ArrayList<File>(30), "$cafe.scala")){
-//					//compile
-//					JUnitCore junit = new JUnitCore();
-//					Result result = junit.run();
-//				}
 
 			} else {
 				ZtlGenerator t = new ZtlGenerator();
@@ -265,7 +251,6 @@ public class ZtlGenerator {
 						included = included && !test.containsTag(excludetag);
 
 					if(included){
-						//testSuite.add(test.getPackage()+"."+test.getFileName()+".class");
 						if(init){
 							testcases.append("," + test.getPackage()+"."+test.getFileName()+".class\n");
 						}else{

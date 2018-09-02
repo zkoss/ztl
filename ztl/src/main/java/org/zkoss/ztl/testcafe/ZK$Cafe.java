@@ -27,7 +27,7 @@ public class ZK$Cafe extends org.zkoss.ztl.unit.ZK {
 
 	@Override
 	public String getVersion() {
-		return Scripts.getEval("zk.version");
+		return Scripts.getCafeEval("zk.version");
 	}
 
 	public ZK$Cafe(String selector, List<CafeTestStep> testSteps) {
@@ -72,6 +72,16 @@ public class ZK$Cafe extends org.zkoss.ztl.unit.ZK {
 	@Override
 	public By toBy() {
 		throw new UnsupportedOperationException("Please use jQuery instead!");
+	}
+
+	@Override
+	public String eval(String script) {
+		return eval(script, true);
+	}
+
+	@Override
+	public String eval(String script, boolean withDot) {
+		return Scripts.getCafeEval(_out.toString() + (withDot ? "." : "") + script);
 	}
 
 }

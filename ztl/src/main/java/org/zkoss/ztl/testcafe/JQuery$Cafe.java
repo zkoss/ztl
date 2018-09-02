@@ -42,12 +42,12 @@ public class JQuery$Cafe extends JQuery {
 
 	@Override
 	public String css(String name) {
-		return Scripts.getEval(_out.toString() + ".css('" + name + "')", _testSteps);
+		return Scripts.getCafeEval(_out.toString() + ".css('" + name + "')");
 	}
 
 	@Override
 	public String attr(String name) {
-		return Scripts.getEval(_out.toString() + ".attr('" + name + "')", _testSteps);
+		return Scripts.getCafeEval(_out.toString() + ".attr('" + name + "')");
 	}
 
 	@Override
@@ -117,17 +117,17 @@ public class JQuery$Cafe extends JQuery {
 
 	@Override
 	public String text() {
-		return Scripts.getEval(_out.toString() + ".text()", _testSteps);
+		return Scripts.getCafeEval(_out.toString() + ".text()");
 	}
 
 	@Override
 	public String html() {
-		return Scripts.getEval(_out.toString() + ".html()", _testSteps);
+		return Scripts.getCafeEval(_out.toString() + ".html()");
 	}
 
 	@Override
 	public String val() {
-		return Scripts.getEval(_out.toString() + ".val()", _testSteps);
+		return Scripts.getCafeEval(_out.toString() + ".val()");
 	}
 
 	@Override
@@ -303,5 +303,15 @@ public class JQuery$Cafe extends JQuery {
 		public void remove() {
 			throw new UnsupportedOperationException();
 		}
+	}
+
+	@Override
+	public String eval(String script) {
+		return eval(script, true);
+	}
+
+	@Override
+	public String eval(String script, boolean withDot) {
+		return Scripts.getCafeEval(_out.toString() + (withDot ? "." : "") + script);
 	}
 }

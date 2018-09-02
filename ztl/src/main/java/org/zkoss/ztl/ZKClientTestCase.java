@@ -1272,7 +1272,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * a shortcut to close zk log
 	 */
 	public void closeZKLog() {
-		Scripts.getEval("!!jq('#zk_logbox').remove();", null);
+		Scripts.getEval("!!jq('#zk_logbox').remove()", null);
 		waitResponse();
 	}
 

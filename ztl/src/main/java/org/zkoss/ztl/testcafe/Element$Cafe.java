@@ -43,7 +43,7 @@ public class Element$Cafe extends Element {
 	}
 	@Override
 	public String attr(String name) {
-		return Scripts.getEval(_out.toString() + "." + name, _testSteps, false);
+		return Scripts.getCafeEval(_out.toString() + "." + name);
 	}
 	@Override
 	public boolean is(String name) {
@@ -78,5 +78,14 @@ public class Element$Cafe extends Element {
 			return this;
 		else
 			throw new UnsupportedOperationException("Please use Jquery instead!");
+	}
+	@Override
+	public String eval(String script) {
+		return eval(script, true);
+	}
+
+	@Override
+	public String eval(String script, boolean withDot) {
+		return Scripts.getCafeEval(_out.toString() + (withDot ? "." : "") + script);
 	}
 }

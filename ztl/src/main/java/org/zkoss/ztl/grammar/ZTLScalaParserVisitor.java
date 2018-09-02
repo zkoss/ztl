@@ -16,6 +16,12 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLiteral(ZTLScalaParser.LiteralContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#stringLiteral}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringLiteral(ZTLScalaParser.StringLiteralContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#numericLiteral}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -39,6 +45,12 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPrimary(ZTLScalaParser.PrimaryContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#returnOrSpace}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturnOrSpace(ZTLScalaParser.ReturnOrSpaceContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#functionCall}.
 	 * @param ctx the parse tree
@@ -75,6 +87,12 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitType(ZTLScalaParser.TypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#typeDetail}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeDetail(ZTLScalaParser.TypeDetailContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#formalParameters}.
 	 * @param ctx the parse tree
@@ -232,6 +250,12 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIfExpression(ZTLScalaParser.IfExpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#elseExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElseExpression(ZTLScalaParser.ElseExpressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#elseIfExpression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -304,11 +328,11 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ZTLScalaParser#otherAssignmentSymbol}.
+	 * Visit a parse tree produced by {@link ZTLScalaParser#assignmentOperator}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx);
+	T visitAssignmentOperator(ZTLScalaParser.AssignmentOperatorContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#anyType}.
 	 * @param ctx the parse tree
@@ -351,12 +375,6 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitOtherStatement(ZTLScalaParser.OtherStatementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link ZTLScalaParser#singleStatement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSingleStatement(ZTLScalaParser.SingleStatementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#statements}.
 	 * @param ctx the parse tree

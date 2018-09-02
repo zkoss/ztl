@@ -47,17 +47,21 @@ public class ZTLTestModifier {
 		}
 		File dir = new File(src);
 		for (File f : getFiles(dir, new ArrayList<File>(30), ".scala")) {
+			if (f.getName().contains("TestCafe")) // skip xxx$cafe.scala
+				continue;
 			String content = "";
 			try {
 				content = new String(Files.readFile(f));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			if (content.contains("@SeleniumOnly"))
+				continue;
 			content = modifyTestCode(content);
 
 			try {
 				//write file
-				String path = f.getPath().replace(".scala", "$cafe.scala");
+				String path = f.getPath().replace(".scala", "Cafe.scala");
 				File destDir = new File(path);
 				destDir.getParentFile().mkdirs();
 				if (!destDir.isFile()) {
@@ -74,11 +78,19 @@ public class ZTLTestModifier {
 	}
 
 	public static void generate(File f, String src, String targetDir) {
+		if (f.getName().contains("TestCafe")) {
+			System.out.println("Skip *TestCafe.scala : " + f.getPath());
+			return;
+		}
 		String content = "";
 		try {
 			content = new String(Files.readFile(f));
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		if (content.contains("@SeleniumOnly")) {
+			System.out.println("Selenium-only case skipped (" + f.getPath() + ")");
+			return;
 		}
 		System.out.println("Modifying: " + f.getPath());
 		content = modifyTestCode(content);
@@ -92,7 +104,7 @@ public class ZTLTestModifier {
 				pkg = pkg.replace(File.separator, ".").substring(1);
 			//write file
 			String path = targetDir + File.separator
-					+ pkg.replace(".", File.separator) + File.separator + f.getName().replace(".scala", "$cafe.scala");
+					+ pkg.replace(".", File.separator) + File.separator + f.getName().replace(".scala", "Cafe.scala");
 			File destDir = new File(path);
 			destDir.getParentFile().mkdirs();
 			if (!destDir.isFile()) {

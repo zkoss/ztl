@@ -27,6 +27,18 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStringLiteral(ZTLScalaParser.StringLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStringLiteral(ZTLScalaParser.StringLiteralContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterNumericLiteral(ZTLScalaParser.NumericLiteralContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -70,6 +82,18 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPrimary(ZTLScalaParser.PrimaryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterReturnOrSpace(ZTLScalaParser.ReturnOrSpaceContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitReturnOrSpace(ZTLScalaParser.ReturnOrSpaceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -142,6 +166,18 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitType(ZTLScalaParser.TypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTypeDetail(ZTLScalaParser.TypeDetailContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTypeDetail(ZTLScalaParser.TypeDetailContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -459,6 +495,18 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterElseExpression(ZTLScalaParser.ElseExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitElseExpression(ZTLScalaParser.ElseExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterElseIfExpression(ZTLScalaParser.ElseIfExpressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -603,13 +651,13 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx) { }
+	@Override public void enterAssignmentOperator(ZTLScalaParser.AssignmentOperatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitOtherAssignmentSymbol(ZTLScalaParser.OtherAssignmentSymbolContext ctx) { }
+	@Override public void exitAssignmentOperator(ZTLScalaParser.AssignmentOperatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -694,18 +742,6 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitOtherStatement(ZTLScalaParser.OtherStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSingleStatement(ZTLScalaParser.SingleStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSingleStatement(ZTLScalaParser.SingleStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
