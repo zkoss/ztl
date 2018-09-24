@@ -132,6 +132,14 @@ public class Scripts {
 	}
 
 	public static String getCafeEval(String script) {
-		return "await ClientFunction(() => " + script + ")()";
+		return getCafeEval(script, false);
+	}
+
+	public static String getCafeEval(String script, boolean toJSString) {
+		String result = "await ClientFunction(() => " + script + ")()";
+		if (toJSString) {
+			result = "'" + result + "'";
+		}
+		return result;
 	}
 }

@@ -584,7 +584,6 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		unitJSStringFunctionList.add(".uuid");
 		unitJSStringFunctionList.add(".id");
 		unitJSStringFunctionList.add(".get");
-		unitJSStringFunctionList.add(".is");
 	}
 
 	private String replaceCodeText(String text, String target, String replacement) {

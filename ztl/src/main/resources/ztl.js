@@ -1,26 +1,32 @@
 import {ClientFunction, Selector} from 'testcafe';
-const isProcessing = ClientFunction(() => !!zAu.processing() || !!jq.timers.length);
+const isProcessing = ClientFunction(() => (!!zAu && !!zAu.processing()) || !!jq.timers.length);
 export async function waitResponse(t) {
+	let waitTimes = 0;
 	await t.wait(300);
     while (await isProcessing()) {
+    	if (waitTimes > 20) {
+    		console.log('timeout');
+    		break;
+    	}
         console.log('waiting..');
         await t.wait(300);
+        waitTimes++;
     }
 }
 
 export async function convertCoordStrToArr(coordStr, coordY) {
 	var coordArr = [0, 0];
-	if (coordY) {
+	if (typeof coordY != 'undefined') {
 		coordArr = [parseInt(coordStr), parseInt(coordY)];
 	} else {
 		coordArr = coordStr.split(',');
-	} 
-	if (!coordArr || coordArr.length != 2) {
-		console.log('parse coord string failed');
-		return null;
+	 	coordArr[0] = parseInt(coordArr[0].trim());
+		coordArr[1] = parseInt(coordArr[1].trim());
+		if (!coordArr || coordArr.length != 2) {
+			console.log('parse coord string failed');
+			return null;
+		}
 	}
-	coordArr[0] = coordArr[0].trim();
-	coordArr[1] = coordArr[1].trim();
 	return coordArr;
 }
 
