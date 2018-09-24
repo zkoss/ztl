@@ -223,12 +223,12 @@ public class Widget extends ClientWidget {
 	 * Used in test cafe
 	 */
 	public String is_cafeStr(String name) {
-		return Scripts.getCafeEval(_out.toString() + toUpperCase(".is", name) + "()", true);
+		return Scripts.getCafeEval(_out.toString() + toUpperCase(".is", name) + "()");
 	}
 	public String exists_cafeStr() {
-		return Scripts.getCafeEval("!!" + _out.toString() + " && !!" + _out.toString() + ".$n()", true);
+		return Scripts.getCafeEval("!!" + _out.toString() + " && !!" + _out.toString() + ".$n()");
 	}
 	public String nChildren_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".nChildren", true);
+		return Scripts.getCafeEval(_out.toString() + ".nChildren");
 	}
 }

@@ -91,9 +91,9 @@ public class ZK extends ClientWidget {
 	 * Used in test cafe
 	 */
 	public String revisedOffset_cafeStr(String name) {
-		return Scripts.getCafeEval(_out.toString() + ".revisedOffset()", true);
+		return Scripts.getCafeEval(_out.toString() + ".revisedOffset()");
 	}
 	public String exists_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".jq != null", true);
+		return Scripts.getCafeEval(_out.toString() + ".jq != null");
 	}
 }

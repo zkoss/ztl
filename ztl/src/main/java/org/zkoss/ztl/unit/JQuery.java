@@ -472,67 +472,87 @@ public class JQuery extends ClientWidget implements Iterable<JQuery> {
 	 * Used in test cafe
 	 */
 	public String hasClass_cafeStr(String className) {
-		return Scripts.getCafeEval(_out.toString() + ".hasClass('" + className + "')", true);
+		return Scripts.getCafeEval(_out.toString() + ".hasClass('" + className + "')");
 	}
+
 	public String is_cafeStr(String selector) {
-		return Scripts.getCafeEval(_out.toString() + ".is('" + selector + "')", true);
+		return Scripts.getCafeEval(_out.toString() + ".is('" + selector + "')");
 	}
+
 	public String isVisible_cafeStr() {
 		return is_cafeStr(":visible");
 	}
+
 	public String height_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".height()", true);
+		return Scripts.getCafeEval(_out.toString() + ".height()");
 	}
+
 	public String width_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".width()", true);
+		return Scripts.getCafeEval(_out.toString() + ".width()");
 	}
+
 	public String innerHeight_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".innerHeight()", true);
+		return Scripts.getCafeEval(_out.toString() + ".innerHeight()");
 	}
+
 	public String innerWidth_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".innerWidth()", true);
+		return Scripts.getCafeEval(_out.toString() + ".innerWidth()");
 	}
+
 	public String outerWidth_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".outerWidth()", true);
+		return Scripts.getCafeEval(_out.toString() + ".outerWidth()");
 	}
+
 	public String outerWidth_cafeStr(boolean includeMargin) {
-		return Scripts.getCafeEval(_out.toString() + ".outerWidth(" + includeMargin + ")", true);
+		return Scripts.getCafeEval(_out.toString() + ".outerWidth(" + includeMargin + ")");
 	}
+
 	public String outerHeight_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".outerHeight()", true);
+		return Scripts.getCafeEval(_out.toString() + ".outerHeight()");
 	}
+
 	public String outerHeight_cafeStr(boolean includeMargin) {
-		return Scripts.getCafeEval(_out.toString() + ".outerHeight(" + includeMargin + ")", true);
+		return Scripts.getCafeEval(_out.toString() + ".outerHeight(" + includeMargin + ")");
 	}
+
 	public String length_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".length", true);
+		return Scripts.getCafeEval(_out.toString() + ".length");
 	}
+
 	public String exists_cafeStr() {
-		return Scripts.getCafeEval("!!" + _out.toString() + "[0]", true);
+		return Scripts.getCafeEval("!!" + _out.toString() + "[0]");
 	}
+
 	public String offsetLeft_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".offset().left", true);
+		return Scripts.getCafeEval(_out.toString() + ".offset().left");
 	}
+
 	public String offsetTop_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".offset().left", true);
+		return Scripts.getCafeEval(_out.toString() + ".offset().left");
 	}
+
 	public String positionLeft_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".position().left", true);
+		return Scripts.getCafeEval(_out.toString() + ".position().left");
 	}
+
 	public String positionTop_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".position().top", true);
+		return Scripts.getCafeEval(_out.toString() + ".position().top");
 	}
+
 	public String scrollTop_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".scrollTop()", true);
+		return Scripts.getCafeEval(_out.toString() + ".scrollTop()");
 	}
+
 	public String scrollLeft_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + ".scrollLeft()", true);
+		return Scripts.getCafeEval(_out.toString() + ".scrollLeft()");
 	}
+
 	public String scrollHeight_cafeStr() {
-		return "'" + get(0).attr("scrollHeight" + "'");
+		return get(0).attr("scrollHeight");
 	}
+
 	public String scrollWidth_cafeStr() {
-		return "'" + get(0).attr("scrollWidth") + "'";
+		return get(0).attr("scrollWidth");
 	}
 
 }

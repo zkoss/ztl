@@ -689,11 +689,14 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		testCodeList.add(new CafeTestStep(CafeTestStep.ASSERTION, codeStr.toString()));
 	}
 
+	//toString
 	private String toClientExpr(String str) {
 		if (str.contains(CAFEEVAL)) {
-			str = str.replace(CAFEEVAL, "");
+			str = str.replace(CAFEEVAL, "") + " + ''";
 		} else if (!str.startsWith(AWAIT_TOKEN) && !str.contains("_cafe")){
 			str = "'" + str.replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'") + "'";
+		} else {
+			str += " + ''";
 		}
 		return str;
 	}
