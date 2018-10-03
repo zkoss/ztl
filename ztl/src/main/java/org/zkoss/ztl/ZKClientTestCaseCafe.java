@@ -866,7 +866,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		String num2 = String.valueOf(number2);
 		String tor = String.valueOf(tolerant);
 		if (!_isTestCafe) {
-			super.verifyTolerant(Integer.parseInt(num1), Integer.parseInt(num2), Integer.parseInt(tor));
+			super.verifyTolerant(super.parseInt(num1), super.parseInt(num2), super.parseInt(tor));
 			return;
 		}
 		cafeVerifyTolerant(num1, num2, tor);
