@@ -589,7 +589,7 @@ public class ConfigHelper {
 					_openonce = _prop.getProperty("openonce");
 				if (isValidOpenOnce(_openonce)) {
 					_cacheMap = new HashMap<String, ZKSelenium>(15);
-					if (_testingEnvironment.equals("selenium"))
+					if ("selenium".equals(_testingEnvironment))
 						System.out.println("openonce="+_openonce);
 				}
 				_lastModified = f.lastModified();
