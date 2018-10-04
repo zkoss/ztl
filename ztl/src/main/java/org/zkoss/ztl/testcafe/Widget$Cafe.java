@@ -51,17 +51,17 @@ public class Widget$Cafe extends Widget {
 
 	@Override
 	public void set(String name, boolean value) {
-		Scripts.getEval("!!" + _out.toString() + toUpperCase(".set", name) + "(" + value + ")", _testSteps, true);
+		Scripts.doCafeEval("!!" + _out.toString() + toUpperCase(".set", name) + "(" + value + ")", _testSteps);
 	}
 
 	@Override
 	public void set(String name, int value) {
-		Scripts.getEval("!!" + _out.toString() + toUpperCase(".set", name) + "(" + value + ")", _testSteps, true);
+		Scripts.doCafeEval("!!" + _out.toString() + toUpperCase(".set", name) + "(" + value + ")", _testSteps);
 	}
 
 	@Override
 	public void set(String name, String value) {
-		Scripts.getEval("!!" + _out.toString() + toUpperCase(".set", name) + "('" + value + "')", _testSteps, true);
+		Scripts.doCafeEval("!!" + _out.toString() + toUpperCase(".set", name) + "('" + value + "')", _testSteps);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class Widget$Cafe extends Widget {
 
 	@Override
 	public String attr(String name) {
-		return Scripts.getCafeEval(_out.toString() + toUpperCase(".get", name) + "()");
+		return Scripts.getCafeClientFunction(_out.toString() + toUpperCase(".get", name) + "()");
 	}
 
 	@Override
@@ -142,7 +142,7 @@ public class Widget$Cafe extends Widget {
 
 	@Override
 	public void detach() {
-		Scripts.getEval(_out.toString() + ".detach()", _testSteps, true);
+		Scripts.doCafeEval(_out.toString() + ".detach()", _testSteps);
 	}
 
 	@Override
@@ -161,6 +161,6 @@ public class Widget$Cafe extends Widget {
 
 	@Override
 	public String eval(String script, boolean withDot) {
-		return Scripts.getCafeEval(_out.toString() + (withDot ? "." : "") + script);
+		return Scripts.getCafeClientFunction(_out.toString() + (withDot ? "." : "") + script);
 	}
 }

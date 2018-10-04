@@ -122,9 +122,9 @@ public class Element extends ClientWidget {
 	 * Used in test cafe
 	 */
 	public String is_cafeStr(String name) {
-		return Scripts.getCafeEval(_out.toString() + "." + name);
+		return Scripts.getCafeClientFunction(_out.toString() + "." + name);
 	}
 	public String exists_cafeStr() {
-		return Scripts.getCafeEval(_out.toString() + " != null");
+		return Scripts.getCafeClientFunction(_out.toString() + " != null");
 	}
 }

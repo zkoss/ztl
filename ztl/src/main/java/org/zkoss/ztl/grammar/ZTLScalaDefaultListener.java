@@ -338,8 +338,10 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			boolean wrapString = false;
 			for (String variable: _variableInStatement) { // ex. t -> t_cafe
 				if (_variableNameReplacements.containsKey(variable)) {
+					String oldExprText = newExprText;
 					newExprText = replaceCodeText(newExprText, variable, _variableNameReplacements.get(variable));
-					wrapString = true;
+					if (!oldExprText.equals(newExprText))
+						wrapString = true;
 				}
 			}
 			if (_ZTLFunctionReplacements.size() > 0) { // do replace: .width() -> .widthStr()
@@ -600,7 +602,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		}
 		target = target.replaceAll("\\(", "\\\\\\\\(");
 		// before and after the target, those characters should not be 1-9a-zA-Z
-		String result = text.replaceAll("([^a-zA-Z0-9\\-_\\$])" + escapeString(target, false) + "([^a-zA-Z0-9\\-_\\$])", replacement);
+		String result = text.replaceAll("([^a-zA-Z0-9\\-_\\$\"])" + escapeString(target, false) + "([^a-zA-Z0-9\\-_\\$\"])", replacement);
 		if (pre)
 			result = result.substring(1);
 		if (suf)

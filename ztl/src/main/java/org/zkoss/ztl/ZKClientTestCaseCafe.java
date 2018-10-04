@@ -8,6 +8,7 @@ import org.zkoss.ztl.unit.ClientWidget;
 import org.zkoss.ztl.unit.JQuery;
 import org.zkoss.ztl.unit.Widget;
 import org.zkoss.ztl.unit.ZK;
+import org.zkoss.ztl.util.Scripts;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -39,15 +40,11 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	public void generateCafeTest(String targetUrl, String folder) throws IllegalArgumentException {
 		String testName = this.getClass().getSimpleName().replace("_", "-");
 		StringBuilder testContent = new StringBuilder();
-		testContent.append("import {ClientFunction, Selector} from 'testcafe';\n");
-		testContent.append("import * as ztl from './module/ztl.js';\n");
-		testContent.append("fixture `ZTL TEST - ");
-		testContent.append(testName);
-		testContent.append("`.page `");
-		testContent.append(targetUrl);
-		testContent.append("`;\ntest('");
-		testContent.append(testName);
-		testContent.append("', async t => {\nawait ztl.waitResponse(t);\n");
+		testContent.append("import {ClientFunction, Selector} from 'testcafe';\n")
+				.append("import * as ztl from './module/ztl.js';\n")
+				.append("fixture `ZTL TEST - ").append(testName).append("`.page `").append(targetUrl)
+				.append("`;\ntest('").append(testName)
+				.append("', async t => {\nawait ztl.waitResponse(t);\n");
 		String lastStepType = null;
 		for (CafeTestStep step : testCodeList) {
 			String type = step.getType();
@@ -162,7 +159,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.focus(locator);
 			return;
 		}
-		getEval(locator.toLocator() + ".focus()");
+		getEval(locator.toLocator() + ".focus();zk;");
 	}
 
 	/**
@@ -607,11 +604,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 
 	private void cafeType(String selectorStr, String text) {
 		StringBuilder codeStr = new StringBuilder();
-		codeStr.append("typeText(");
-		codeStr.append(toCafeSelector(selectorStr));
-		codeStr.append(",");
-		codeStr.append(toClientExpr(text));
-		codeStr.append(")");
+		codeStr.append("typeText(").append(toCafeSelector(selectorStr)).append(",").append(toClientExpr(text)).append(")");
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
 	}
 
@@ -650,7 +643,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.verifyContains(message, word1, contains);
 			return;
 		}
-		cafeExpect("contains", toClientExpr(word1), toClientExpr(contains), message);
+		cafeExpect("contains", word1, contains, message);
 	}
 
 	@Override
@@ -672,12 +665,12 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	private void cafeExpect(String assertion, String actualExpr, String expectExpr, String message) {
+		boolean isTF = false;
+		if ("ok".equals(assertion) || "notOk".equals(assertion))
+			isTF = true;
 		StringBuilder codeStr = new StringBuilder();
-		codeStr.append("expect(");
-		codeStr.append(toClientExpr(actualExpr));
-		codeStr.append(").");
-		codeStr.append(assertion);
-		codeStr.append("(");
+
+		codeStr.append("expect(").append(toClientExpr(actualExpr, !isTF)).append(").").append(assertion).append("(");
 		if (expectExpr != null)
 			codeStr.append(toClientExpr(expectExpr));
 		if (message != null) {
@@ -691,15 +684,21 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 
 	//toString
 	private String toClientExpr(String str) {
+		return toClientExpr(str, true);
+	}
+
+	//toString
+	private String toClientExpr(String str, boolean toJSString) {
 		if (str.contains(CAFEEVAL)) {
 			str = str.replace(CAFEEVAL, "") + " + ''";
 		} else if (!str.startsWith(AWAIT_TOKEN) && !str.contains("_cafe")){
 			str = "'" + str.replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'") + "'";
-		} else {
+		} else if (toJSString){
 			str += " + ''";
 		}
 		return str;
 	}
+
 	@Override
 	public void verifyEquals(boolean arg1, boolean arg2) {
 		verifyEquals(null, arg1, arg2);
@@ -874,13 +873,8 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 
 	private void cafeVerifyTolerant(String num1, String num2, String tor) {
 		StringBuilder codeStr = new StringBuilder();
-		codeStr.append("await ztl.verifyTolerant(t, ");
-		codeStr.append(toClientExpr(num1));
-		codeStr.append(", ");
-		codeStr.append(toClientExpr(num2));
-		codeStr.append(", ");
-		codeStr.append(toClientExpr(tor));
-		codeStr.append(")();");
+		codeStr.append("await ztl.verifyTolerant(t, ").append(toClientExpr(num1)).append(", ")
+				.append(toClientExpr(num2)).append(", ").append(toClientExpr(tor)).append(")();");
 		testCodeList.add(new CafeTestStep(CafeTestStep.PRE, codeStr.toString()));
 	}
 
@@ -889,14 +883,15 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			return super.getEval(script);
 		}
-		return cafeEval(script, true);
+		return Scripts.getCafeClientFunction(script);
 	}
 
-	public String getEval(String script, boolean record) {
-		if (!_isTestCafe)
-			throw new UnsupportedOperationException("Only used in test cafe");
-		else
-			return cafeEval(script, record);
+	public void evalScript(String script) {
+		if (!_isTestCafe) {
+			super.getEval(script);
+		} else {
+			Scripts.doCafeEval(script, testCodeList);
+		}
 	}
 
 	@Override
@@ -911,20 +906,6 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	protected void runZscript(String zscript) {
 		super.runZscript(zscript);
 		waitResponse();
-	}
-
-	private String cafeEval(String script) {
-		return cafeEval(script, false);
-	}
-
-	private String cafeEval(String script, boolean record) {
-		String cafeScript = script;
-		if (!script.trim().startsWith(AWAIT_TOKEN)) {
-			cafeScript = "await ClientFunction(() => " + script + ")()";
-		}
-		if (record)
-			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, cafeScript));
-		return cafeScript;
 	}
 
 	@Override
@@ -1218,7 +1199,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.closeZKLog();
 		} else {
-			cafeEval("!!jq('#zk_logbox').remove()", true);
+			Scripts.doCafeEval("jq('#zk_logbox').remove()", testCodeList);
 			waitResponse();
 		}
 	}
@@ -1368,14 +1349,14 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String hasError_cafeStr() {
-		return cafeEval("!!jq('.z-messagebox-error')[0] || !!jq('.z-errorbox')[0] || jq('.z-error')[0]");
+		return Scripts.getCafeClientFunction("!!jq('.z-messagebox-error')[0] || !!jq('.z-errorbox')[0] || jq('.z-error')[0]");
 	}
 
 	public String getText(ClientWidget locator) {
 		if (!_isTestCafe) {
 			return super.getText(locator);
 		}
-		return cafeEval("jq(" + locator.toString() + ").text()");
+		return Scripts.getCafeClientFunction("jq(" + locator.toString() + ").text()");
 	}
 
 	@Override
@@ -1401,7 +1382,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String hasNativeScroll_cafeStr(ClientWidget locator) {
-		return cafeEval("!" + locator.toLocator() + "._scrollbar");
+		return Scripts.getCafeClientFunction("!" + locator.toLocator() + "._scrollbar");
 	}
 
 	@Override
@@ -1414,7 +1395,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String hasHScrollbar_cafeStr(ClientWidget locator) {
-		return "await ztl.hasHScrollbar(t, " + cafeEval(locator.toString()) + ")";
+		return "await ztl.hasHScrollbar(t, " + Scripts.getCafeClientFunction(locator.toString()) + ")";
 	}
 
 	@Override
@@ -1427,7 +1408,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String hasVScrollbar_cafeStr(ClientWidget locator) {
-		return "await ztl.hasVScrollbar(t, " + cafeEval(locator.toString()) + ")";
+		return "await ztl.hasVScrollbar(t, " + Scripts.getCafeClientFunction(locator.toString()) + ")";
 	}
 
 	public int getScrollTop(Widget widget) {
@@ -1439,7 +1420,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String getScrollTop_cafeStr(ClientWidget locator) {
-		return "await ztl.getScrollTop(t, " + cafeEval(locator.toString()) + ")";
+		return "await ztl.getScrollTop(t, " + Scripts.getCafeClientFunction(locator.toString()) + ")";
 	}
 
 	public int getScrollLeft(Widget widget) {
@@ -1451,7 +1432,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String getScrollLeft_cafeStr(ClientWidget locator) {
-		return "await ztl.getScrollLeft(t, " + cafeEval(locator.toString()) + ")";
+		return "await ztl.getScrollLeft(t, " + Scripts.getCafeClientFunction(locator.toString()) + ")";
 	}
 
 	public String getZKLog() {
@@ -1471,7 +1452,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String is_cafeStr(String name) {
-		return cafeEval("!!(zk." + name + ")");
+		return Scripts.getCafeClientFunction("!!(zk." + name + ")");
 	}
 
 	@Override
@@ -1484,7 +1465,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String getWindowWidth_cafeStr() {
-		return cafeEval("document.body.offsetWidth");
+		return Scripts.getCafeClientFunction("document.body.offsetWidth");
 	}
 
 	@Override
@@ -1497,7 +1478,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String getWindowHeight_cafeStr() {
-		return cafeEval("document.body.offsetHeight");
+		return Scripts.getCafeClientFunction("document.body.offsetHeight");
 	}
 
 	public int getBrowserTabCount() {
@@ -1518,7 +1499,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (exprStr.startsWith(CAFEEVAL)) {
 			codeStr.append(exprStr.replace(CAFEEVAL, ""));
 		} else {
-			codeStr.append(cafeEval(String.valueOf(expr)));
+			codeStr.append(Scripts.getCafeClientFunction(String.valueOf(expr)));
 		}
 		testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, codeStr.toString()));
 	}
@@ -1634,7 +1615,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			return super.getSelectedIndex(selectLocator);
 		} else {
-			return cafeEval("zk.Widget.$(jq(" + selectLocator.toString() + ")).getSelectedIndex()");
+			return Scripts.getCafeClientFunction("zk.Widget.$(jq(" + selectLocator.toString() + ")).getSelectedIndex()");
 		}
 	}
 
@@ -1684,7 +1665,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			return super.getValue(locator);
 		} else {
-			return cafeEval("jq(" + locator.toString() + ").val()");
+			return Scripts.getCafeClientFunction("jq(" + locator.toString() + ").val()");
 		}
 	}
 

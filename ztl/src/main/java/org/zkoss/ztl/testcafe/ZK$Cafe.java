@@ -27,7 +27,7 @@ public class ZK$Cafe extends org.zkoss.ztl.unit.ZK {
 
 	@Override
 	public String getVersion() {
-		return Scripts.getCafeEval("zk.version");
+		return Scripts.getCafeClientFunction("zk.version");
 	}
 
 	public ZK$Cafe(String selector, List<CafeTestStep> testSteps) {
@@ -52,7 +52,7 @@ public class ZK$Cafe extends org.zkoss.ztl.unit.ZK {
 
 	@Override
 	public void focus() {
-		Scripts.getEval(_out.toString() + ".focus()", _testSteps, true);
+		Scripts.doCafeEval(_out.toString() + ".focus()", _testSteps);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class ZK$Cafe extends org.zkoss.ztl.unit.ZK {
 
 	@Override
 	public String eval(String script, boolean withDot) {
-		return Scripts.getCafeEval(_out.toString() + (withDot ? "." : "") + script);
+		return Scripts.getCafeClientFunction(_out.toString() + (withDot ? "." : "") + script);
 	}
 
 }

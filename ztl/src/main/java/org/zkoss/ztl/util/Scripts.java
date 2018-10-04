@@ -116,11 +116,10 @@ public class Scripts {
 		return getEval(script, null , false);
 	}
 
+	//internal use
 	public static String getEval(String script, List<CafeTestStep> testSteps) {
 		return getEval(script, testSteps , false);
 	}
-
-	//internal use
 	public static String getEval(String script, List<CafeTestStep> testSteps, boolean doRecord) {
 		if (testSteps == null) {
 			script = ZKTestCase.getCurrent().getEval(script);
@@ -131,7 +130,21 @@ public class Scripts {
 		return script;
 	}
 
-	public static String getCafeEval(String script) {
-		return "await ClientFunction(() => " + script + ")()";
+	public static void doCafeEval(String script, List<CafeTestStep> testCodeList) {
+		if (!script.trim().startsWith("await ")) {
+			script = "t.eval(() => " + script + ")";
+		}
+		testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script));
+	}
+
+	public static String getCafeClientFunction(String script) {
+		if (!script.trim().startsWith("await ")) {
+			script = "await ClientFunction(() => " + script + ")()";
+		}
+		return script;
+	}
+
+	public static void doCafeScript(String script, List<CafeTestStep> testCodeList) {
+		testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script));
 	}
 }

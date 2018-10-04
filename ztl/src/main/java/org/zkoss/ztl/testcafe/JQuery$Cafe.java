@@ -42,12 +42,12 @@ public class JQuery$Cafe extends JQuery {
 
 	@Override
 	public String css(String name) {
-		return Scripts.getCafeEval(_out.toString() + ".css('" + name + "')");
+		return Scripts.getCafeClientFunction(_out.toString() + ".css('" + name + "')");
 	}
 
 	@Override
 	public String attr(String name) {
-		return Scripts.getCafeEval(_out.toString() + ".attr('" + name + "')");
+		return Scripts.getCafeClientFunction(_out.toString() + ".attr('" + name + "')");
 	}
 
 	@Override
@@ -117,17 +117,17 @@ public class JQuery$Cafe extends JQuery {
 
 	@Override
 	public String text() {
-		return Scripts.getCafeEval(_out.toString() + ".text()");
+		return Scripts.getCafeClientFunction(_out.toString() + ".text()");
 	}
 
 	@Override
 	public String html() {
-		return Scripts.getCafeEval(_out.toString() + ".html()");
+		return Scripts.getCafeClientFunction(_out.toString() + ".html()");
 	}
 
 	@Override
 	public String val() {
-		return Scripts.getCafeEval(_out.toString() + ".val()");
+		return Scripts.getCafeClientFunction(_out.toString() + ".val()");
 	}
 
 	@Override
@@ -211,7 +211,7 @@ public class JQuery$Cafe extends JQuery {
 
 	@Override
 	public void scrollTop(int value) {
-		Scripts.getEval(_out.toString() + ".scrollTop(" + value + ");1;", _testSteps, true);
+		Scripts.doCafeEval(_out.toString() + ".scrollTop(" + value + ")", _testSteps);
 	}
 
 	@Override
@@ -221,7 +221,7 @@ public class JQuery$Cafe extends JQuery {
 
 	@Override
 	public void scrollLeft(int value) {
-		Scripts.getEval(_out.toString() + ".scrollLeft(" + value + ");1;", _testSteps, true);
+		Scripts.doCafeEval(_out.toString() + ".scrollLeft(" + value + ")", _testSteps);
 	}
 
 	@Override
@@ -312,6 +312,6 @@ public class JQuery$Cafe extends JQuery {
 
 	@Override
 	public String eval(String script, boolean withDot) {
-		return Scripts.getCafeEval(_out.toString() + (withDot ? "." : "") + script);
+		return Scripts.getCafeClientFunction(_out.toString() + (withDot ? "." : "") + script);
 	}
 }

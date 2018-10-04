@@ -31,19 +31,19 @@ public class Element$Cafe extends Element {
 	}
 	@Override
 	public void set(String name, String value) {
-		Scripts.getEval(_out.toString() + "." + name + " = '" + value + "'", _testSteps, true);
+		Scripts.doCafeEval(_out.toString() + "." + name + " = '" + value + "'", _testSteps);
 	}
 	@Override
 	public void set(String name, boolean value) {
-		Scripts.getEval(_out.toString() + "." + name + " = " + value + "", _testSteps, true);
+		Scripts.doCafeEval(_out.toString() + "." + name + " = " + value + "", _testSteps);
 	}
 	@Override
 	public void set(String name, int value) {
-		Scripts.getEval(_out.toString() + "." + name + " = " + value + "", _testSteps, true);
+		Scripts.doCafeEval(_out.toString() + "." + name + " = " + value + "", _testSteps);
 	}
 	@Override
 	public String attr(String name) {
-		return Scripts.getCafeEval(_out.toString() + "." + name);
+		return Scripts.getCafeClientFunction(_out.toString() + "." + name);
 	}
 	@Override
 	public boolean is(String name) {
@@ -86,6 +86,6 @@ public class Element$Cafe extends Element {
 
 	@Override
 	public String eval(String script, boolean withDot) {
-		return Scripts.getCafeEval(_out.toString() + (withDot ? "." : "") + script);
+		return Scripts.getCafeClientFunction(_out.toString() + (withDot ? "." : "") + script);
 	}
 }
