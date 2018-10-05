@@ -139,7 +139,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 						replacement.append("\"" + ZKClientTestCaseCafe.CAFEEVAL);
 					}
 					if (isOp && assignmentOperatorContext.getText().length() > 1) {
-						replacement.append("\"").append(newAssignName).append(" ")
+						replacement.append("\"").append(ZKClientTestCaseCafe.CAFEEVAL).append(newAssignName).append(" ")
 								.append(assignmentOperatorContext.getText().charAt(0)).append(" \" + ");
 					}
 					if (wrapString) {

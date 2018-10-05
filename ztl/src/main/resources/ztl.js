@@ -31,10 +31,10 @@ export async function convertCoordStrToArr(coordStr, coordY) {
 }
 
 export async function verifyTolerant(t, num1, num2, tolerant) {
-	if (Math.abs(num1 - num2) > tolerant) {
-		t.expect(false).ok(num1 + ' and ' + num2 + 'is out of the tolerant' + tolerant);
+	if (Math.abs(parseInt(num1) - parseInt(num2)) > parseInt(tolerant)) {
+		await t.expect(false).ok(num1 + ' and ' + num2 + 'is out of the tolerant' + tolerant);
 	} else {
-		t.expect(true).ok(num1 + ' and ' + num2 + 'is in the tolerant' + tolerant);
+		await t.expect(true).ok(num1 + ' and ' + num2 + 'is in the tolerant' + tolerant);
 	}
 	
 }

@@ -132,7 +132,7 @@ public class Scripts {
 
 	public static void doCafeEval(String script, List<CafeTestStep> testCodeList) {
 		if (!script.trim().startsWith("await ")) {
-			script = "t.eval(() => " + script + ")";
+			script = "await ClientFunction(() => {" + script + "})()";
 		}
 		testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script));
 	}

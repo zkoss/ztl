@@ -122,12 +122,11 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		StringBuilder codeStr = new StringBuilder();
 		codeStr.append("Selector(() => ");
 		codeStr.append(locatorStr);
-		if (locatorStr.matches(".*\\$n\\([\"|'].*[\"|']\\)")) {
-			//skip
-		} else if (locatorStr.startsWith("zk.Desktop._dt")) {
+		if (locatorStr.startsWith("zk.Desktop._dt")) {
 			codeStr.append(".$n()");
-		} else if (!locatorStr.endsWith("get(0)") && !locatorStr.endsWith("]")) //handle get(1)
+		} else if (!locatorStr.matches(".*\\.get\\([0-9]+\\)$") && !locatorStr.endsWith("]") && !locatorStr.matches(".*\\.\\$n\\(.*\\)$")) {
 			codeStr.append("[0]");
+		}
 
 		codeStr.append(")");
 		return codeStr.toString();
@@ -159,7 +158,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.focus(locator);
 			return;
 		}
-		getEval(locator.toLocator() + ".focus();zk;");
+		Scripts.doCafeEval(locator.toLocator() + ".focus();", testCodeList);
 	}
 
 	/**
@@ -903,12 +902,6 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	@Override
-	protected void runZscript(String zscript) {
-		super.runZscript(zscript);
-		waitResponse();
-	}
-
-	@Override
 	protected void sleep(long millis) {
 		if (!_isTestCafe) {
 			super.sleep(millis);
@@ -923,6 +916,15 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			return;
 		}
 		cafeClick("click", "jq('body')");
+	}
+
+	protected void runZscript(String zscript) {
+		if (!_isTestCafe) {
+			super.runZscript(zscript);
+			return;
+		}
+		Scripts.doCafeEval("zAu.send(new zk.Event(null, 'onZTLService', '" + zscript + "', 10))", testCodeList);
+		waitResponse();
 	}
 
 	//JQuery
@@ -1439,7 +1441,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			return super.getZKLog();
 		} else {
-			return jq("#zk_log").val();
+			return cafeTrim(jq("#zk_log").val());
 		}
 	}
 
@@ -1838,6 +1840,10 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.waitForPopUp(windowID, timeout);
 		}
 		throw new UnsupportedOperationException("Not support in test cafe");
+	}
+
+	private String cafeTrim(String text) {
+		return "(" + text + ").trim()";
 	}
 
 	private final static String coordArrayIdentifier = "cafeCoord_";
