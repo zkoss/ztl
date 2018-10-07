@@ -122,12 +122,13 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		StringBuilder codeStr = new StringBuilder();
 		codeStr.append("Selector(() => ");
 		codeStr.append(locatorStr);
-		if (locatorStr.startsWith("zk.Desktop._dt")) {
-			codeStr.append(".$n()");
-		} else if (!locatorStr.matches(".*\\.get\\([0-9]+\\)$") && !locatorStr.endsWith("]") && !locatorStr.matches(".*\\.\\$n\\(.*\\)$")) {
-			codeStr.append("[0]");
+		if (!locatorStr.matches(".*\\.\\$n\\([^\\(]*\\)$")) {
+			if (locatorStr.startsWith("zk.Desktop._dt")) {
+				codeStr.append(".$n()");
+			} else if (!locatorStr.matches(".*\\.get\\([0-9]+\\)$") && !locatorStr.endsWith("]")) {
+				codeStr.append("[0]");
+			}
 		}
-
 		codeStr.append(")");
 		return codeStr.toString();
 	}
@@ -690,7 +691,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	private String toClientExpr(String str, boolean toJSString) {
 		if (str.contains(CAFEEVAL)) {
 			str = str.replace(CAFEEVAL, "") + " + ''";
-		} else if (!str.startsWith(AWAIT_TOKEN) && !str.contains("_cafe")){
+		} else if (!str.matches("^\\(*" + AWAIT_TOKEN + ".*") && !str.contains("_cafe")){
 			str = "'" + str.replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'") + "'";
 		} else if (toJSString){
 			str += " + ''";
@@ -1078,7 +1079,9 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.select(selectLocator, optionLocator);
 		} else {
-			click(jq(selectLocator).find("option:contains(\"" + optionLocator + "\")"));
+			click(jq(selectLocator));
+			click(jq(selectLocator).find("option:contains(" + optionLocator + ")"));
+			waitResponse();
 		}
 	}
 
