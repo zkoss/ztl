@@ -149,16 +149,25 @@ public class ZTLTestModifier {
 			List<String[]> replacements = listener.getCodeReplacements();
 			StringBuilder codeContent = new StringBuilder();
 			int replaceIndex = -1;
+			int replacementsCnt = replacements.size();
 			String[] replacement = null;
+			boolean allReplaced = false;
 			for (String line: code.split("\n")) {
-				if (replacement == null) {
-					replaceIndex++;
-					replacement = replacements.get(replaceIndex);
-				}
-				String oldLine = line;
-				line = line.replace(replacement[0], replacement[1]);
-				if (!oldLine.equals(line)) {
-					replacement = null;
+				if (!allReplaced) {
+					if (replacement == null) {
+						replaceIndex++;
+						if (replaceIndex < replacementsCnt)
+							replacement = replacements.get(replaceIndex);
+						else
+							allReplaced = true;
+					}
+					if (replacement != null) {
+						String oldLine = line;
+						line = line.replace(replacement[0], replacement[1]);
+						if (!oldLine.equals(line)) {
+							replacement = null;
+						}
+					}
 				}
 				codeContent.append(line).append("\n");
 			}

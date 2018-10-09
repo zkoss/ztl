@@ -51,7 +51,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	public void exitClassStatement(ZTLScalaParser.ClassStatementContext ctx) {
 		//classStatement
 		String className = ctx.Identifier().get(0).getText();
-		_codeReplacements.add(new String[]{className, className + "Cafe"});
+		_codeReplacements.add(0, new String[]{className, className + "Cafe"});
 	}
 
 	private boolean _inAssignment = false;
@@ -69,8 +69,6 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	public void exitAssignmentStatement(ZTLScalaParser.AssignmentStatementContext ctx) {
 		String text = ctx.getText().trim();
 		if (!text.contains("\"\"\"")) {
-//			if (_codeReplacements.containsKey(text))
-//				log("More than one assignments with same text: " + text);
 			String assignName = "";
 			boolean isDeclaration = false;
 			String startToken = ctx.anyType() != null ? ctx.anyType().getText() : ctx.Identifier().get(0).getText();
