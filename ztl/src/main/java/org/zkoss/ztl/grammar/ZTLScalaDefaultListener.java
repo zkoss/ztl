@@ -22,18 +22,18 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		return _preCodeReplacements;
 	}
 
-	public Map<String, String> getCodeReplacements() {
+	public List<String[]> getCodeReplacements() {
 		return _codeReplacements;
 	}
 
 	private Map<String, String> _preCodeReplacements;
-	private Map<String, String> _codeReplacements;
+	private List<String[]> _codeReplacements;
 	private Map<String, String> _variableNameReplacements;
 
 	public ZTLScalaDefaultListener() {
 		super();
 		_preCodeReplacements = new HashMap<>();
-		_codeReplacements = new HashMap<>();
+		_codeReplacements = new LinkedList<>();
 		_variableNameReplacements = new HashMap<>();
 		// use in scope
 		_ZTLFunctionReplacements = new HashSet<>();
@@ -51,7 +51,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	public void exitClassStatement(ZTLScalaParser.ClassStatementContext ctx) {
 		//classStatement
 		String className = ctx.Identifier().get(0).getText();
-		_codeReplacements.put(className, className + "Cafe");
+		_codeReplacements.add(new String[]{className, className + "Cafe"});
 	}
 
 	private boolean _inAssignment = false;
@@ -154,7 +154,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 							newText = newText.replace(tr.getText(), tr.getReplacement());
 						}
 					}
-					_codeReplacements.put(text, newText + "\n" + replacement.toString());
+					_codeReplacements.add(new String[]{text, newText + "\n" + replacement.toString()});
 					_variableNameReplacements.put(assignName, newAssignName);
 				}
 				String logText = "";
@@ -262,7 +262,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			exprCnt++;
 			String exprText = expr.getText();
 			String newExprText = exprText;
-			if (exprText.trim().startsWith("\"") || exprText.trim().matches("[0-9.]*")) {
+			if ((exprText.trim().startsWith("\"") &&  exprText.trim().endsWith("\"")) || exprText.trim().matches("[0-9.]*")) {
 				exprReplacement.append(exprText);
 				continue; //skip String & number
 			}
@@ -301,7 +301,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 
 		if (paramChanged) {
 			replacement.append(ctx.getChild(0).getText()).append("(").append(exprReplacement).append(")\n");
-			_codeReplacements.put(text, replacement.toString());
+			_codeReplacements.add(new String[]{text, replacement.toString()});
 		}
 		_inAction = false;
 		_isConditionalExprExist = false;
@@ -375,7 +375,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 
 		if (paramChanged) {
 			replacement.append(ctx.getChild(0).getText()).append("(").append(exprReplacement).append(")\n");
-			_codeReplacements.put(text, replacement.toString());
+			_codeReplacements.add(new String[]{text, replacement.toString()});
 		}
 		_inVerification = false;
 		_isConditionalExprExist = false;
@@ -512,7 +512,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		if (!exprText.equals(newExprText)) {
 			replacement.append("conditionStatement_cafe(\"").append(cond).append("\", \"");
 			replacement.append(escapeString(newExprText, true)).append("\")\n");
-			_codeReplacements.put(text, replacement.toString());
+			_codeReplacements.add(new String[]{text, replacement.toString()});
 			_ifExprRemoved = true;
 		} else {
 			_inCafeConditionStatements.add(_inCafeConditionStatements.size() - 1, Boolean.FALSE);
@@ -602,7 +602,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		}
 		target = target.replaceAll("\\(", "\\\\\\\\(");
 		// before and after the target, those characters should not be 1-9a-zA-Z
-		String result = text.replaceAll("([^a-zA-Z0-9\\-_\\$\"])" + escapeString(target, false) + "([^a-zA-Z0-9\\-_\\$\"])", replacement);
+		String result = text.replaceAll("([^a-zA-Z0-9\\-_\\$\"])" + escapeString(target, false) + "([^a-zA-Z0-9\\-_\\$\"(])", replacement);
 		if (pre)
 			result = result.substring(1);
 		if (suf)

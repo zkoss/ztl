@@ -38,3 +38,60 @@ export async function verifyTolerant(t, num1, num2, tolerant) {
 	}
 	
 }
+
+export async function doScroll(config) {
+	config.locator = await config.locator();
+	await ClientFunction(() => {
+		var target = config.locator,
+			isVert = config.scrollType == 'vertical',
+			percent = config.percent,
+			dist = config.dist,
+			wgt = zk.Widget.$(jq(target)),
+			body = wgt.$n('body'),
+			cave = wgt.$n('cave');
+		if (!config.noBody) {
+			if (percent) {
+				var bpad = wgt.$n('bpad'),
+					tpad = wgt.$n('tpad'),
+					totalDist;
+				if (isVert) {
+					if (bpad && tpad) {
+						totalDist = bpad.offsetHeight + tpad.offsetHeight;
+					} else {
+						totalDist = jq(cave).height() - jq(body).height();
+					}
+				} else {
+					totalDist = jq(cave).width() - jq(body).width();
+				}
+				dist = Math.round(totalDist * percent / 100);
+			}
+		} else {
+			var caveChildren = jq(cave).children(),
+				childrenDist = 0;
+			if (isVert) {
+				for (var i = 0; i < caveChildren.length; i++)
+					childrenDist += caveChildren.eq(i).height();
+				dist = Math.round((childrenDist - jq(wgt).height()) * percent);
+			} else {
+				for (var i = 0; i < caveChildren.length; i++)
+					childrenDist += caveChildren.eq(i).width();
+				dist = Math.round((childrenDist - jq(wgt).width()) * percent);
+			}
+		}
+
+		var nScrollBar = wgt._scrollbar;
+		if (isVert) {
+			if (nScrollBar)
+				wgt._scrollbar.scrollTo(0, dist);
+			else {
+				var scrollTarget = (body ? body : (cave ? cave : wgt));
+				scrollTarget.scrollTop = Math.abs(dist);
+			}
+		} else {
+			if (nScrollBar)
+				wgt._scrollbar.scrollTo(dist, 0);
+			else
+				(body ? body : (cave ? cave : wgt)).scrollLeft = Math.abs(dist);
+		}
+	}, {dependencies: {config}})();
+}

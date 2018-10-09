@@ -46,11 +46,6 @@ public class ZK$Cafe extends org.zkoss.ztl.unit.ZK {
 	}
 
 	@Override
-	public int[] revisedOffset() {
-		return new int[]{0, 0};
-	}
-
-	@Override
 	public void focus() {
 		Scripts.doCafeEval(_out.toString() + ".focus()", _testSteps);
 	}

@@ -50,14 +50,6 @@ public class ZK extends ClientWidget {
 	}
 
 	/**
-	 * Returns the revised offset array.
-	 */
-	public int[] revisedOffset() {
-		String[] s = Scripts.getEval(_out.toString() + ".revisedOffset()").split(",");
-		return new int[]{parseInt(s[0]), parseInt(s[1])};
-	}
-
-	/**
 	 * focus the current element
 	 */
 	public void focus() {
@@ -90,9 +82,6 @@ public class ZK extends ClientWidget {
 	/**
 	 * Used in test cafe
 	 */
-	public String revisedOffset_cafeStr(String name) {
-		return Scripts.getCafeClientFunction(_out.toString() + ".revisedOffset()");
-	}
 	public String exists_cafeStr() {
 		return Scripts.getCafeClientFunction(_out.toString() + ".jq != null");
 	}

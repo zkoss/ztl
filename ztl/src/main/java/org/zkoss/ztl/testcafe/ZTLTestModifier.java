@@ -146,10 +146,23 @@ public class ZTLTestModifier {
 			for (Map.Entry<String, String> entry : preReplaceMap.entrySet()) {
 				code = code.replace(entry.getKey(), entry.getValue());
 			}
-			Map<String, String> replaceMap = listener.getCodeReplacements();
-			for (Map.Entry<String, String> entry : replaceMap.entrySet()) {
-				code = code.replace(entry.getKey(), entry.getValue());
+			List<String[]> replacements = listener.getCodeReplacements();
+			StringBuilder codeContent = new StringBuilder();
+			int replaceIndex = -1;
+			String[] replacement = null;
+			for (String line: code.split("\n")) {
+				if (replacement == null) {
+					replaceIndex++;
+					replacement = replacements.get(replaceIndex);
+				}
+				String oldLine = line;
+				line = line.replace(replacement[0], replacement[1]);
+				if (!oldLine.equals(line)) {
+					replacement = null;
+				}
+				codeContent.append(line).append("\n");
 			}
+			code = codeContent.toString();
 			System.out.println("Done.");
 		} catch (IOException e) {
 			e.printStackTrace();
