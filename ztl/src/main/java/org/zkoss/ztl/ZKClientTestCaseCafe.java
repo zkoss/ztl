@@ -1178,7 +1178,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
-					.append(", scrollType: 'vertical' noBody: true, percent: ").append(percent).append("});");
+					.append(", scrollType: 'vertical', noBody: true, percent: ").append(percent).append("});");
 			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
 			waitResponse();
 		}
