@@ -528,7 +528,7 @@ public class JQuery extends ClientWidget implements Iterable<JQuery> {
 	}
 
 	public String offsetTop_cafeStr() {
-		return Scripts.getCafeClientFunction(_out.toString() + ".offset().left");
+		return Scripts.getCafeClientFunction(_out.toString() + ".offset().top");
 	}
 
 	public String positionLeft_cafeStr() {

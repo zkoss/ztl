@@ -1,4 +1,5 @@
 import {ClientFunction, Selector} from 'testcafe';
+const colorString = require('color-string');
 const isProcessing = ClientFunction(() => (!!zAu && !!zAu.processing()) || !!jq.timers.length);
 export async function waitResponse(t) {
 	let waitTimes = 0;
@@ -27,16 +28,21 @@ export async function convertCoordStrToArr(coordStr, coordY) {
 			return null;
 		}
 	}
+	//modify
+	if (coordArr[0] > 0)
+		coordArr[0] = coordArr[0] - 1;
+	if (coordArr[1] > 0)
+    	coordArr[1] = coordArr[1] - 1;
 	return coordArr;
 }
 
 export async function verifyTolerant(t, num1, num2, tolerant) {
 	if (Math.abs(parseInt(num1) - parseInt(num2)) > parseInt(tolerant)) {
-		await t.expect(false).ok(num1 + ' and ' + num2 + 'is out of the tolerant' + tolerant);
+		await t.expect(false).ok(num1 + ' and ' + num2 + ' is out of the tolerant' + tolerant);
 	} else {
-		await t.expect(true).ok(num1 + ' and ' + num2 + 'is in the tolerant' + tolerant);
+		await t.expect(true).ok(num1 + ' and ' + num2 + ' is in the tolerant' + tolerant);
 	}
-	
+
 }
 
 export async function doScroll(config) {
@@ -94,4 +100,8 @@ export async function doScroll(config) {
 				(body ? body : (cave ? cave : wgt)).scrollLeft = Math.abs(dist);
 		}
 	}, {dependencies: {config}})();
+}
+
+export async function isEqualColor(color1, color2) {
+	return colorString.get.rgb(color1).toString() == colorString.get.rgb(color2).toString();
 }

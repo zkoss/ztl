@@ -41,7 +41,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 				.append("import * as ztl from './module/ztl.js';\n")
 				.append("fixture `ZTL TEST - ").append(testName).append("`.page `").append(targetUrl)
 				.append("`;\ntest('").append(testName)
-				.append("', async t => {\nawait ztl.waitResponse(t);\n");
+				.append("', async t => {\nawait t.maximizeWindow();\nawait ztl.waitResponse(t);\n");
 		String lastStepType = null;
 		for (CafeTestStep step : testCodeList) {
 			String type = step.getType();
@@ -120,7 +120,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		codeStr.append("Selector(() => ");
 		codeStr.append(locatorStr);
 		if (!locatorStr.matches(".*\\.\\$n\\([^\\(\\)]*\\)$")) {
-			if (locatorStr.startsWith("zk.Desktop._dt")) {
+			if (locatorStr.startsWith("zk.Desktop._dt") || locatorStr.startsWith("zk.Widget.$")) {
 				codeStr.append(".$n()");
 			} else if (!locatorStr.matches(".*\\.get\\([0-9]+\\)$") && !locatorStr.endsWith("]")) {
 				codeStr.append("[0]");
@@ -367,7 +367,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.dragAndDrop(locator, movementsString);
 			return;
 		}
-		cafeDrag("drag", locator.toLocator(), movementsString);
+		cafeDrag(locator.toLocator(), movementsString);
 	}
 
 	@Override
@@ -417,11 +417,15 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		codeStr.append("drag(").append(toCafeSelector(selectorStr)).append(",");
 		testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(movementsString)));
 		String coordVar = coordArrayIdentifier + coordArrayVarCnt;
-		codeStr.append(coordVar).append("[0], ").append(coordVar).append("[1]");
 		if (from != null) {
 			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from)));
 			String coordVarFrom = coordArrayIdentifier + coordArrayVarCnt;
-			codeStr.append(", {offsetX: ").append(coordVarFrom).append("[0], offsetY: ").append(coordVarFrom).append("[1]}");
+			codeStr.append(coordVar).append("[0] - ").append(coordVarFrom).append("[0], ")
+					.append(coordVar).append("[1] - ").append(coordVarFrom).append("[1]")
+					.append(", {offsetX: ").append(coordVarFrom).append("[0], offsetY: ")
+					.append(coordVarFrom).append("[1]}");
+		} else {
+			codeStr.append(coordVar).append("[0], ").append(coordVar).append("[1]");
 		}
 		codeStr.append(")");
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
@@ -533,6 +537,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.sendKeys(locator, keysToSend);
 			return;
 		}
+		click(locator);
 		StringBuilder codeStr = new StringBuilder();
 		codeStr.append("pressKey('");
 		int cnt = 0;
@@ -1113,7 +1118,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
-					.append(", type: 'vertical', percent: ").append(percent).append("});");
+					.append(", scrollType: 'vertical', percent: ").append(percent).append("});");
 			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
 			waitResponse();
 		}
@@ -1782,7 +1787,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.verifyEqualColor(color1, color2);
 		} else {
-			verifyEquals(color1, color2);
+			cafeVerifyColor(null, "ok", color1, color2);
 		}
 	}
 
@@ -1791,7 +1796,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.verifyEqualColor(msg, color1, color2);
 		} else {
-			verifyEquals(msg, color1, color2);
+			cafeVerifyColor(msg, "ok", color1, color2);
 		}
 	}
 
@@ -1800,7 +1805,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.verifyNotEqualColor(color1, color2);
 		} else {
-			verifyNotEqualColor(color1, color2);
+			cafeVerifyColor(null, "notOk", color1, color2);
 		}
 	}
 
@@ -1809,8 +1814,19 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.verifyNotEqualColor(msg, color1, color2);
 		} else {
-			verifyNotEqualColor(msg, color1, color2);
+			cafeVerifyColor(msg, "notOk", color1, color2);
 		}
+	}
+
+	private void cafeVerifyColor(String message, String testEqualExpr, String color1, String color2) {
+		StringBuilder codeStr = new StringBuilder();
+		codeStr.append("await t.expect(await ztl.isEqualColor(").append(toClientExpr(color1))
+				.append(", ").append(toClientExpr(color2)).append(")).")
+				.append(testEqualExpr).append("(");
+		if (message != null)
+			codeStr.append(toClientExpr(message.replaceAll("\n", "")));
+		codeStr.append(")");
+		testCodeList.add(new CafeTestStep(CafeTestStep.PRE, codeStr.toString()));
 	}
 
 	@Override
