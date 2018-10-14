@@ -105,3 +105,31 @@ export async function doScroll(config) {
 export async function isEqualColor(color1, color2) {
 	return colorString.get.rgb(color1).toString() == colorString.get.rgb(color2).toString();
 }
+
+export async function getScrollTop(config) {
+	config.locator = await config.locator();
+	return await ClientFunction(() => {
+		var wgt = zk.Widget.$(jq(config.locator)),
+			nScrollBar = wgt._scrollbar;
+		if (nScrollBar) {
+			var str = jq(wgt).find(".z-scrollbar")[0].style.top;
+			return parseInt(str);
+		} else {
+			return jq(wgt.$n("body")).scrollTop();
+		}
+	}, {dependencies: {config}})();
+}
+
+export async function getScrollLeft(config) {
+	config.locator = await config.locator();
+	return await ClientFunction(() => {
+		var wgt = zk.Widget.$(jq(config.locator)),
+			nScrollBar = wgt._scrollbar;
+		if (nScrollBar) {
+			var str = jq(wgt).find(".z-scrollbar")[0].style.left;
+			return parseInt(str);
+		} else {
+			return jq(wgt.$n("body")).scrollLeft();
+		}
+	}, {dependencies: {config}})();
+}

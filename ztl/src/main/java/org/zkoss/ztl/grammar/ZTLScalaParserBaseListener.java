@@ -387,6 +387,18 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterZtlUnitEvalMethod(ZTLScalaParser.ZtlUnitEvalMethodContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitZtlUnitEvalMethod(ZTLScalaParser.ZtlUnitEvalMethodContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterZtlTestMethod(ZTLScalaParser.ZtlTestMethodContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -394,6 +406,30 @@ public class ZTLScalaParserBaseListener implements ZTLScalaParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitZtlTestMethod(ZTLScalaParser.ZtlTestMethodContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterZtlTestEvalMethod(ZTLScalaParser.ZtlTestEvalMethodContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitZtlTestEvalMethod(ZTLScalaParser.ZtlTestEvalMethodContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterThisDot(ZTLScalaParser.ThisDotContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitThisDot(ZTLScalaParser.ThisDotContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

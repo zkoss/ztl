@@ -196,11 +196,29 @@ public interface ZTLScalaParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitZtlUnitMethod(ZTLScalaParser.ZtlUnitMethodContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#ztlUnitEvalMethod}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitZtlUnitEvalMethod(ZTLScalaParser.ZtlUnitEvalMethodContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#ztlTestMethod}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitZtlTestMethod(ZTLScalaParser.ZtlTestMethodContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#ztlTestEvalMethod}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitZtlTestEvalMethod(ZTLScalaParser.ZtlTestEvalMethodContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ZTLScalaParser#thisDot}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitThisDot(ZTLScalaParser.ThisDotContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ZTLScalaParser#statement}.
 	 * @param ctx the parse tree

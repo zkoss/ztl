@@ -317,6 +317,16 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 */
 	void exitZtlUnitMethod(ZTLScalaParser.ZtlUnitMethodContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link ZTLScalaParser#ztlUnitEvalMethod}.
+	 * @param ctx the parse tree
+	 */
+	void enterZtlUnitEvalMethod(ZTLScalaParser.ZtlUnitEvalMethodContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZTLScalaParser#ztlUnitEvalMethod}.
+	 * @param ctx the parse tree
+	 */
+	void exitZtlUnitEvalMethod(ZTLScalaParser.ZtlUnitEvalMethodContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#ztlTestMethod}.
 	 * @param ctx the parse tree
 	 */
@@ -326,6 +336,26 @@ public interface ZTLScalaParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitZtlTestMethod(ZTLScalaParser.ZtlTestMethodContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZTLScalaParser#ztlTestEvalMethod}.
+	 * @param ctx the parse tree
+	 */
+	void enterZtlTestEvalMethod(ZTLScalaParser.ZtlTestEvalMethodContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZTLScalaParser#ztlTestEvalMethod}.
+	 * @param ctx the parse tree
+	 */
+	void exitZtlTestEvalMethod(ZTLScalaParser.ZtlTestEvalMethodContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link ZTLScalaParser#thisDot}.
+	 * @param ctx the parse tree
+	 */
+	void enterThisDot(ZTLScalaParser.ThisDotContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ZTLScalaParser#thisDot}.
+	 * @param ctx the parse tree
+	 */
+	void exitThisDot(ZTLScalaParser.ThisDotContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link ZTLScalaParser#statement}.
 	 * @param ctx the parse tree

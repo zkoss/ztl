@@ -24,7 +24,13 @@ public class KeyHelper {
 			StringBuilder k = new StringBuilder();
 			for (int i = 0; i < keyString.length(); i++) {
 				if (i != 0) k.append(" ");
-				k.append(checkKeys(keyString.substring(i, i + 1)));
+				String keyChar = keyString.substring(i, i + 1);
+				if (" ".equals(keyChar)) {
+					keyChar = "space";
+				} else {
+					keyChar = checkKeys(keyChar);
+				}
+				k.append(keyChar);
 			}
 			keyString = k.toString();
 		}

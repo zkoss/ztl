@@ -103,18 +103,14 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 						String replaceText = tr.getReplacement();
 						if (_isConditionalExprExist) {
 							wrapString = true;
-							if (!tr.getText().equals(replaceText)) {
-								String name = newAssignName + "_" + jsVarIndex;
-								jsVarIndex++;
-								replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
-								replaceText = name;
-								innerReplacements.add(new TextReplacement(replaceText, name));
-							}
+							String name = newAssignName + "_" + jsVarIndex;
+							jsVarIndex++;
+							replacement.append("assignment_cafe(\"").append(name).append("\",").append(replaceText).append(", true)\n");
+							replaceText = name;
+							innerReplacements.add(new TextReplacement(replaceText, name));
 						}
-						String targetText = tr.getText();
-						if (newExprText.indexOf(targetText) != -1 && !targetText.equals(replaceText) && !newExprText.equals(replaceText)) {
-							newExprText = newExprText.replace(tr.getText(), replaceText);
-						}
+						newExprText = newExprText.replace(tr.getText(), replaceText);
+						changed = true;
 					}
 				}
 
@@ -129,7 +125,7 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 					}
 				}
 
-				if (changed || isOp) {
+				if (changed || isOp || wrapString) {
 					for (TextReplacement tr : innerReplacements) { // replace inner assignment
 						newExprText = replaceCodeText(newExprText, tr.getText(), tr.getReplacement());
 					}
@@ -529,12 +525,10 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 	public void exitZtlTestMethod(ZTLScalaParser.ZtlTestMethodContext ctx) {
 		String text = ctx.getText().trim();
 		String replacement = text.replace("this.", "");
-		for (String checkFunction : ZTLTestFunctionCheckList) {
-			String checkToken = checkFunction;
-			int index = text.indexOf(checkToken);
-			if (index != -1) {
-				replacement = replacement.replace(checkToken, checkToken + "_cafeStr");
-				break;
+		if (ctx.ztlTestEvalMethod() == null) {
+			String methodName = text.contains("this.") ? ctx.getChild(1).getText() : ctx.getChild(0).getText();
+			if (!ZTLTestStringFunctionList.contains(methodName)) {
+				replacement = text.replace(methodName, methodName + "_cafeStr");
 			}
 		}
 		if (replacement.isEmpty())
@@ -543,19 +537,12 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			_ZTLFunctionReplacements.add(new TextReplacement(text, replacement));
 	}
 
-	private static List<String> ZTLTestFunctionCheckList = new ArrayList<>();
+	private static List<String> ZTLTestStringFunctionList = new ArrayList<>();
 	static {
-		ZTLTestFunctionCheckList.add("hasError");
-		ZTLTestFunctionCheckList.add("isVisible");
-		ZTLTestFunctionCheckList.add("hasNativeScroll");
-		ZTLTestFunctionCheckList.add("hasHScrollbar");
-		ZTLTestFunctionCheckList.add("hasVScrollbar");
-		ZTLTestFunctionCheckList.add("getScrollTop");
-		ZTLTestFunctionCheckList.add("getScrollLeft");
-		ZTLTestFunctionCheckList.add("is");
-		ZTLTestFunctionCheckList.add("getWindowWidth");
-		ZTLTestFunctionCheckList.add("getWindowHeight");
-		ZTLTestFunctionCheckList.add("getBrowserTabCount");
+		ZTLTestStringFunctionList.add("getAlertMessage");
+		ZTLTestStringFunctionList.add("getText");
+		ZTLTestStringFunctionList.add("getZKLog");
+		ZTLTestStringFunctionList.add("getEval");
 	}
 
 	@Override
@@ -563,9 +550,11 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		if (_inAssignment || _inVerification || _inAction || _inConditionStatementExpression) {
 			String text = ctx.getText().trim();
 			String replacement = text;
-			String methodName = ctx.getChild(1).getText();
-			if (!unitJSStringFunctionList.contains(methodName)) {
-				replacement = text.replace(methodName, methodName + "_cafeStr");
+			if (ctx.ztlUnitEvalMethod() == null) {
+				String methodName = ctx.getChild(1).getText();
+				if (!unitJSStringFunctionList.contains(methodName)) {
+					replacement = text.replace(methodName, methodName + "_cafeStr");
+				}
 			}
 			TextReplacement t = new TextReplacement(text, replacement);
 			if (_inParseMethod) {

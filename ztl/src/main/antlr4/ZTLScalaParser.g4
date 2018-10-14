@@ -150,18 +150,21 @@ parseMethod
 toIntMethod
   : primary '.' 'toInt'
   | ztlUnitMethod '.' 'toInt'
+  | thisDot? ztlTestEvalMethod '.' 'toInt'
   | 'parseInt' '(' expression ')'
   ;
 
 toDoubleMethod
   : primary '.' 'toDouble'
   | ztlUnitMethod '.' 'toDouble'
+  | thisDot? ztlTestEvalMethod '.' 'toDouble'
   | 'parseDouble' '(' expression ')'
   ;
 
 toFloatMethod
   : primary '.' 'toFloat'
   | ztlUnitMethod '.' 'toFloat'
+  | thisDot? ztlTestEvalMethod '.' 'toFloat'
   | 'parseFloat' '(' expression ')'
   ;
 
@@ -198,22 +201,36 @@ ztlUnitMethod
   | primary returnOrSpace* '.nChildren' ('(' ')')?
   | primary returnOrSpace* '.isVisible' ('(' ')')?
   | primary returnOrSpace* '.exists' ('(' ')')?
+  | ztlUnitEvalMethod
+  ;
+
+ztlUnitEvalMethod
+  : primary returnOrSpace* '.eval' '(' expression ')'
   ;
 
 ztlTestMethod
-  : ('this' returnOrSpace* '.')? 'getAlertMessage' ('(' ')')?
-  | ('this' returnOrSpace* '.')? 'hasError' ('(' ')')?
-  | ('this' returnOrSpace* '.')? 'getText' '(' expression ')'
-  | ('this' returnOrSpace* '.')? 'isVisible' '(' expression ')'
-  | ('this' returnOrSpace* '.')? 'hasNativeScroll' '(' expression ')'
-  | ('this' returnOrSpace* '.')? 'hasHScrollbar' '(' expression ')'
-  | ('this' returnOrSpace* '.')? 'hasVScrollbar' '(' expression ')'
-  | ('this' returnOrSpace* '.')? 'getScrollTop' '(' expression ')'
-  | ('this' returnOrSpace* '.')? 'getScrollLeft' '(' expression ')'
-  | ('this' returnOrSpace* '.')? 'getZKLog' ('(' ')')?
-  | ('this' returnOrSpace* '.')? 'is' '(' expression ')'
-  | ('this' returnOrSpace* '.')? 'getWindowWidth' ('(' ')')?
-  | ('this' returnOrSpace* '.')? 'getWindowHeight' ('(' ')')?
+  : thisDot? 'getAlertMessage' ('(' ')')?
+  | thisDot? 'hasError' ('(' ')')?
+  | thisDot? 'getText' '(' expression ')'
+  | thisDot? 'isVisible' '(' expression ')'
+  | thisDot? 'hasNativeScroll' '(' expression ')'
+  | thisDot? 'hasHScrollbar' '(' expression ')'
+  | thisDot? 'hasVScrollbar' '(' expression ')'
+  | thisDot? 'getScrollTop' '(' expression ')'
+  | thisDot? 'getScrollLeft' '(' expression ')'
+  | thisDot? 'getZKLog' ('(' ')')?
+  | thisDot? 'is' '(' expression ')'
+  | thisDot? 'getWindowWidth' ('(' ')')?
+  | thisDot? 'getWindowHeight' ('(' ')')?
+  | thisDot? ztlTestEvalMethod
+  ;
+
+ztlTestEvalMethod
+  : 'getEval' '(' expression ')'
+  ;
+  
+thisDot
+  : 'this' returnOrSpace* '.'
   ;
 
 statement
@@ -326,8 +343,10 @@ anyType
   ;
 
 functionCallStatement
-  : WS* ('this' '.')? verifyMethod WS*
-  | WS* ('this' '.')? ztlActionMethod WS*
+  : WS* thisDot? verifyMethod WS*
+  | WS* thisDot? ztlActionMethod WS*
+  | WS* thisDot? ztlTestEvalMethod WS*
+  |	WS* ztlUnitEvalMethod WS*
   | WS* functionCall WS*
   ;
 

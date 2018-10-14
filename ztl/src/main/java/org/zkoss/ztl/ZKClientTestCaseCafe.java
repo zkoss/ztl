@@ -1,16 +1,34 @@
 package org.zkoss.ztl;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.interactions.Actions;
-import org.zkoss.ztl.testcafe.*;
-import org.zkoss.ztl.unit.*;
-import org.zkoss.ztl.util.Scripts;
+import static java.util.regex.Pattern.compile;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.interactions.Actions;
+
+import org.zkoss.ztl.testcafe.CafeTestStep;
+import org.zkoss.ztl.testcafe.JQuery$Cafe;
+import org.zkoss.ztl.testcafe.KeyHelper;
+import org.zkoss.ztl.testcafe.Widget$Cafe;
+import org.zkoss.ztl.testcafe.ZK$Cafe;
+import org.zkoss.ztl.unit.ClientWidget;
+import org.zkoss.ztl.unit.JQuery;
+import org.zkoss.ztl.unit.Widget;
+import org.zkoss.ztl.unit.ZK;
+import org.zkoss.ztl.util.Scripts;
 
 /**
  * A transpiler to write test cafe in ztl
@@ -537,11 +555,14 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.sendKeys(locator, keysToSend);
 			return;
 		}
-		click(locator);
+
 		StringBuilder codeStr = new StringBuilder();
 		codeStr.append("pressKey('");
 		int cnt = 0;
+		boolean allInKeys = true;
 		for (CharSequence s : keysToSend) {
+			if (!(s instanceof Keys))
+				allInKeys = false;
 			String key = KeyHelper.getKey(s);
 			if (cnt > 0)
 				codeStr.append(" ");
@@ -550,6 +571,10 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			codeStr.append(key);
 		}
 		codeStr.append("')");
+		if (!allInKeys) {
+			click(locator);
+			waitResponse();
+		}
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
 	}
 
@@ -696,12 +721,33 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	//toString
 	private String toClientExpr(String str, boolean toJSString) {
 		if (str.contains(CAFEEVAL)) {
-			str = str.replace(CAFEEVAL, "") + " + ''";
+			str = toClientGetEval(str);
 		} else if (!str.matches("^\\(*" + AWAIT_TOKEN + ".*") && !str.contains("_cafe")){
 			str = "'" + str.replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'") + "'";
 		} else if (toJSString){
 			str += " + ''";
 		}
+		return str;
+	}
+
+	private String toClientGetEval(String str) {
+		String ztlGetEvalToken = CAFEEVAL + "getEval(";
+		if (str.startsWith(ztlGetEvalToken)) {
+			String newStr = str.replace(ztlGetEvalToken, "await ClientFunction(() => eval(");
+			newStr += ", {dependencies: {";
+			Pattern pattern = compile("[a-zA-Z0-9_]+_cafe[a-zA-Z0-9_]*");
+			Matcher matcher = pattern.matcher(str);
+			int cnt = 0;
+			while (matcher.find()) {
+				if (cnt > 0)
+					newStr += ", ";
+				newStr += matcher.group(0);
+				cnt++;
+			}
+			newStr += "}})()";
+			str = newStr;
+		} else
+			str = str.replace(CAFEEVAL, "") + " + ''";
 		return str;
 	}
 
@@ -780,12 +826,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.verifyFalse(message, Boolean.valueOf(expr));
 			return;
 		}
-		//ZTLCafeEval=>
-		String str = String.valueOf(expr);
-		if (str.contains(CAFEEVAL)) {
-			str = str.replace(CAFEEVAL, "");
-		}
-		cafeExpect("notOk", str, null, message);
+		cafeExpect("notOk", expr, null, message);
 	}
 
 	@Override
@@ -849,12 +890,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.verifyTrue(message, Boolean.valueOf(expr));
 			return;
 		}
-		//ZTLCafeEval=>
-		String str = String.valueOf(expr);
-		if (str.contains(CAFEEVAL)) {
-			str = str.replace(CAFEEVAL, "");
-		}
-		cafeExpect("ok", str, null, message);
+		cafeExpect("ok", expr, null, message);
 	}
 
 	@Override
@@ -922,7 +958,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.blur(locator);
 			return;
 		}
-		cafeClick("click", "jq('body')");
+		testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, "await t.pressKey('tab')"));
 	}
 
 	protected void runZscript(String zscript) {
@@ -1431,7 +1467,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String getScrollTop_cafeStr(ClientWidget locator) {
-		return "await ztl.getScrollTop(t, " + Scripts.getCafeClientFunction(locator.toString()) + ")";
+		return "await ztl.getScrollTop({locator:" + toCafeSelector(locator.toString()) + "})";
 	}
 
 	public int getScrollLeft(Widget widget) {
@@ -1443,7 +1479,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String getScrollLeft_cafeStr(ClientWidget locator) {
-		return "await ztl.getScrollLeft(t, " + Scripts.getCafeClientFunction(locator.toString()) + ")";
+		return "await ztl.getScrollLeft({locator:" + toCafeSelector(locator.toString()) + "})";
 	}
 
 	public String getZKLog() {
@@ -1508,7 +1544,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		codeStr.append(" = ");
 		String exprStr = String.valueOf(expr);
 		if (exprStr.startsWith(CAFEEVAL)) {
-			codeStr.append(exprStr.replace(CAFEEVAL, ""));
+			codeStr.append(toClientGetEval(exprStr));
 		} else {
 			codeStr.append(Scripts.getCafeClientFunction(String.valueOf(expr)));
 		}
