@@ -74,7 +74,15 @@ GETEVAL:		'getEval';
 IS:				'is';
 GETWINDOWHEIGHT:'getWindowHeight';
 GETWINDOWWIDTH:	'getWindowWidth';
-GETBROWSERTABCOUNT:'getBrowserTabCount';
+VERSCROLL:		'verScroll';
+VERSCROLLABS:	'verScrollAbs';
+VERSCROLLNOBODY:'verScrollNoBody';
+VERSCROLLNOBODYABS:'verScrollNoBodyAbs';
+HORSCROLL:		'horScroll';
+HORSCROLLABS:	'horScrollAbs';
+HORSCROLLNOBODY:'horScrollNoBody';
+HORSCROLLNOBODYABS:'horScrollNoBodyAbs';
+
 //Handle param
 CLICKAT:		'clickAt';
 CONTEXTMENUAT:	'contextMenuAt';

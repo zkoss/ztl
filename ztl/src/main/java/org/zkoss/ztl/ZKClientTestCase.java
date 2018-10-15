@@ -287,7 +287,7 @@ public class ZKClientTestCase extends ZKTestCase {
 						.perform();
 		} else {
 			// fixed for Selenium 2.5.0 issue
-			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", to);
+			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousemove", from);
 			Scripts.triggerMouseEventAt(getWebDriver(), locatorOfObjectToBeDragged, "mousedown", from);
 			if (isChrome())
 				sleep(Integer.parseInt(ConfigHelper.getInstance().getDelay()));

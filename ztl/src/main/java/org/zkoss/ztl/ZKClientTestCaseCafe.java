@@ -436,7 +436,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(movementsString)));
 		String coordVar = coordArrayIdentifier + coordArrayVarCnt;
 		if (from != null) {
-			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from)));
+			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from, true)));
 			String coordVarFrom = coordArrayIdentifier + coordArrayVarCnt;
 			codeStr.append(coordVar).append("[0] - ").append(coordVarFrom).append("[0], ")
 					.append(coordVar).append("[1] - ").append(coordVarFrom).append("[1]")
@@ -457,9 +457,9 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		StringBuilder codeStr = new StringBuilder();
 		codeStr.append("dragToElement(").append(toCafeSelector(fromSelectorStr)).append(",").append(toCafeSelector(toSelectorStr));
 		if (from != null && to != null) {
-			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from)));
+			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from, true)));
 			String coordVarFrom = coordArrayIdentifier + coordArrayVarCnt;
-			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from)));
+			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(to)));
 			String coordVarTo = coordArrayIdentifier + coordArrayVarCnt;
 			codeStr.append(", {offsetX: ").append(coordVarFrom).append("[0], offsetY: ").append(coordVarFrom).append("[1]");
 			codeStr.append(", destinationOffsetX: ").append(coordVarTo).append("[0], destinationOffsetY: ").append(coordVarTo).append("[1]}");
@@ -608,6 +608,8 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		jq(locator).toElement().set("value", "");
 		waitResponse();
 		cafeType(locator.toString(), value);
+		waitResponse();
+		sendKeys(locator, Keys.TAB);
 	}
 
 	//append
@@ -724,7 +726,8 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			str = toClientGetEval(str);
 		} else if (!str.matches("^\\(*" + AWAIT_TOKEN + ".*") && !str.contains("_cafe")){
 			str = "'" + str.replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'") + "'";
-		} else if (toJSString){
+		}
+		if (toJSString){
 			str += " + ''";
 		}
 		return str;
@@ -747,7 +750,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			newStr += "}})()";
 			str = newStr;
 		} else
-			str = str.replace(CAFEEVAL, "") + " + ''";
+			str = str.replace(CAFEEVAL, "");
 		return str;
 	}
 
@@ -1152,9 +1155,17 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.verScroll(locator, percent);
 		} else {
+			verScroll(locator, percent + "");
+		}
+	}
+
+	public void verScroll(ClientWidget locator, String percent) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Only used in test cafe");
+		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
-					.append(", scrollType: 'vertical', percent: ").append(percent).append("});");
+					.append(", scrollType: 'vertical', percent: ").append(toClientExpr(percent, false)).append("});");
 			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
 			waitResponse();
 		}
@@ -1165,9 +1176,17 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.verScrollAbs(locator, dist);
 		} else {
+			verScrollAbs(locator, dist + "");
+		}
+	}
+
+	public void verScrollAbs(ClientWidget locator, String dist) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Only used in test cafe");
+		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
-					.append(", scrollType: 'vertical', dist: ").append(dist).append("});");
+					.append(", scrollType: 'vertical', dist: ").append(toClientExpr(dist, false)).append("});");
 			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
 			waitResponse();
 		}
@@ -1178,22 +1197,39 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.horScroll(locator, percent);
 		} else {
+			horScroll(locator, percent + "");
+		}
+	}
+
+	public void horScroll(ClientWidget locator, String percent) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Only used in test cafe");
+		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
-					.append(", scrollType: 'horizontal', percent: ").append(percent).append("});");
+					.append(", scrollType: 'horizontal', percent: ").append(toClientExpr(percent, false)).append("});");
 			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
 			waitResponse();
 		}
 	}
+
 
 	@Override
 	public void horScrollAbs(ClientWidget locator, int dist) {
 		if (!_isTestCafe) {
 			super.horScrollAbs(locator, dist);
 		} else {
+			horScrollAbs(locator, dist);
+		}
+	}
+
+	public void horScrollAbs(ClientWidget locator, String dist) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Only used in test cafe");
+		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
-					.append(", scrollType: 'horizontal', dist: ").append(dist).append("});");
+					.append(", scrollType: 'horizontal', dist: ").append(toClientExpr(dist, false)).append("});");
 			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
 			waitResponse();
 		}
@@ -1204,22 +1240,81 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.horScrollNoBody(locator, percent);
 		} else {
+			horScrollNoBody(locator, percent + "");
+		}
+	}
+
+	public void horScrollNoBody(ClientWidget locator, String percent) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Only used in test cafe");
+		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
-					.append(", scrollType: 'horizontal', noBody: true, percent: ").append(percent).append("});");
+					.append(", scrollType: 'horizontal', noBody: true, percent: ").append(toClientExpr(percent, false)).append("});");
 			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
 			waitResponse();
 		}
 	}
 
 	@Override
+	public void horScrollNoBodyAbs(ClientWidget locator, int dist) {
+		if (!_isTestCafe) {
+			super.horScrollNoBodyAbs(locator, dist);
+		} else {
+			horScrollNoBodyAbs(locator, dist + "");
+		}
+	}
+
+	public void horScrollNoBodyAbs(ClientWidget locator, String dist) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Only used in test cafe");
+		} else {
+			StringBuilder script = new StringBuilder();
+			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
+					.append(", scrollType: 'horizontal', noBody: true, dist: ").append(toClientExpr(dist, false)).append("});");
+			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
+			waitResponse();
+		}
+	}
+
+
+	@Override
 	public void verScrollNoBody(ClientWidget locator, double percent) {
 		if (!_isTestCafe) {
 			super.verScrollNoBody(locator, percent);
 		} else {
+			verScrollNoBody(locator, percent + "");
+		}
+	}
+
+	public void verScrollNoBody(ClientWidget locator, String percent) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Only used in test cafe");
+		} else {
 			StringBuilder script = new StringBuilder();
 			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
-					.append(", scrollType: 'vertical', noBody: true, percent: ").append(percent).append("});");
+					.append(", scrollType: 'vertical', noBody: true, percent: ").append(toClientExpr(percent, false)).append("});");
+			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
+			waitResponse();
+		}
+	}
+
+	@Override
+	public void verScrollNoBodyAbs(ClientWidget locator, int dist) {
+		if (!_isTestCafe) {
+			super.verScrollNoBodyAbs(locator, dist);
+		} else {
+			verScrollNoBodyAbs(locator, dist + "");
+		}
+	}
+
+	public void verScrollNoBodyAbs(ClientWidget locator, String dist) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Only used in test cafe");
+		} else {
+			StringBuilder script = new StringBuilder();
+			script.append("await ztl.doScroll({locator:").append(toCafeSelector(locator.toString()))
+					.append(", scrollType: 'vertical', noBody: true, dist: ").append(toClientExpr(dist, false)).append("});");
 			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, script.toString()));
 			waitResponse();
 		}
@@ -1905,10 +2000,21 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	private final static String coordArrayIdentifier = "cafeCoord_";
 	private int coordArrayVarCnt = 0;
 	private String genCoordStringExpr(String coordString) {
+		return genCoordStringExpr(coordString, false);
+	}
+	private String genCoordStringExpr(String coordString, boolean isDragFrom) {
 		coordArrayVarCnt++;
+		boolean isNum = false;
+		if (coordString.matches("^[-0-9].*[-0-9]$")) {
+			coordString = "\"" + coordString + "\"";
+			isNum = true;
+		}
 		StringBuilder codeStr = new StringBuilder();
 		codeStr.append("let ").append(coordArrayIdentifier).append(coordArrayVarCnt)
-				.append(" = await ztl.convertCoordStrToArr(").append(coordString).append(");\n");
+				.append(" = await ztl.convertCoordStrToArr(").append(coordString);
+		if (isDragFrom && !isNum) // for modify
+			codeStr.append(", true");
+		codeStr.append(");\n");
 		return codeStr.toString();
 	}
 }

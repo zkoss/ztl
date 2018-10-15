@@ -15,32 +15,29 @@ export async function waitResponse(t) {
     }
 }
 
-export async function convertCoordStrToArr(coordStr, coordY) {
-	var coordArr = [0, 0];
-	if (typeof coordY != 'undefined') {
-		coordArr = [parseInt(coordStr), parseInt(coordY)];
-	} else {
-		coordArr = coordStr.split(',');
-	 	coordArr[0] = parseInt(coordArr[0].trim());
-		coordArr[1] = parseInt(coordArr[1].trim());
-		if (!coordArr || coordArr.length != 2) {
-			console.log('parse coord string failed');
-			return null;
-		}
+export async function convertCoordStrToArr(coordStr, isDragFrom) {
+	var coordArr = coordStr.split(',');
+	coordArr[0] = parseInt(coordArr[0].trim());
+	coordArr[1] = parseInt(coordArr[1].trim());
+	if (!coordArr || coordArr.length != 2) {
+		console.log('parse coord string failed');
+		return null;
 	}
 	//modify
-	if (coordArr[0] > 0)
-		coordArr[0] = coordArr[0] - 1;
-	if (coordArr[1] > 0)
-    	coordArr[1] = coordArr[1] - 1;
+	if (isDragFrom) {
+		if (coordArr[0] > 0)
+			coordArr[0] = coordArr[0] - 1;
+		if (coordArr[1] > 0)
+			coordArr[1] = coordArr[1] - 1;
+	}
 	return coordArr;
 }
 
 export async function verifyTolerant(t, num1, num2, tolerant) {
 	if (Math.abs(parseInt(num1) - parseInt(num2)) > parseInt(tolerant)) {
-		await t.expect(false).ok(num1 + ' and ' + num2 + ' is out of the tolerant' + tolerant);
+		await t.expect(false).ok(num1 + ' and ' + num2 + ' is out of the tolerant ' + tolerant);
 	} else {
-		await t.expect(true).ok(num1 + ' and ' + num2 + ' is in the tolerant' + tolerant);
+		await t.expect(true).ok(num1 + ' and ' + num2 + ' is in the tolerant ' + tolerant);
 	}
 
 }
