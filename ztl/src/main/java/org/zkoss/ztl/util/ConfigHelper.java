@@ -26,12 +26,28 @@ import org.zkoss.ztl.ConnectionManager;
 import org.zkoss.ztl.webdriver.ZKRemoteWebDriver;
 import org.zkoss.ztl.webdriver.ZKWebDriverCommandProcessor;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.AbstractSequentialList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Properties;
 
 /**
  * ZTL configuration helper.
@@ -797,8 +813,18 @@ public class ConfigHelper {
 				}
 				//copy module js
 				String modulePath = module.getPath();
-				Files.copy(this.getClass().getResourceAsStream("/ztl.js"), Paths.get( modulePath + File.separator + "ztl.js"), StandardCopyOption.REPLACE_EXISTING);
-				Files.copy(this.getClass().getResourceAsStream("/ztl-reporter.js"), Paths.get(modulePath + File.separator + "ztl-reporter.js"), StandardCopyOption.REPLACE_EXISTING);
+				File ztlJS = new File(modulePath + File.separator + "ztl.js");
+				if (ztlJS.exists()) {
+					System.out.println("ztl.js exists : " + ztlJS.getPath());
+					Files.delete(ztlJS.toPath());
+				}
+				File ztlReporter = new File(modulePath + File.separator + "ztl-reporter.js");
+				if (ztlReporter.exists()) {
+					System.out.println("ztl-reporter.js exists : " + ztlReporter.getPath());
+					Files.delete(ztlReporter.toPath());
+				}
+				Files.copy(this.getClass().getResourceAsStream("/ztl.js"), Paths.get( modulePath + File.separator + "ztl.js"));
+				Files.copy(this.getClass().getResourceAsStream("/ztl-reporter.js"), Paths.get(modulePath + File.separator + "ztl-reporter.js"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

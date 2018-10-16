@@ -54,13 +54,14 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		String newStatement = statement;
 		//classStatement
 		String className = ctx.Identifier().get(0).getText();
-		if (className.matches(".*Test$"))
+		if (className.matches(".*Test$")) {
 			newStatement = statement.replace(className, className + "Cafe");
-		String extendsClass = ctx.Identifier().get(1).getText();
-		if (!"ZTL4ScalaTestCase".endsWith(extendsClass) && extendsClass.matches(".*Test$")) {
-			newStatement = newStatement.replace(extendsClass, extendsClass + "Cafe");
+			String extendsClass = ctx.Identifier().get(1).getText();
+			if (!"ZTL4ScalaTestCase".endsWith(extendsClass) && extendsClass.matches(".*Test$")) {
+				newStatement = newStatement.replace(extendsClass, extendsClass + "Cafe");
+			}
+			_codeReplacements.add(0, new String[]{statement, newStatement});
 		}
-		_codeReplacements.add(0, new String[]{statement, newStatement});
 	}
 
 	private boolean _inAssignment = false;
