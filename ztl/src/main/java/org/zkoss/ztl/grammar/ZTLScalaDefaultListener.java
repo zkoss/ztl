@@ -1,5 +1,6 @@
 package org.zkoss.ztl.grammar;
 
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.zkoss.ztl.ZKClientTestCaseCafe;
 
 import java.util.*;
@@ -53,12 +54,15 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		statement = statement.substring(0, statement.indexOf("{")).trim();
 		String newStatement = statement;
 		//classStatement
-		String className = ctx.Identifier().get(0).getText();
+		List<TerminalNode> identifiers = ctx.Identifier();
+		String className = identifiers.get(0).getText();
 		if (className.matches(".*Test$")) {
 			newStatement = statement.replace(className, className + "Cafe");
-			String extendsClass = ctx.Identifier().get(1).getText();
-			if (!"ZTL4ScalaTestCase".endsWith(extendsClass) && extendsClass.matches(".*Test$")) {
-				newStatement = newStatement.replace(extendsClass, extendsClass + "Cafe");
+			if (identifiers.size() > 1) {
+				String extendsClass = identifiers.get(1).getText();
+				if (!"ZTL4ScalaTestCase".endsWith(extendsClass) && extendsClass.matches(".*Test$")) {
+					newStatement = newStatement.replace(extendsClass, extendsClass + "Cafe");
+				}
 			}
 			_codeReplacements.add(0, new String[]{statement, newStatement});
 		}
