@@ -796,7 +796,9 @@ public class ConfigHelper {
 					module.mkdirs();
 				}
 				//copy module js
-				Files.copy(this.getClass().getResourceAsStream("/ztl.js"), Paths.get(module.getPath() + File.separator + "ztl.js"), StandardCopyOption.REPLACE_EXISTING);
+				String modulePath = module.getPath();
+				Files.copy(this.getClass().getResourceAsStream("/ztl.js"), Paths.get( modulePath + File.separator + "ztl.js"), StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(this.getClass().getResourceAsStream("/ztl-reporter.js"), Paths.get(modulePath + File.separator + "ztl-reporter.js"), StandardCopyOption.REPLACE_EXISTING);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
