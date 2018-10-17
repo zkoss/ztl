@@ -607,9 +607,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		}
 		jq(locator).toElement().set("value", "");
 		waitResponse();
-		cafeType(locator.toString(), value);
-		waitResponse();
-		sendKeys(locator, Keys.TAB);
+		cafeType(locator, value);
 	}
 
 	//append
@@ -619,7 +617,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.typeKeys(locator, value);
 			return;
 		}
-		cafeType(locator.toString(), value);
+		cafeType(locator, value);
 	}
 
 	@Override
@@ -635,10 +633,19 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, "pressKey('" + key + "')"));
 	}
 
-	private void cafeType(String selectorStr, String text) {
-		StringBuilder codeStr = new StringBuilder();
-		codeStr.append("typeText(").append(toCafeSelector(selectorStr)).append(",").append(toClientExpr(text)).append(")");
-		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
+	private void cafeType(ClientWidget locator, String text) {
+		if (text == null || text.length() == 0) {
+			click(locator);
+			waitResponse();
+			jq(locator).toElement().set("value", "");
+		} else {
+			StringBuilder codeStr = new StringBuilder();
+			codeStr.append("typeText(").append(toCafeSelector(locator.toString())).append(",").append(toClientExpr(text)).append(")");
+			testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
+		}
+		waitResponse();
+		sendKeys(locator, Keys.TAB);
+		waitResponse();
 	}
 
 	/**
