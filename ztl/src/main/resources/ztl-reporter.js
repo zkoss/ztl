@@ -29,7 +29,7 @@ rl.on('line', (line) => {
 		} else {
 			if (line.indexOf('Running tests in:') > -1)
 				isHeadLine = true;
-			else if (line.indexOf("zAu.send(new zk.Event(null, 'onZTLService'") > -1) {
+			else if (line.indexOf("await ClientFunction(() => {zAu.send(new zk.Event") > -1) {
 				isOnZTLService = true;
 			} else if (line.indexOf('ZTL TEST -') > -1) {
 				if (testStartCnt > 0) {
@@ -43,11 +43,11 @@ rl.on('line', (line) => {
 				testStartCnt++;
 				testName = line.replace('ZTL TEST -', '').trim();
 				dataContent = dataContent + '<testcase classname="' + line + '" name="' + testName + '" time="0.99">\n';
-			} else if (line.indexOf('✓') > -1) { // passed start
+			} else if (line.indexOf('✓') > -1 || line.indexOf('√') > -1) { // passed start
 				dataContent = dataContent + '</testcase>\n';
 				testStartCnt = 0;
 				passedCnt++;
-			} else if (line.indexOf('✖') > -1){ // failed start
+			} else if (line.indexOf('✖') > -1 || line.indexOf('×') > -1) { // failed start
 				testFailed = true;
 				failedCnt++;
 				dataContent = dataContent + '<failure> <![CDATA[\n';
