@@ -774,7 +774,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 * @return
 	 */
 	public boolean hasHScrollbar(ClientWidget locator) {
-		if(hasNativeScroll(jq(locator).toWidget())) {
+		if (hasNativeScroll(jq(locator).toWidget())) {
 			return Integer.parseInt(zk(locator).eval("hasHScroll()")) > 0;
 		} else
 			return jq(locator).find(".z-scrollbar-horizontal").exists();

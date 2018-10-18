@@ -1,6 +1,19 @@
 package org.zkoss.ztl;
 
-import static java.util.regex.Pattern.compile;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.zkoss.ztl.testcafe.CafeTestStep;
+import org.zkoss.ztl.testcafe.JQuery$Cafe;
+import org.zkoss.ztl.testcafe.KeyHelper;
+import org.zkoss.ztl.testcafe.Widget$Cafe;
+import org.zkoss.ztl.testcafe.ZK$Cafe;
+import org.zkoss.ztl.unit.ClientWidget;
+import org.zkoss.ztl.unit.JQuery;
+import org.zkoss.ztl.unit.Widget;
+import org.zkoss.ztl.unit.ZK;
+import org.zkoss.ztl.util.Scripts;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -14,21 +27,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.interactions.Actions;
-
-import org.zkoss.ztl.testcafe.CafeTestStep;
-import org.zkoss.ztl.testcafe.JQuery$Cafe;
-import org.zkoss.ztl.testcafe.KeyHelper;
-import org.zkoss.ztl.testcafe.Widget$Cafe;
-import org.zkoss.ztl.testcafe.ZK$Cafe;
-import org.zkoss.ztl.unit.ClientWidget;
-import org.zkoss.ztl.unit.JQuery;
-import org.zkoss.ztl.unit.Widget;
-import org.zkoss.ztl.unit.ZK;
-import org.zkoss.ztl.util.Scripts;
+import static java.util.regex.Pattern.compile;
 
 /**
  * A transpiler to write test cafe in ztl
@@ -124,7 +123,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			}
 			for (String identifier : identifiers) {
 				if (line.contains(identifier) && identifierToMap.containsKey(identifier)) {
-					line = line.replaceAll(identifier + "([^_]?)", identifierToMap.get(identifier) + "$1");
+					line = line.replaceAll(identifier + "([^_])", identifierToMap.get(identifier) + "$1");
 				}
 			}
 			newContent.append(line).append("\n");
@@ -1133,7 +1132,6 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		} else {
 			click(jq(selectLocator));
 			click(jq(selectLocator).find("option:contains(" + optionLocator + ")"));
-			waitResponse();
 		}
 	}
 
@@ -1142,6 +1140,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.select(selectLocator, index);
 		} else {
+			click(jq(selectLocator));
 			click(jq(selectLocator).find("option").get(index));
 		}
 	}
@@ -1226,7 +1225,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.horScrollAbs(locator, dist);
 		} else {
-			horScrollAbs(locator, dist);
+			horScrollAbs(locator, dist + "");
 		}
 	}
 
@@ -1544,7 +1543,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String hasHScrollbar_cafeStr(ClientWidget locator) {
-		return "await ztl.hasHScrollbar(t, " + Scripts.getCafeClientFunction(locator.toString()) + ")";
+		return "await ztl.hasHScrollbar({locator:" + toCafeSelector(locator.toString()) + "})";
 	}
 
 	@Override
@@ -1557,7 +1556,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	public String hasVScrollbar_cafeStr(ClientWidget locator) {
-		return "await ztl.hasVScrollbar(t, " + Scripts.getCafeClientFunction(locator.toString()) + ")";
+		return "await ztl.hasVScrollbar({locator:" + toCafeSelector(locator.toString()) + "})";
 	}
 
 	public int getScrollTop(Widget widget) {

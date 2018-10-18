@@ -130,3 +130,32 @@ export async function getScrollLeft(config) {
 		}
 	}, {dependencies: {config}})();
 }
+
+export async function hasHScrollbar(config) {
+	config.locator = await config.locator();
+	return await ClientFunction(() => {
+		var locator = jq(config.locator),
+			wgt = zk.Widget.$(locator),
+			nonNativeScrollBar = wgt._scrollbar;
+		if (nonNativeScrollBar) {
+			return !!jq(wgt).find('.z-scrollbar-horizontal')[0];
+		} else {
+			var borderWidth = locator.css('borderLeftWidth', true) - locator.css('borderLeftWidth', true),
+				scrollbarWidth = locator[0].offsetWidth - borderWidth - locator[0].clientWidth;
+			return scrollbarWidth > 0;
+		}
+	}, {dependencies: {config}})();
+}
+
+export async function hasVScrollbar(config) {
+	config.locator = await config.locator();
+	return await ClientFunction(() => {
+		var wgt = zk.Widget.$(jq(config.locator)),
+			nonNativeScrollBar = wgt._scrollbar;
+		if (nonNativeScrollBar) {
+			return !!jq(wgt).find('.z-scrollbar-vertical')[0];
+		} else {
+			return zk(jq(config.locator)).hasVScroll() > 0;
+		}
+	}, {dependencies: {config}})();
+}

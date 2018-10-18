@@ -252,20 +252,14 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 		int exprTotalCnt = expressions.size();
 		boolean paramChanged = false;
 		for (ZTLScalaParser.ExpressionContext expr : expressions) {
+			if ("dragdropToObject".equals(actionMethod) && exprTotalCnt == 2)
+				break;
 			if (exprCnt > 0)
 				exprReplacement.append(", ");
-			if (exprCnt == 0) {
+			if (exprCnt == 0 || (exprCnt == 1 && "dragdropToObject".equals(actionMethod))) {
 				exprReplacement.append(expr.getText());
 				exprCnt++;
 				continue; //skip locator
-			} else if (exprCnt == 1) {
-				if ("dragdropToObject".equals(actionMethod)) {
-					if (exprTotalCnt == 2)
-						break;
-					else {
-						continue;
-					}
-				}
 			}
 			exprCnt++;
 			String exprText = expr.getText();
