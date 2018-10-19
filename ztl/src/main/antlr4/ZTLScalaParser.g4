@@ -379,6 +379,8 @@ ztlActionMethod
 	| 'horScrollAbs' '(' formalParameters ')'
 	| 'horScrollNoBody' '(' formalParameters ')'
 	| 'horScrollNoBodyAbs' '(' formalParameters ')'
+	| 'setWindowSize' '(' formalParameters ')'
+	| 'evalScript' '(' formalParameters ')'
 	;
 
 returnStatement

@@ -256,7 +256,8 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 				break;
 			if (exprCnt > 0)
 				exprReplacement.append(", ");
-			if (exprCnt == 0 || (exprCnt == 1 && "dragdropToObject".equals(actionMethod))) {
+			if (!"evalScript".equals(actionMethod) && !"setWindowSize".equals(actionMethod) &&
+					(exprCnt == 0 || (exprCnt == 1 && "dragdropToObject".equals(actionMethod)))) {
 				exprReplacement.append(expr.getText());
 				exprCnt++;
 				continue; //skip locator
@@ -264,7 +265,8 @@ public class ZTLScalaDefaultListener extends ZTLScalaParserBaseListener {
 			exprCnt++;
 			String exprText = expr.getText();
 			String newExprText = exprText;
-			if ((exprText.trim().startsWith("\"") &&  exprText.trim().endsWith("\"")) || exprText.trim().matches("[0-9.]*")) {
+			String trimExprText = exprText.trim();
+			if (trimExprText.matches("^\"((\\\\\")|[^\"])*\"$") || trimExprText.matches("[0-9.]*")) {
 				exprReplacement.append(exprText);
 				continue; //skip String & number
 			}

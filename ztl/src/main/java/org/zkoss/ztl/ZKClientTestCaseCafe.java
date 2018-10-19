@@ -742,22 +742,25 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	private String toClientGetEval(String str) {
 		String ztlGetEvalToken = CAFEEVAL + "getEval(";
 		if (str.startsWith(ztlGetEvalToken)) {
-			String newStr = str.replace(ztlGetEvalToken, "await ClientFunction(() => eval(");
-			newStr += ", {dependencies: {";
-			Pattern pattern = compile("[a-zA-Z0-9_]+_cafe[a-zA-Z0-9_]*");
-			Matcher matcher = pattern.matcher(str);
-			int cnt = 0;
-			while (matcher.find()) {
-				if (cnt > 0)
-					newStr += ", ";
-				newStr += matcher.group(0);
-				cnt++;
-			}
-			newStr += "}})()";
-			str = newStr;
+			str = str.replace(ztlGetEvalToken, "await ClientFunction(() => eval(") + toClientFunctionDependencies(str);
 		} else
 			str = str.replace(CAFEEVAL, "");
 		return str;
+	}
+
+	private String toClientFunctionDependencies(String originStr) {
+		String newStr = ", {dependencies: {";
+		Pattern pattern = compile("[a-zA-Z0-9_]+_cafe[a-zA-Z0-9_]*");
+		Matcher matcher = pattern.matcher(originStr);
+		int cnt = 0;
+		while (matcher.find()) {
+			if (cnt > 0)
+				newStr += ", ";
+			newStr += matcher.group(0);
+			cnt++;
+		}
+		newStr += "}})()";
+		return newStr;
 	}
 
 	@Override
@@ -941,16 +944,13 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.getEval(script);
 		} else {
-			Scripts.doCafeEval(script, testCodeList);
+			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, "await ClientFunction(() => {eval(" + script + ")}" + toClientFunctionDependencies(script)));
 		}
 	}
 
 	@Override
 	public void runScript(String script) {
-		if (!_isTestCafe)
-			super.runScript(script);
-		else
-			getEval(script);
+		throw new UnsupportedOperationException("Please use evalScript(script) instead");
 	}
 
 	@Override
@@ -1151,7 +1151,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.frozenScroll(locator, num);
 		} else {
 			Widget wgt = jq(locator).toWidget();
-			wgt.eval("frozen._doScrollNow(" + num + ")");
+			evalScript(wgt + ".frozen._doScrollNow(" + num + ")");
 			waitResponse();
 		}
 	}
@@ -1369,7 +1369,14 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.setWindowSize(width, height);
 		} else {
-			//TODO
+			setWindowSize(width + "", height + "");
+		}
+	}
+	public void setWindowSize(Object width, Object height) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Only used in test cafe");
+		} else {
+			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, "await t.resizeWindow(" + width + ", " + height + ")"));
 		}
 	}
 
@@ -1504,7 +1511,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			return super.getText(locator);
 		}
-		return Scripts.getCafeClientFunction("jq(" + locator.toString() + ").text()");
+		return Scripts.getCafeClientFunction("jq(" + locator.toString() + ").text().replace(/\\s/g,' ')");
 	}
 
 	@Override
@@ -1587,7 +1594,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			return super.getZKLog();
 		} else {
-			return cafeTrim(jq("#zk_log").val());
+			return "await ClientFunction(() => jq(\"#zk_log\").length > 0 ? " + cafeTrim("jq(\"#zk_log\").val()") + " : '')()";
 		}
 	}
 

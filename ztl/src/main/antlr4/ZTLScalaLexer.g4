@@ -70,7 +70,7 @@ HASVSCROLLBAR:	'hasVScrollbar';
 GETSCROLLTOP:	'getScrollTop';
 GETSCROLLLEFT:	'getScrollLeft';
 GETZKLOG:		'getZKLog';
-GETEVAL:		'getEval';
+
 IS:				'is';
 GETWINDOWHEIGHT:'getWindowHeight';
 GETWINDOWWIDTH:	'getWindowWidth';
@@ -93,7 +93,11 @@ DRAGDROPTOOBJECT:'dragdropToObject';
 DRAGANDDROPTOOBJECT:'dragAndDropToObject';
 DRAGDROP:		'dragdrop';
 MOUSEDOWNAT:	'mouseDownAt';
+SETWINDOWSIZE:	'setWindowSize';
+EVALSCRIPT:		'evalScript';
 
+//eval
+GETEVAL:		'getEval';
 
 // Literals
 DECIMAL_LITERAL:('0' | [1-9] (Digits? | '_'+ Digits)) [lL]?;
