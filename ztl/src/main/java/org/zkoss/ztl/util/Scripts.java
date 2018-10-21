@@ -138,7 +138,7 @@ public class Scripts {
 	}
 
 	public static String getCafeClientFunction(String script) {
-		if (!script.trim().startsWith("await ")) {
+		if (!script.trim().contains("await ")) {
 			script = "await ClientFunction(() => " + script + ")()";
 		}
 		return script;

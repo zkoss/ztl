@@ -736,7 +736,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			str = "'" + str.replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'") + "'";
 		}
 		if (toJSString){
-			str = "(" + str + " + '').replace('&nbsp;', ' ')" ; // replace html space
+			str = "((" + str + ") + '').replace('&nbsp;', ' ')" ; // replace html space
 		}
 		return str;
 	}
@@ -761,7 +761,10 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			newStr += matcher.group(0);
 			cnt++;
 		}
-		newStr += "}})()";
+		if (cnt > 0)
+			newStr += "}})()";
+		else
+			newStr = ")()";
 		return newStr;
 	}
 
@@ -1418,7 +1421,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe)
 			throw new UnsupportedOperationException("Only used in test cafe");
 		else
-			return number;
+			return "parseInt(" + number + ")";
 	}
 
 	@Override
@@ -1438,7 +1441,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe)
 			throw new UnsupportedOperationException("Only used in test cafe");
 		else
-			return number;
+			return "parseFloat(" + number + ")";
 	}
 
 	protected double parseFloat(int number) {
@@ -1474,7 +1477,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe)
 			throw new UnsupportedOperationException("Only used in test cafe");
 		else
-			return number;
+			return "parseFloat(" + number + ")";
 	}
 
 	@Override
