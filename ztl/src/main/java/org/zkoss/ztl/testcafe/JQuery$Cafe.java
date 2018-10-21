@@ -117,7 +117,8 @@ public class JQuery$Cafe extends JQuery {
 
 	@Override
 	public String text() {
-		return Scripts.getCafeClientFunction(_out.toString() + ".text()");
+		return Scripts.getCafeClientFunction(_out.toString() + ".text().replace(/\\s/g,' ')");
+
 	}
 
 	@Override

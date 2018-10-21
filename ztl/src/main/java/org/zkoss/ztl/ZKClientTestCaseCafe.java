@@ -606,7 +606,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		}
 		jq(locator).toElement().set("value", "");
 		waitResponse();
-		cafeType(locator, value);
+		cafeType(locator, value, true);
 	}
 
 	//append
@@ -616,7 +616,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.typeKeys(locator, value);
 			return;
 		}
-		cafeType(locator, value);
+		cafeType(locator, value , false);
 	}
 
 	@Override
@@ -632,7 +632,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, "pressKey('" + key + "')"));
 	}
 
-	private void cafeType(ClientWidget locator, String text) {
+	private void cafeType(ClientWidget locator, String text, boolean doTab) {
 		if (text == null || text.length() == 0) {
 			click(locator);
 			waitResponse();
@@ -643,8 +643,10 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
 		}
 		waitResponse();
-		sendKeys(locator, Keys.TAB);
-		waitResponse();
+		if (doTab) {
+			sendKeys(locator, Keys.TAB);
+			waitResponse();
+		}
 	}
 
 	/**
@@ -734,7 +736,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			str = "'" + str.replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'") + "'";
 		}
 		if (toJSString){
-			str += " + ''";
+			str = "(" + str + " + '').replace('&nbsp;', ' ')" ; // replace html space
 		}
 		return str;
 	}
@@ -1380,11 +1382,14 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		}
 	}
 
-	public void navigatePage(boolean forword) {
+	public void navigatePage(boolean forward) {
 		if (!_isTestCafe) {
-			super.navigatePage(forword);
+			super.navigatePage(forward);
 		} else {
-			//TODO
+			String action = "forward";
+			if (!forward)
+				action = "back";
+			evalScript("window.history." + action + "()");
 		}
 	}
 
