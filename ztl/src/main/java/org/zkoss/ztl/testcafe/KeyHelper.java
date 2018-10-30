@@ -16,28 +16,7 @@ import org.openqa.selenium.Keys;
  * @author jameschu
  */
 public class KeyHelper {
-	public static String getKey(Object o) {
-		String keyString = o.toString();
-		if (o instanceof Keys) {
-			keyString = checkKeys(keyString);
-		} else {
-			StringBuilder k = new StringBuilder();
-			for (int i = 0; i < keyString.length(); i++) {
-				if (i != 0) k.append(" ");
-				String keyChar = keyString.substring(i, i + 1);
-				if (" ".equals(keyChar)) {
-					keyChar = "space";
-				} else {
-					keyChar = checkKeys(keyChar);
-				}
-				k.append(keyChar);
-			}
-			keyString = k.toString();
-		}
-		return keyString;
-	}
-
-	private static String checkKeys(String o) {
+	public static String getKeys(String o) {
 		String keyString = o;
 		if (Keys.ENTER.toString().equals(o)) keyString = "enter";
 		else if (Keys.BACK_SPACE.toString().equals(o)) keyString = "backspace";

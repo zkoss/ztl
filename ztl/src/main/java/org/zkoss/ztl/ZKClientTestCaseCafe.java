@@ -559,15 +559,45 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		codeStr.append("pressKey('");
 		int cnt = 0;
 		boolean allInKeys = true;
+		boolean isModifiedKey = false;
 		for (CharSequence s : keysToSend) {
 			if (!(s instanceof Keys))
 				allInKeys = false;
-			String key = KeyHelper.getKey(s);
-			if (cnt > 0)
-				codeStr.append(" ");
-			else
+			String keyString = s.toString();
+			if (s instanceof Keys) {
+				keyString = KeyHelper.getKeys(keyString);
+				isModifiedKey = ("alt".equals(keyString) || "ctrl".equals(keyString) || "shift".equals(keyString));
+			} else {
+				StringBuilder k = new StringBuilder();
+				int keyStrLength = keyString.length();
+				for (int i = 0; i < keyStrLength; i++) {
+					if (i > 0) {
+						if (isModifiedKey) {
+							k.append("+");
+							isModifiedKey = false;
+						} else
+						k.append(" ");
+					}
+					String keyChar = keyString.substring(i, i + 1);
+					if (" ".equals(keyChar)) {
+						keyChar = "space";
+					} else {
+						keyChar = KeyHelper.getKeys(keyChar);
+						isModifiedKey = ("alt".equals(keyChar) || "ctrl".equals(keyChar) || "shift".equals(keyChar));
+					}
+					k.append(keyChar);
+				}
+				keyString = k.toString();
+			}
+			if (cnt > 0) {
+				if (isModifiedKey) {
+					codeStr.append("+");
+					isModifiedKey = false;
+				} else
+					codeStr.append(" ");
+			} else
 				cnt++;
-			codeStr.append(key);
+			codeStr.append(keyString);
 		}
 		codeStr.append("')");
 		if (!allInKeys) {
