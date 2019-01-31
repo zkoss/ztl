@@ -977,7 +977,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 
 	public void evalScript(String script) {
 		if (!_isTestCafe) {
-			super.getEval(script);
+			super.executeScript(script);
 		} else {
 			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, "await ClientFunction(() => {eval(" + script + ")}" + toClientFunctionDependencies(script)));
 		}
