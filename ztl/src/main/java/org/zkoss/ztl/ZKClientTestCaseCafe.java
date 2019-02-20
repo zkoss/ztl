@@ -517,7 +517,6 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	}
 
 	/**
-	 * TODO
 	 * Type Text
 	 * Press Key
 	 */
@@ -548,7 +547,6 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
-	@Override
 	public void sendKeys(ClientWidget locator, CharSequence... keysToSend) {
 		if (!_isTestCafe) {
 			super.sendKeys(locator, keysToSend);
@@ -601,7 +599,8 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		}
 		codeStr.append("')");
 		if (!allInKeys) {
-			click(locator);
+			String s = locator.toLocator();
+			Scripts.doCafeEval("if (" + s + "== jq(zk.currentFocus))" + s + ".focus();", testCodeList);
 			waitResponse();
 		}
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
@@ -979,7 +978,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			super.executeScript(script);
 		} else {
-			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, "await ClientFunction(() => {eval(" + script + ")}" + toClientFunctionDependencies(script)));
+			testCodeList.add(new CafeTestStep(CafeTestStep.EVAL, "await ClientFunction(() => {" + script + "}" + toClientFunctionDependencies(script)));
 		}
 	}
 
@@ -1451,7 +1450,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe)
 			throw new UnsupportedOperationException("Only used in test cafe");
 		else
-			return "parseInt(" + number + ")";
+			return CAFEEVAL + "parseInt(" + number + ")";
 	}
 
 	@Override
@@ -1471,7 +1470,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe)
 			throw new UnsupportedOperationException("Only used in test cafe");
 		else
-			return "parseFloat(" + number + ")";
+			return CAFEEVAL + "parseFloat(" + number + ")";
 	}
 
 	protected double parseFloat(int number) {
