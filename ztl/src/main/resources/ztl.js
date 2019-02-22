@@ -161,3 +161,16 @@ export async function hasVScrollbar(config) {
 		}
 	}, {dependencies: {config}})();
 }
+
+export async function splitInputText(text) {
+	var result = '',
+		textArr = text.split('');
+	for (var i = 0, l = textArr.length; i < l; i++) {
+		if (' ' == textArr[i]) {
+			result += ' space';
+		} else {
+			result += ' ' + textArr[i];
+		}
+	}
+	return result.trim();
+}

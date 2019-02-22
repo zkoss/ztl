@@ -509,10 +509,17 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.windowResizeTo(width, height);
 			return;
 		}
-		cafeResizeWindow(width, height);
+		cafeResizeWindow(String.valueOf(width), String.valueOf(height));
 	}
 
-	private void cafeResizeWindow(int width, int height) {
+	public void windowResizeTo(Object width, Object height) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Not support in test cafe");
+		}
+		cafeResizeWindow(String.valueOf(width), String.valueOf(height));
+	}
+
+	private void cafeResizeWindow(String width, String height) {
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, "resizeWindow(" + width + "," + height + ")"));
 	}
 
@@ -554,53 +561,62 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		}
 
 		StringBuilder codeStr = new StringBuilder();
-		codeStr.append("pressKey('");
+		codeStr.append("pressKey(");
 		int cnt = 0;
 		boolean allInKeys = true;
 		boolean isModifiedKey = false;
-		for (CharSequence s : keysToSend) {
-			if (!(s instanceof Keys))
-				allInKeys = false;
-			String keyString = s.toString();
-			if (s instanceof Keys) {
-				keyString = KeyHelper.getKeys(keyString);
-				isModifiedKey = ("alt".equals(keyString) || "ctrl".equals(keyString) || "shift".equals(keyString));
-			} else {
-				StringBuilder k = new StringBuilder();
-				int keyStrLength = keyString.length();
-				for (int i = 0; i < keyStrLength; i++) {
-					if (i > 0) {
-						if (isModifiedKey) {
-							k.append("+");
-							isModifiedKey = false;
-						} else
-						k.append(" ");
+		boolean isVariable = false;
+		if (keysToSend.length == 1 && keysToSend[0].toString().contains("_cafe")) {
+			isVariable = true;
+			allInKeys = false;
+			codeStr.append("await ztl.splitInputText(").append(keysToSend[0].toString()).append("))");
+		} else {
+			codeStr.append("'");
+			for (CharSequence s : keysToSend) {
+				if (!(s instanceof Keys))
+					allInKeys = false;
+				String keyString = s.toString();
+				if (s instanceof Keys) {
+					keyString = KeyHelper.getKeys(keyString);
+					isModifiedKey = ("alt".equals(keyString) || "ctrl".equals(keyString) || "shift".equals(keyString));
+				} else {
+					StringBuilder k = new StringBuilder();
+					int keyStrLength = keyString.length();
+					for (int i = 0; i < keyStrLength; i++) {
+						if (i > 0) {
+							if (isModifiedKey) {
+								k.append("+");
+								isModifiedKey = false;
+							} else
+								k.append(" ");
+						}
+						String keyChar = keyString.substring(i, i + 1);
+						if (" ".equals(keyChar)) {
+							keyChar = "space";
+						} else {
+							keyChar = KeyHelper.getKeys(keyChar);
+							isModifiedKey = ("alt".equals(keyChar) || "ctrl".equals(keyChar) || "shift".equals(keyChar));
+						}
+						k.append(keyChar);
 					}
-					String keyChar = keyString.substring(i, i + 1);
-					if (" ".equals(keyChar)) {
-						keyChar = "space";
-					} else {
-						keyChar = KeyHelper.getKeys(keyChar);
-						isModifiedKey = ("alt".equals(keyChar) || "ctrl".equals(keyChar) || "shift".equals(keyChar));
-					}
-					k.append(keyChar);
+					keyString = k.toString();
 				}
-				keyString = k.toString();
-			}
-			if (cnt > 0) {
-				if (isModifiedKey) {
-					codeStr.append("+");
-					isModifiedKey = false;
+				if (cnt > 0) {
+					if (isModifiedKey) {
+						codeStr.append("+");
+						isModifiedKey = false;
+					} else
+						codeStr.append(" ");
 				} else
-					codeStr.append(" ");
-			} else
-				cnt++;
-			codeStr.append(keyString);
+					cnt++;
+				codeStr.append(keyString);
+			}
+			codeStr.append("')");
 		}
-		codeStr.append("')");
 		if (!allInKeys) {
 			String s = locator.toLocator();
-			Scripts.doCafeEval("if (" + s + "== jq(zk.currentFocus))" + s + ".focus();", testCodeList);
+			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, "if (await ClientFunction(() => jq(" + s + ")[0] != document.activeElement)())"));
+			click(locator);
 			waitResponse();
 		}
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));

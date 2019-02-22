@@ -381,6 +381,8 @@ ztlActionMethod
 	| 'horScrollNoBodyAbs' '(' formalParameters ')'
 	| 'setWindowSize' '(' formalParameters ')'
 	| 'evalScript' '(' formalParameters ')'
+	| 'windowResizeTo' '(' formalParameters ')'
+	| 'sendKeys' '(' formalParameters ')'
 	;
 
 returnStatement

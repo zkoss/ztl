@@ -95,7 +95,8 @@ DRAGDROP:		'dragdrop';
 MOUSEDOWNAT:	'mouseDownAt';
 SETWINDOWSIZE:	'setWindowSize';
 EVALSCRIPT:		'evalScript';
-
+WINDOWRESIZETO: 'windowResizeTo';
+SENDKEYS:		'sendKeys';
 //eval
 GETEVAL:		'getEval';
 
