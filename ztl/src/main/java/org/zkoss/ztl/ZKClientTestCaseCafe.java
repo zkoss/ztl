@@ -2059,6 +2059,15 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		throw new UnsupportedOperationException("Not support in test cafe");
 	}
 
+	@Override
+	public void refresh() {
+		if (!_isTestCafe) {
+			super.refresh();
+		} else {
+			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, "await t.eval(() => location.reload(true));"));
+		}
+	}
+
 	private String cafeTrim(String text) {
 		return "(" + text + ").trim()";
 	}
