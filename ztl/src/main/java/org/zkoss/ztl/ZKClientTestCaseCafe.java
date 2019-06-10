@@ -2068,6 +2068,15 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		}
 	}
 
+	public void refresh(String zscript) {
+		if (!_isTestCafe) {
+			throw new UnsupportedOperationException("Not support in ZTL (selenium)");
+		} else {
+			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, "await t.eval(() => location.reload(true));"));
+			runRawZscript(zscript);
+		}
+	}
+
 	private String cafeTrim(String text) {
 		return "(" + text + ").trim()";
 	}
