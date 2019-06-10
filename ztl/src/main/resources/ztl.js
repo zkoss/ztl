@@ -106,7 +106,7 @@ export async function isEqualColor(color1, color2) {
 export async function getScrollTop(config) {
 	config.locator = await config.locator();
 	return await ClientFunction(() => {
-		var wgt = zk.Widget.$(jq(config.locator)),
+		var wgt = zk.Widget.$(jq('#' + config.locator.id)),
 			nScrollBar = wgt._scrollbar;
 		if (nScrollBar) {
 			var str = jq(wgt).find(".z-scrollbar")[0].style.top;
@@ -120,7 +120,7 @@ export async function getScrollTop(config) {
 export async function getScrollLeft(config) {
 	config.locator = await config.locator();
 	return await ClientFunction(() => {
-		var wgt = zk.Widget.$(jq(config.locator)),
+		var wgt = zk.Widget.$(jq('#' + config.locator.id)),
 			nScrollBar = wgt._scrollbar;
 		if (nScrollBar) {
 			var str = jq(wgt).find(".z-scrollbar")[0].style.left;
@@ -134,7 +134,7 @@ export async function getScrollLeft(config) {
 export async function hasHScrollbar(config) {
 	config.locator = await config.locator();
 	return await ClientFunction(() => {
-		var locator = jq(config.locator),
+		var locator = jq('#' + config.locator.id),
 			wgt = zk.Widget.$(locator),
 			nonNativeScrollBar = wgt._scrollbar;
 		if (nonNativeScrollBar) {
@@ -150,7 +150,8 @@ export async function hasHScrollbar(config) {
 export async function hasVScrollbar(config) {
 	config.locator = await config.locator();
 	return await ClientFunction(() => {
-		var wgt = zk.Widget.$(jq(config.locator)),
+		var locator = jq('#' + config.locator.id),
+			wgt = zk.Widget.$(locator),
 			nonNativeScrollBar = wgt._scrollbar;
 		if (nonNativeScrollBar) {
 			return !!jq(wgt).find('.z-scrollbar-vertical')[0];
