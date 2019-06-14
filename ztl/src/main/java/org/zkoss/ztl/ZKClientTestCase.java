@@ -632,11 +632,10 @@ public class ZKClientTestCase extends ZKTestCase {
 				tpad = wgt.$n("tpad");
 		JQuery body = jq(wgt.$n("body")),
 			   cave = jq(wgt.$n("cave"));
+		totalHight = jq(cave).height() - jq(body).height();
 		if (bpad.exists() && tpad.exists()) {
 			// ROD Scroll
-			totalHight = Integer.parseInt(bpad.attr("offsetHeight")) + Integer.parseInt(tpad.attr("offsetHeight"));
-		} else {
-			totalHight = jq(cave).height() - jq(body).height();
+			totalHight += Integer.parseInt(bpad.attr("offsetHeight")) + Integer.parseInt(tpad.attr("offsetHeight"));
 		}
 		
 		int dist = (int) Math.round(totalHight * percent / 100);
@@ -775,7 +774,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public boolean hasHScrollbar(ClientWidget locator) {
 		if (hasNativeScroll(jq(locator).toWidget())) {
-			return Integer.parseInt(zk(locator).eval("hasHScroll()")) > 0;
+			return Boolean.parseBoolean(zk(locator).eval("hasHScroll()"));
 		} else
 			return jq(locator).find(".z-scrollbar-horizontal").exists();
 	}
@@ -787,7 +786,7 @@ public class ZKClientTestCase extends ZKTestCase {
 	 */
 	public boolean hasVScrollbar(ClientWidget locator) {
 		if(hasNativeScroll(jq(locator).toWidget())) {
-			return Integer.parseInt(zk(locator).eval("hasVScroll()")) > 0;
+			return Boolean.parseBoolean(zk(locator).eval("hasVScroll()"));
 		} else
 			return jq(locator).find(".z-scrollbar-vertical").exists();
 	}
