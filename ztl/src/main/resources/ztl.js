@@ -58,10 +58,9 @@ export async function doScroll(config) {
 					tpad = wgt.$n('tpad'),
 					totalDist;
 				if (isVert) {
+					totalDist = jq(cave).height() - jq(body).height();
 					if (bpad && tpad) {
-						totalDist = bpad.offsetHeight + tpad.offsetHeight;
-					} else {
-						totalDist = jq(cave).height() - jq(body).height();
+						totalDist += bpad.offsetHeight + tpad.offsetHeight;
 					}
 				} else {
 					totalDist = jq(cave).width() - jq(body).width();
