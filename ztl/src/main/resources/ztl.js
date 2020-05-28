@@ -58,7 +58,7 @@ export async function doScroll(config) {
 					tpad = wgt.$n('tpad'),
 					totalDist;
 				if (isVert) {
-					totalDist = jq(cave).height() - jq(body).height();
+					totalDist = jq(cave).height() - (body ? jq(body).height() : 0);
 					if (bpad && tpad) {
 						totalDist += bpad.offsetHeight + tpad.offsetHeight;
 					}
@@ -73,11 +73,11 @@ export async function doScroll(config) {
 			if (isVert) {
 				for (var i = 0; i < caveChildren.length; i++)
 					childrenDist += caveChildren.eq(i).height();
-				dist = Math.round((childrenDist - jq(wgt).height()) * percent);
+				dist = Math.round((childrenDist - jq(wgt).height()) * percent / 100);
 			} else {
 				for (var i = 0; i < caveChildren.length; i++)
 					childrenDist += caveChildren.eq(i).width();
-				dist = Math.round((childrenDist - jq(wgt).width()) * percent);
+				dist = Math.round((childrenDist - jq(wgt).width()) * percent / 100);
 			}
 			body = wgt.$n();
 		}

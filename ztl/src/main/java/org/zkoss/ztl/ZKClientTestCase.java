@@ -709,7 +709,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			childrenWidth += child.width();
 		}
 		int totalWidth = childrenWidth - jq(locator).width();		
-		int dist = (int) Math.round(totalWidth * percent);
+		int dist = (int) Math.round(totalWidth * percent / 100);
 
 		horScrollNoBodyAbs(locator, dist);
 	}
@@ -746,7 +746,7 @@ public class ZKClientTestCase extends ZKTestCase {
 			childrenHeight += child.height();
 		}
 		int totalHeight = childrenHeight - jq(locator).height();		
-		int dist = (int) Math.round(totalHeight * percent);
+		int dist = (int) Math.round(totalHeight * percent / 100);
 		
 		verScrollNoBodyAbs(locator, dist);
 	}
