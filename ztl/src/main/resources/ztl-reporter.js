@@ -7,6 +7,7 @@ const rl = readline.createInterface({
 });
 
 let testStartCnt = 0;
+let testClass = '';
 let testName = '';
 let dataHead = '<?xml version="1.0" encoding="UTF-8" ?>\n<testsuite name="TestCafe Tests: ';
 let dataContent = '';
@@ -41,8 +42,9 @@ rl.on('line', (line) => {
 					testFailed = false;
 				}
 				testStartCnt++;
-				testName = line.replace('ZTL TEST -', '').trim();
-				dataContent = dataContent + '<testcase classname="' + line + '" name="' + testName + '" time="0.99">\n';
+				testName = line.substring(line.indexOf('('));
+				testClass = line.replace('ZTL TEST -', '').replace(testName, '').trim();
+				dataContent = dataContent + '<testcase classname="' + testClass + '" name="test' + testName + '" time="0.99">\n';
 			} else if (line.indexOf('✓') > -1 || line.indexOf('√') > -1) { // passed start
 				dataContent = dataContent + '</testcase>\n';
 				testStartCnt = 0;
