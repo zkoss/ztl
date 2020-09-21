@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.ztl</groupId>
 	<artifactId>ztl</artifactId>
-	<version>3.9.1-SNAPSHOT</version>
+	<version>3.141.59-SNAPSHOT</version>
 	<name>ZUL Testing Language</name>
 	<description>ZTL is an automatic testing tool for recording and testing
 		ZK applications
 	</description>
 	<properties>
-        <selenium.version>3.9.1</selenium.version>
+        <selenium.version>3.141.59</selenium.version>
 		<antlr.version>4.7</antlr.version>
 	</properties>
 	<dependencies>
