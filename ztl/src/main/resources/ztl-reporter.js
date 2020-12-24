@@ -72,7 +72,11 @@ rl.on('line', (line) => {
 	dataHead = dataHead + '" tests="' + (passedCnt + failedCnt) + '" failures="' + failedCnt + '" skipped="0" errors="'
 		+ failedCnt + '" time="' + totalTime + '" timestamp="" >\n';
 	dataContent = dataContent + '</testsuite>';
-	fs.writeFile('res.xml', dataHead + dataContent, function (err) {
+	var targetFolder = process.argv[3] || '';
+	console.log('Write into folder : ' + targetFolder);
+	if (targetFolder.length > 0 && !targetFolder.endsWith('/'))
+		targetFolder += '/';
+	fs.writeFile(targetFolder + 'res.xml', dataHead + dataContent, function (err) {
 		if (err)
 			console.log(err);
 		else

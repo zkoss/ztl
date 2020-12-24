@@ -611,8 +611,7 @@ public class ConfigHelper {
 				_lastModified = f.lastModified();
 
 				// _client = _prop.getProperty("client");
-				_debuggable = Boolean.parseBoolean(_prop
-						.getProperty("debuggable"));
+				_debuggable = Boolean.parseBoolean(_prop.getProperty("debuggable", "false"));
 				_server = _prop.getProperty("server");
 				_contextPath = _prop.getProperty("context-path");
 				_action = _prop.getProperty("action");
@@ -624,9 +623,8 @@ public class ConfigHelper {
 				_zktheme = _prop.getProperty("zktheme");
 				_comparable = Boolean.parseBoolean(_prop.getProperty(
 						"comparable", "false"));
-				_granularity = Integer.parseInt(_prop
-						.getProperty("granularity"));
-				_leniency = Integer.parseInt(_prop.getProperty("leniency"));
+				_granularity = Integer.parseInt(_prop.getProperty("granularity", "0"));
+				_leniency = Integer.parseInt(_prop.getProperty("leniency", "0"));
 				for (Iterator iter = _prop.entrySet().iterator(); iter
 						.hasNext();) {
 					final Map.Entry setting = (Map.Entry) iter.next();
@@ -663,12 +661,14 @@ public class ConfigHelper {
 								key.substring(start + 1));
 					}
 				}
-				
-				_connectionWaitPeriod = Integer.parseInt(_prop.getProperty("connectionWaitPeriod"));
-				_connectionReducePeriod = Integer.parseInt(_prop.getProperty("connectionReducePeriod"));
+
+				_connectionWaitPeriod = Integer.parseInt(_prop.getProperty("connectionWaitPeriod", "0"));
+
+				_connectionReducePeriod = Integer.parseInt(_prop.getProperty("connectionReducePeriod", "0"));
+
 				_mutexDir = _prop.getProperty("mutexDir");
-				_restartSleep = Integer.parseInt(_prop.getProperty("restartSleep"));
-				_maxTimeoutCount = Integer.parseInt(_prop.getProperty("maxTimeoutCount"));
+				_restartSleep = Integer.parseInt(_prop.getProperty("restartSleep", "0"));
+				_maxTimeoutCount = Integer.parseInt(_prop.getProperty("maxTimeoutCount", "0"));
 			} finally {
 				if (in != null) {
 					in.close();
