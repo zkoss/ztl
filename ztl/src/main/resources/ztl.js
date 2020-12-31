@@ -1,4 +1,5 @@
-import {ClientFunction, Selector} from 'testcafe';
+import {ClientFunction} from 'testcafe';
+
 const colorString = require('color-string');
 const isProcessing = ClientFunction(() => (!!zAu && !!zAu.processing()) || !!jq.timers.length);
 export async function waitResponse(t) {
@@ -86,14 +87,13 @@ export async function doScroll(config) {
 			if (nScrollBar)
 				wgt._scrollbar.scrollTo(0, dist);
 			else {
-				var scrollTarget = (body ? body : (cave ? cave : wgt));
-				scrollTarget.scrollTop = Math.abs(dist);
+				jq(body ? body : (cave ? cave : wgt)).scrollTop(Math.abs(dist));
 			}
 		} else {
 			if (nScrollBar)
 				wgt._scrollbar.scrollTo(dist, 0);
 			else
-				(body ? body : (cave ? cave : wgt)).scrollLeft = Math.abs(dist);
+				jq(body ? body : (cave ? cave : wgt)).scrollLeft(Math.abs(dist));
 		}
 	}, {dependencies: {config}})();
 }
