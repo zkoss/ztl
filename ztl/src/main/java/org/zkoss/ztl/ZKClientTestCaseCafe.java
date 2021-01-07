@@ -51,14 +51,17 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		testCodeList = null;
 	}
 
-	public void generateCafeTest(String targetUrl, String folder) throws IllegalArgumentException {
+	public void generateCafeTest(String targetUrl, String folder, String annotIgnoreBrowsers) throws IllegalArgumentException {
 		String testName = this.getClass().getSimpleName().replace("_", "-");
 		StringBuilder testContent = new StringBuilder();
 		testContent.append("import {ClientFunction, Selector} from 'testcafe';\n")
 				.append("import * as ztl from './module/ztl.js';\n")
 				.append("fixture `ZTL TEST - ").append(testName).append("`.page `").append(targetUrl)
 				.append("`;\ntest('").append(testName)
-				.append("', async t => {\nawait t.maximizeWindow();\nawait ztl.waitResponse(t);\n");
+				.append("', async t => {\nif (await ztl.isBrowserIgnored('").append(annotIgnoreBrowsers)
+				.append("')) {console.log('This issue is ignored in current browser! (")
+				.append(annotIgnoreBrowsers)
+				.append(")'); return;} \nawait t.maximizeWindow();\nawait ztl.waitResponse(t);\n");
 		String lastStepType = null;
 		for (CafeTestStep step : testCodeList) {
 			String type = step.getType();

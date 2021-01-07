@@ -174,3 +174,15 @@ export async function splitInputText(text) {
 	}
 	return result.trim();
 }
+
+export async function isBrowserIgnored(ignoreBrowsers) {
+	return await ClientFunction(() => {
+		var browserArr = ignoreBrowsers.split(',');
+		for (var i = 0, l = browserArr.length; i < l; i++) {
+			var browser = browserArr[i];
+			var ignored = zk[browser] || ('ie11' == browser && zk.ie11_); // chrome -> zk.chrome
+			if (ignored)
+				return true;
+		}
+	}, {dependencies: {ignoreBrowsers}})();
+}
