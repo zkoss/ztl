@@ -184,5 +184,6 @@ export async function isBrowserIgnored(ignoreBrowsers) {
 			if (ignored)
 				return true;
 		}
+		return false;
 	}, {dependencies: {ignoreBrowsers}})();
 }
