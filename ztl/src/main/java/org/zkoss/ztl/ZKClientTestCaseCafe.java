@@ -58,10 +58,12 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 				.append("import * as ztl from './module/ztl.js';\n")
 				.append("fixture `ZTL TEST - ").append(testName).append("`.page `").append(targetUrl)
 				.append("`;\ntest('").append(testName)
-				.append("', async t => {\nif (await ztl.isBrowserIgnored('").append(annotIgnoreBrowsers)
+				.append("', async t => {\n")
+				.append("await t.maximizeWindow();\nawait ztl.waitResponse(t);\n")
+				.append("if (await ztl.isBrowserIgnored('").append(annotIgnoreBrowsers)
 				.append("')) {console.log('This issue is ignored in current browser! (")
 				.append(annotIgnoreBrowsers)
-				.append(")'); return;} \nawait t.maximizeWindow();\nawait ztl.waitResponse(t);\n");
+				.append(")'); return;} \n");
 		String lastStepType = null;
 		for (CafeTestStep step : testCodeList) {
 			String type = step.getType();
