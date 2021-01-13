@@ -850,7 +850,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.verifyEquals(message, s1, s2);
 			return;
 		}
-		cafeExpect("eql", String.valueOf(s1), String.valueOf(s2), message);
+		cafeExpect("eql", String.valueOf(s2), String.valueOf(s1), message);
 	}
 
 	@Override
@@ -934,7 +934,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.verifyNotEquals(message, s1, s2);
 			return;
 		}
-		cafeExpect("notEql", String.valueOf(s1), String.valueOf(s2), message);
+		cafeExpect("notEql", String.valueOf(s2), String.valueOf(s1), message);
 	}
 
 	@Override
