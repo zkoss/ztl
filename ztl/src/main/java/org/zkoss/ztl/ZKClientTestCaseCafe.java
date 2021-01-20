@@ -59,8 +59,9 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 				.append("fixture `ZTL TEST - ").append(testName).append("`.page `").append(targetUrl)
 				.append("`;\ntest('").append(testName)
 				.append("', async t => {\n")
-				.append("await t.maximizeWindow();\nawait ztl.waitResponse(t);\n")
-				.append("if (await ztl.isBrowserIgnored('").append(annotIgnoreBrowsers)
+				.append("await t.maximizeWindow();\nawait ztl.waitResponse(t);\n");
+		if (annotIgnoreBrowsers != null && annotIgnoreBrowsers.trim().length() > 0)
+			testContent.append("if (await ztl.isBrowserIgnored('").append(annotIgnoreBrowsers)
 				.append("')) {console.log('This issue is ignored in current browser! (")
 				.append(annotIgnoreBrowsers)
 				.append(")'); return;} \n");

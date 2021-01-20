@@ -139,9 +139,11 @@ export async function hasHScrollbar(config) {
 		if (nonNativeScrollBar) {
 			return !!jq(wgt).find('.z-scrollbar-horizontal')[0];
 		} else {
-		 	var borderHeight = Math.round(parseInt(locator.css('borderTopWidth'))) + Math.round(parseInt(locator.css('borderBottomWidth'))),
-		 		scrollbarHeight = locator[0].offsetHeight - borderHeight - locator[0].clientHeight;
-			return scrollbarHeight > 0;
+			var nLocator = locator[0];
+			if (locator[0] == jq('body')[0] || locator[0] == window)
+				return jq(document).width() > jq(window).width();
+			else
+				return locator[0].scrollWidth > locator[0].clientWidth;
 		}
 	}, {dependencies: {config}})();
 }
@@ -155,9 +157,11 @@ export async function hasVScrollbar(config) {
 		if (nonNativeScrollBar) {
 			return !!jq(wgt).find('.z-scrollbar-vertical')[0];
 		} else {
-			var borderHeight = Math.round(parseInt(locator.css('borderLeftWidth'))) + Math.round(parseInt(locator.css('borderRightWidth'))),
-				scrollbarHeight = locator[0].offsetHeight - borderHeight - locator[0].clientHeight;
-			return scrollbarHeight > 0;
+			var nLocator = locator[0];
+			if (locator[0] == jq('body')[0] || locator[0] == window)
+				return jq(document).height() > jq(window).height();
+			else
+				return locator[0].scrollHeight > locator[0].clientHeight;
 		}
 	}, {dependencies: {config}})();
 }
