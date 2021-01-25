@@ -136,7 +136,7 @@ export async function hasHScrollbar(config) {
 		var locator = jq('#' + config.locator.id),
 			wgt = zk.Widget.$(locator),
 			nonNativeScrollBar = wgt._scrollbar;
-		if (nonNativeScrollBar) {
+		if (nonNativeScrollBar && (iScroll == undefined || !(nonNativeScrollBar instanceof iScroll))) {
 			return !!jq(wgt).find('.z-scrollbar-horizontal')[0];
 		} else {
 			var nLocator = locator[0];
@@ -154,7 +154,7 @@ export async function hasVScrollbar(config) {
 		var locator = jq('#' + config.locator.id),
 			wgt = zk.Widget.$(locator),
 			nonNativeScrollBar = wgt._scrollbar;
-		if (nonNativeScrollBar) {
+		if (nonNativeScrollBar && (iScroll == undefined || !(nonNativeScrollBar instanceof iScroll))) {
 			return !!jq(wgt).find('.z-scrollbar-vertical')[0];
 		} else {
 			var nLocator = locator[0];
