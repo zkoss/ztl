@@ -59,6 +59,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 				.append("fixture `ZTL TEST - ").append(testName).append("`.page `").append(targetUrl)
 				.append("`;\ntest('").append(testName)
 				.append("', async t => {\n")
+                .append("console.log('LOG: Testcafe started, maximize window');\n")
 				.append("await t.maximizeWindow();\nawait ztl.waitResponse(t);\n");
 		if (annotIgnoreBrowsers != null && annotIgnoreBrowsers.trim().length() > 0)
 			testContent.append("if (await ztl.isBrowserIgnored('").append(annotIgnoreBrowsers)
@@ -1040,7 +1041,9 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.runZscript(zscript);
 			return;
 		}
+		Scripts.doCafeScript("console.log('LOG: Try to send onZTLService')", testCodeList);
 		Scripts.doCafeEval("zAu.send(new zk.Event(null, 'onZTLService', '" + zscript + "', 10))", testCodeList);
+        Scripts.doCafeScript("console.log('LOG: After onZTLService')", testCodeList);
 		waitResponse();
 	}
 
