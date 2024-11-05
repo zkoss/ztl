@@ -57,7 +57,9 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		testContent.append("import {ClientFunction, Selector} from 'testcafe';\n")
 				.append("import * as ztl from './module/ztl.js';\n")
 				.append("fixture `ZTL TEST - ").append(testName).append("`.page `").append(targetUrl)
-				.append("`;\ntest('").append(testName)
+				// to avoid `href="javascript:foo"` be replaced to `javascript: parent.__proc$Html(window, foo);` by testcafe hammerhead
+				.append("`.beforeEach(async () => {await ClientFunction(() => {window['%hammerhead%'].processors.DomProcessor.processJsAttrValue = function (value, options) {return value;}})()})\n")
+				.append("test('").append(testName)
 				.append("', async t => {\n")
                 .append("console.log('LOG: Testcafe started, maximize window');\n")
 				.append("await t.maximizeWindow();\nawait ztl.waitResponse(t);\n");
