@@ -5,15 +5,15 @@ const isProcessing = ClientFunction(() => (typeof zAu !== 'undefined' && !!zAu.p
 export async function waitResponse(t) {
 	let waitTimes = 0;
 	await t.wait(300);
-    while (await isProcessing()) {
-    	if (waitTimes > 20) {
-    		console.log('timeout');
-    		break;
-    	}
-        console.log('waiting..');
-        await t.wait(300);
-        waitTimes++;
-    }
+	while (await isProcessing()) {
+		if (waitTimes > 20) {
+			console.log('timeout');
+			break;
+		}
+		console.log('waiting..');
+		await t.wait(300);
+		waitTimes++;
+	}
 }
 
 export async function convertCoordStrToArr(coordStr, isDragFrom) {
@@ -137,14 +137,14 @@ export async function hasHScrollbar(config) {
 			wgt = zk.Widget.$(locator),
 			nonNativeScrollBar = wgt._scrollbar,
 			iScroll = window.iScroll;
-		if (nonNativeScrollBar && (iScroll == undefined || !(nonNativeScrollBar instanceof iScroll))) {
-			return !!jq(wgt).find('.z-scrollbar-horizontal')[0];
+		if (nonNativeScrollBar && (iScroll == undefined || !(nonNativeScrollBar instanceof iScroll)) || zk.mobile) {
+			return !!jq(wgt).find('.z-scrollbar-vertical')[0] || zk.mobile; // mobile iScroll DOM is hidden by default
 		} else {
 			var nLocator = locator[0];
-			if (locator[0] == jq('body')[0] || locator[0] == window)
+			if (nLocator == jq('body')[0] || nLocator == window)
 				return jq(document).width() > jq(window).width();
 			else
-				return locator[0].scrollWidth > locator[0].clientWidth;
+				return nLocator.scrollWidth > nLocator.clientWidth;
 		}
 	}, {dependencies: {config}})();
 }
@@ -156,14 +156,14 @@ export async function hasVScrollbar(config) {
 			wgt = zk.Widget.$(locator),
 			nonNativeScrollBar = wgt._scrollbar,
 			iScroll = window.iScroll;
-		if (nonNativeScrollBar && (iScroll == undefined || !(nonNativeScrollBar instanceof iScroll))) {
-			return !!jq(wgt).find('.z-scrollbar-vertical')[0];
+		if (nonNativeScrollBar && (iScroll == undefined || !(nonNativeScrollBar instanceof iScroll)) || zk.mobile) {
+			return !!jq(wgt).find('.z-scrollbar-vertical')[0] || zk.mobile; // mobile iScroll DOM is hidden by default
 		} else {
 			var nLocator = locator[0];
-			if (locator[0] == jq('body')[0] || locator[0] == window)
+			if (nLocator == jq('body')[0] || nLocator == window)
 				return jq(document).height() > jq(window).height();
 			else
-				return locator[0].scrollHeight > locator[0].clientHeight;
+				return nLocator.scrollHeight > nLocator.clientHeight;
 		}
 	}, {dependencies: {config}})();
 }
