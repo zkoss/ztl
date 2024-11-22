@@ -138,7 +138,7 @@ export async function hasHScrollbar(config) {
 			nonNativeScrollBar = wgt._scrollbar,
 			iScroll = window.iScroll;
 		if (nonNativeScrollBar && (iScroll == undefined || !(nonNativeScrollBar instanceof iScroll)) || zk.mobile) {
-			return !!jq(wgt).find('.z-scrollbar-vertical')[0] || zk.mobile; // mobile iScroll DOM is hidden by default
+			return !!jq(wgt).find('.z-scrollbar-horizontal')[0] || zk.mobile; // mobile iScroll DOM is hidden by default
 		} else {
 			var nLocator = locator[0];
 			if (nLocator == jq('body')[0] || nLocator == window)
