@@ -51,9 +51,11 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		testCodeList = null;
 	}
 
-	public void generateCafeTest(String targetUrl, String folder, String annotIgnoreBrowsers) throws IllegalArgumentException {
+	public void generateCafeTest(String targetUrl, String folder, String annotIgnoreBrowsers, boolean annotNonConcurrent) throws IllegalArgumentException {
 		String testName = this.getClass().getSimpleName().replace("_", "-");
 		StringBuilder testContent = new StringBuilder();
+		if (annotNonConcurrent)
+			testContent.append("//@nonConcurrent\n");
 		testContent.append("import {ClientFunction, Selector} from 'testcafe';\n")
 				.append("import * as ztl from './module/ztl.js';\n")
 				.append("fixture `ZTL TEST - ").append(testName).append("`.page `").append(targetUrl)
