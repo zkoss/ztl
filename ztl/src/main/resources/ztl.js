@@ -1,6 +1,6 @@
 import {ClientFunction} from 'testcafe';
 
-const colorString = require('color-string');
+import colorString from 'color-string';
 const isProcessing = ClientFunction(() => (typeof zAu !== 'undefined' && !!zAu.processing()) || !!jq.timers.length);
 export async function waitResponse(t) {
 	let waitTimes = 0;
