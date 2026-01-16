@@ -186,6 +186,12 @@ export async function isBrowserIgnored(ignoreBrowsers) {
 		var browserArr = ignoreBrowsers.split(',');
 		for (var i = 0, l = browserArr.length; i < l; i++) {
 			var browser = browserArr[i];
+			if (browser === 'desktop') {
+				if (!zk.mobile) {
+					return true;
+				}
+				continue;
+			}
 			var ignored = zk[browser] || ('ie11' == browser && zk.ie11_); // chrome -> zk.chrome
 			if (ignored)
 				return true;
