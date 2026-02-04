@@ -63,8 +63,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 				.append("`.beforeEach(async () => {await ClientFunction(() => {window['%hammerhead%'].processors.DomProcessor.processJsAttrValue = function (value, options) {return value;}})()})\n")
 				.append("test('").append(testName)
 				.append("', async t => {\n")
-                .append("console.log('LOG: Testcafe started, maximize window');\n")
-				.append("await t.maximizeWindow();\nawait ztl.waitResponse(t);\n");
+				.append("await ztl.initTest(t);\n");
 		if (annotIgnoreBrowsers != null && annotIgnoreBrowsers.trim().length() > 0)
 			testContent.append("if (await ztl.isBrowserIgnored('").append(annotIgnoreBrowsers)
 				.append("')) {console.log('This issue is ignored in current browser! (")
@@ -284,9 +283,11 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		codeStr.append("(");
 		codeStr.append(toCafeSelector(selectorStr));
 		if (coordString != null) {
-			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(coordString)));
-			String coordVar = coordArrayIdentifier + coordArrayVarCnt;
-			codeStr.append(", {offsetX: ").append(coordVar).append("[0], offsetY: ").append(coordVar).append("[1]}");
+			// Parse coord string directly: "10,20" -> {offsetX: 10, offsetY: 20}
+			String[] coords = coordString.split(",");
+			String x = coords[0].trim();
+			String y = coords[1].trim();
+			codeStr.append(", {offsetX: ").append(x).append(", offsetY: ").append(y).append("}");
 		}
 		codeStr.append(")");
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
@@ -1045,10 +1046,29 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			super.runZscript(zscript);
 			return;
 		}
-		Scripts.doCafeScript("console.log('LOG: Try to send onZTLService')", testCodeList);
-		Scripts.doCafeEval("zAu.send(new zk.Event(null, 'onZTLService', '" + zscript + "', 10))", testCodeList);
-        Scripts.doCafeScript("console.log('LOG: After onZTLService')", testCodeList);
-		waitResponse();
+
+		String tempZul = zscript
+            .replace("`", "\\`")
+            .replace("${", "\\${");
+
+		StringBuilder safeZulBuilder = new StringBuilder();
+    	String[] parts = tempZul.split("\"", -1);
+
+		for (int i = 0; i < parts.length; i++) {
+			if (i % 2 == 0) {
+				safeZulBuilder.append(parts[i].replace("\\n", "\n"));
+			} else {
+				safeZulBuilder.append(parts[i]);
+			}
+			
+			if (i < parts.length - 1) {
+				safeZulBuilder.append("\"");
+			}
+		}
+    
+    	String safeZul = safeZulBuilder.toString();
+
+		Scripts.doCafeScript("await ztl.runZscript(t, `" + safeZul + "`)", testCodeList);
 	}
 
 	//JQuery

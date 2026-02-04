@@ -199,3 +199,18 @@ export async function isBrowserIgnored(ignoreBrowsers) {
 		return false;
 	}, {dependencies: {ignoreBrowsers}})();
 }
+
+export async function runZscript(t, zscript) {
+	console.log('LOG: Try to send onZTLService');
+	await ClientFunction(() => {
+		zAu.send(new zk.Event(null, 'onZTLService', zscript, 10));
+	}, {dependencies: {zscript}})();
+	console.log('LOG: After onZTLService');
+	await waitResponse(t);
+}
+
+export async function initTest(t) {
+	console.log('LOG: Testcafe started, maximize window');
+	await t.maximizeWindow();
+	// await waitResponse(t);
+}
