@@ -283,11 +283,17 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		codeStr.append("(");
 		codeStr.append(toCafeSelector(selectorStr));
 		if (coordString != null) {
-			// Parse coord string directly: "10,20" -> {offsetX: 10, offsetY: 20}
-			String[] coords = coordString.split(",");
-			String x = coords[0].trim();
-			String y = coords[1].trim();
-			codeStr.append(", {offsetX: ").append(x).append(", offsetY: ").append(y).append("}");
+			if (isSimpleCoordString(coordString)) {
+				// Parse coord string directly: "10,20" -> {offsetX: 10, offsetY: 20}
+				String[] coords = coordString.split(",");
+				String x = coords[0].trim();
+				String y = coords[1].trim();
+				codeStr.append(", {offsetX: ").append(x).append(", offsetY: ").append(y).append("}");
+			} else {
+				testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(coordString)));
+				String coordVar = coordArrayIdentifier + coordArrayVarCnt;
+				codeStr.append(", {offsetX: ").append(coordVar).append("[0], offsetY: ").append(coordVar).append("[1]}");
+			}
 		}
 		codeStr.append(")");
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
@@ -445,19 +451,50 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 
 	private void cafeDrag(String selectorStr, String movementsString, String from) {
 		StringBuilder codeStr = new StringBuilder();
-		codeStr.append("drag(").append(toCafeSelector(selectorStr)).append(",");
-		testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(movementsString)));
-		String coordVar = coordArrayIdentifier + coordArrayVarCnt;
+		codeStr.append("drag(").append(toCafeSelector(selectorStr)).append(", ");
+
+		boolean isMovementsSimple = isSimpleCoordString(movementsString);
+    	boolean isFromSimple = (from != null) && isSimpleCoordString(from);
+
 		if (from != null) {
-			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from, true)));
-			String coordVarFrom = coordArrayIdentifier + coordArrayVarCnt;
-			codeStr.append(coordVar).append("[0] - ").append(coordVarFrom).append("[0], ")
-					.append(coordVar).append("[1] - ").append(coordVarFrom).append("[1]")
-					.append(", {offsetX: ").append(coordVarFrom).append("[0], offsetY: ")
-					.append(coordVarFrom).append("[1]}");
+			if (isMovementsSimple && isFromSimple) {
+				// Both are simple numbers: calculate and embed directly
+				String[] toCoords = movementsString.split(",");
+				String[] fromCoords = from.split(",");
+				
+				int toX = Integer.parseInt(toCoords[0].trim());
+				int toY = Integer.parseInt(toCoords[1].trim());
+				int fromX = Integer.parseInt(fromCoords[0].trim());
+				int fromY = Integer.parseInt(fromCoords[1].trim());
+				
+				int deltaX = toX - fromX;
+				int deltaY = toY - fromY;
+				
+				codeStr.append(deltaX).append(", ").append(deltaY)
+						.append(", {offsetX: ").append(fromX)
+						.append(", offsetY: ").append(fromY).append("}");
+			} else {
+				testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(movementsString)));
+				String coordVar = coordArrayIdentifier + coordArrayVarCnt;
+
+				testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from, true)));
+				String coordVarFrom = coordArrayIdentifier + coordArrayVarCnt;
+				codeStr.append(coordVar).append("[0] - ").append(coordVarFrom).append("[0], ")
+						.append(coordVar).append("[1] - ").append(coordVarFrom).append("[1]")
+						.append(", {offsetX: ").append(coordVarFrom).append("[0], offsetY: ")
+						.append(coordVarFrom).append("[1]}");
+			}
 		} else {
-			codeStr.append(coordVar).append("[0], ").append(coordVar).append("[1]");
+			if (isMovementsSimple) {
+				String[] coords = movementsString.split(",");
+            	codeStr.append(coords[0].trim()).append(", ").append(coords[1].trim());
+			} else {
+				testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(movementsString)));
+				String coordVar = coordArrayIdentifier + coordArrayVarCnt;
+				codeStr.append(coordVar).append("[0], ").append(coordVar).append("[1]");
+			}
 		}
+
 		codeStr.append(")");
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
 	}
@@ -470,12 +507,26 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		StringBuilder codeStr = new StringBuilder();
 		codeStr.append("dragToElement(").append(toCafeSelector(fromSelectorStr)).append(",").append(toCafeSelector(toSelectorStr));
 		if (from != null && to != null) {
-			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from, true)));
-			String coordVarFrom = coordArrayIdentifier + coordArrayVarCnt;
-			testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(to)));
-			String coordVarTo = coordArrayIdentifier + coordArrayVarCnt;
-			codeStr.append(", {offsetX: ").append(coordVarFrom).append("[0], offsetY: ").append(coordVarFrom).append("[1]");
-			codeStr.append(", destinationOffsetX: ").append(coordVarTo).append("[0], destinationOffsetY: ").append(coordVarTo).append("[1]}");
+			boolean isFromSimple = isSimpleCoordString(from);
+        	boolean isToSimple = isSimpleCoordString(to);
+
+			if (isFromSimple && isToSimple) {
+				// Both are simple numbers: calculate and embed directly
+				String[] toCoords = to.split(",");
+				String[] fromCoords = from.split(",");
+				
+				codeStr.append(", {offsetX: ").append(fromCoords[0].trim())
+						.append(", offsetY: ").append(fromCoords[1].trim())
+						.append(", destinationOffsetX: ").append(toCoords[0].trim())
+						.append(", destinationOffsetY: ").append(toCoords[1].trim()).append("}");
+			} else {
+				testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(from, true)));
+				String coordVarFrom = coordArrayIdentifier + coordArrayVarCnt;
+				testCodeList.add(new CafeTestStep(CafeTestStep.PRE, genCoordStringExpr(to)));
+				String coordVarTo = coordArrayIdentifier + coordArrayVarCnt;
+				codeStr.append(", {offsetX: ").append(coordVarFrom).append("[0], offsetY: ").append(coordVarFrom).append("[1]");
+				codeStr.append(", destinationOffsetX: ").append(coordVarTo).append("[0], destinationOffsetY: ").append(coordVarTo).append("[1]}");
+			}
 		}
 		codeStr.append(")");
 		testCodeList.add(new CafeTestStep(CafeTestStep.ACTION, codeStr.toString()));
@@ -775,13 +826,18 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			isTF = true;
 		StringBuilder codeStr = new StringBuilder();
 
-		codeStr.append("expect(").append(toClientExpr(actualExpr, !isTF)).append(").").append(assertion).append("(");
+		// actualExpr
+		boolean isActualSelector = actualExpr.startsWith("Selector(");
+		codeStr.append("expect(").append(toClientExpr(actualExpr, !isTF && !isActualSelector)).append(").").append(assertion).append("(");
+
+		// expectExpr
 		if (expectExpr != null)
 			codeStr.append(toClientExpr(expectExpr));
+
 		if (message != null) {
 			if (expectExpr != null)
 				codeStr.append(",");
-			codeStr.append(toClientExpr(message.replaceAll("\n", "")));
+			codeStr.append(toClientExpr(message.replaceAll("\n", ""), false));
 		}
 		codeStr.append(")");
 		testCodeList.add(new CafeTestStep(CafeTestStep.ASSERTION, codeStr.toString()));
@@ -796,11 +852,11 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 	private String toClientExpr(String str, boolean toJSString) {
 		if (str.contains(CAFEEVAL)) {
 			str = toClientGetEval(str);
-		} else if (!str.matches("^\\(*" + AWAIT_TOKEN + ".*") && !str.contains("_cafe")){
+		} else if (!str.matches("^\\(*" + AWAIT_TOKEN + ".*") && !str.contains("_cafe") && !str.startsWith("Selector(")) {
 			str = "'" + str.replaceAll("\n", "\\\\n").replaceAll("'", "\\\\'") + "'";
 		}
 		if (toJSString){
-			str = "((" + str + ") + '').replace('&nbsp;', ' ')" ; // replace html space
+			str = "ztl.normalizeText(" + str + ")" ;
 		}
 		return str;
 	}
@@ -1608,7 +1664,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			return super.getText(locator);
 		}
-		return Scripts.getCafeClientFunction("jq(" + locator.toString() + ").text().replace(/\\s/g,' ')");
+		return toCafeSelector(locator.toLocator()) + ".innerText";
 	}
 
 	@Override
@@ -1751,6 +1807,9 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		String exprStr = String.valueOf(expr);
 		if (exprStr.startsWith(CAFEEVAL)) {
 			codeStr.append(toClientGetEval(exprStr));
+		} else if (exprStr.startsWith("Selector(")) {
+			codeStr.append("await ");
+			codeStr.append(exprStr);
 		} else {
 			codeStr.append(Scripts.getCafeClientFunction(String.valueOf(expr)));
 		}
@@ -2179,5 +2238,15 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 			codeStr.append(", true");
 		codeStr.append(");\n");
 		return codeStr.toString();
+	}
+
+	/** 
+	 * Check if the coordinate string is a simple numeric format like "10,20"
+	 */
+	private boolean isSimpleCoordString(String coordString) {
+		if (coordString == null || coordString.isEmpty()) {
+			return false;
+		}
+		return coordString.matches("^-?\\d+\\s*,\\s*-?\\d+$");
 	}
 }

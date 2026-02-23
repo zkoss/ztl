@@ -214,3 +214,7 @@ export async function initTest(t) {
 	await t.maximizeWindow();
 	// await waitResponse(t);
 }
+
+export function normalizeText(text) {
+	return (text + '').replace(/\u00A0/g, ' ');  // replace html space
+}
