@@ -1664,7 +1664,7 @@ public class ZKClientTestCaseCafe extends ZKClientTestCase {
 		if (!_isTestCafe) {
 			return super.getText(locator);
 		}
-		return toCafeSelector(locator.toLocator()) + ".innerText";
+		return toCafeSelector(locator.toLocator()) + ".innerText.replace(/\\s/g, ' ')";
 	}
 
 	@Override
